@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../../../components/common/topBar';
 import LevelMap from '../components/LevelMap/LevelMap';
+import UserStats from '../components/userStats';
 import { getLevels } from '../../../services/api/levelService';
 import { logout } from '../../../services/api/authService';
 
@@ -69,7 +70,13 @@ export default function HomePage() {
                     </div>
                 </div>
             ) : (
-                <LevelMap levels={levels} />
+                <>
+                    <LevelMap levels={levels} />
+                    {/* User Stats Floating Widget in Bottom Left */}
+                    <div className="fixed bottom-6 left-6 z-30 pointer-events-auto">
+                        <UserStats />
+                    </div>
+                </>
             )}
         </div>
     );
