@@ -1,28 +1,12 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+import { api } from './apiClient';
 
 /**
- * Menandai onboarding user sebagai selesai
+ * Mark onboarding user as complete
  * Endpoint: PATCH /api/users/me/onboarding
- * @returns {Promise<object>} Data user yang sudah menyelesaikan onboarding
+ * @returns {Promise<object>} User data after completing onboarding
  */
 export async function completeOnboarding() {
-  const token = localStorage.getItem("accessToken");
-
-  const response = await fetch(`${API_BASE_URL}/users/me/onboarding`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    credentials: "include",
-  });
-
-  const result = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(result.message || "Gagal menyelesaikan onboarding.");
-  }
-
+  const result = await api.patch('/users/me/onboarding');
   return result.data?.user;
 }
+

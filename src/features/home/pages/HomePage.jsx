@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TopBar from '../../../components/common/topBar';
 import LevelMap from '../components/LevelMap/LevelMap';
 import { getLevels } from '../../../services/api/levelService';
+import { logout } from '../../../services/api/authService';
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -10,10 +11,8 @@ export default function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+    const handleLogout = async () => {
+        await logout();
         navigate('/login');
     };
 

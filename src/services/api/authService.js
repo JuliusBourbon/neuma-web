@@ -1,68 +1,42 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+import { api, refreshAccessToken } from './apiClient';
 
 export async function register({ email, password, username }) {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password, username })
-    })
-
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(result.message || 'Register gagal. Silakan coba lagi.');
-    }
-
+    const result = await api.post('/auth/register', { email, password, username });
     return result.data;
 }
 
 /**
- * Login dengan email dan password
+ * Login with email and password
  * @param {{ email: string, password: string }} credentials
  * @returns {Promise<{ user: object, accessToken: string }>}
  */
 export async function login({ email, password }) {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-    });
-
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(result.message || 'Login gagal. Silakan coba lagi.');
-    }
-
+    const result = await api.post('/auth/login', { email, password });
     return result.data;
 }
 
 /**
- * Login atau Register dengan Google Token (ID Token atau Access Token)
+ * Login or Register with Google Token (ID Token or Access Token)
  * @param {{ idToken?: string, accessToken?: string }} payload
  * @returns {Promise<{ user: object, accessToken: string }>}
  */
 export async function loginWithGoogle({ idToken, accessToken }) {
-    const response = await fetch(`${API_BASE_URL}/auth/google`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ idToken, accessToken }),
-    });
-
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(result.message || 'Login Google gagal. Silakan coba lagi.');
-    }
-
+    const result = await api.post('/auth/google', { idToken, accessToken });
     return result.data;
 }
+
+// Logout user and clear refresh token cookie and localStorage
+export async function logout() {
+    try {
+        await api.post('/auth/logout');
+    } catch {
+        // Ignore network errors during logout
+    } finally {
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+    }
+}
+
+export { refreshAccessToken };
+
