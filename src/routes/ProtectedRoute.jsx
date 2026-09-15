@@ -5,13 +5,13 @@ import { Navigate, Outlet } from "react-router-dom";
  * Jika token tidak ditemukan, pengguna diarahkan ke /login.
  */
 export function ProtectedRoute({ children }) {
-    const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
-    if (!token) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
 
-    return children ? children : <Outlet />;
+  return children ? children : <Outlet />;
 }
 
 /**
@@ -19,13 +19,13 @@ export function ProtectedRoute({ children }) {
  * Jika pengguna sudah login, langsung diarahkan ke /home.
  */
 export function GuestRoute({ children }) {
-    const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
-    if (token) {
-        return <Navigate to="/home" replace />;
-    }
+  if (token) {
+    return <Navigate to="/home" replace />;
+  }
 
-    return children ? children : <Outlet />;
+  return children ? children : <Outlet />;
 }
 
 export default ProtectedRoute;
