@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ActionButton from "../../../components/common/actionButton";
+import DialogBubble from "../../../components/common/dialogBubble";
 import OptionCard from "../components/OptionCard";
 import fireflyMain from "../../../assets/onboarding/firefly-main.png";
 import firefly1 from "../../../assets/onboarding/firefly-1.png";
@@ -97,9 +98,8 @@ function OnboardingPage() {
           {[1, 2, 3, 4].map((step) => (
             <div
               key={step}
-              className={`h-3 w-32 rounded-full ${
-                currentStep >= step ? "bg-tertiary" : "bg-secondary"
-              }`}
+              className={`h-3 w-32 rounded-full ${currentStep >= step ? "bg-tertiary" : "bg-secondary"
+                }`}
             />
           ))}
         </div>
@@ -121,23 +121,10 @@ function OnboardingPage() {
           {/* Step 1 */}
           {currentStep === 1 && (
             <>
-              {/* Firefly + Speech Bubble */}
-              <div className="mb-10 flex items-center justify-center gap-8">
-                <img
-                  src={fireflyMain}
-                  alt="Neuma mascot"
-                  className="h-28 w-28 object-contain"
-                />
-
-                <div className="relative rounded-xl border-2 border-tertiary bg-primary px-8 py-5">
-                  {/* Speech bubble tail */}
-                  <div className="absolute -left-3 top-1/2 h-5 w-5 -translate-y-1/2 rotate-45 border-b-2 border-l-2 border-tertiary bg-primary" />
-
-                  <p className="relative text-2xl text-tertiary">
-                    How much do you know about Sign Language?
-                  </p>
-                </div>
-              </div>
+              <DialogBubble
+                image={fireflyMain}
+                text="How much do you know about Sign Language?"
+              />
 
               {/* Options */}
               <div className="flex flex-col gap-4">
@@ -157,23 +144,10 @@ function OnboardingPage() {
           {/* Step 2 */}
           {currentStep === 2 && (
             <>
-              {/* Firefly + Speech Bubble */}
-              <div className="mb-10 flex items-center justify-center gap-8">
-                <img
-                  src={fireflyMain}
-                  alt="Neuma mascot"
-                  className="h-28 w-28 object-contain"
-                />
-
-                <div className="relative rounded-xl border-2 border-tertiary bg-primary px-8 py-5">
-                  {/* Speech bubble tail */}
-                  <div className="absolute -left-3 top-1/2 h-5 w-5 -translate-y-1/2 rotate-45 border-b-2 border-l-2 border-tertiary bg-primary" />
-
-                  <p className="relative text-2xl text-tertiary">
-                    Why do you want to learn Sign Language?
-                  </p>
-                </div>
-              </div>
+              <DialogBubble
+                image={fireflyMain}
+                text="Why do you want to learn Sign Language?"
+              />
 
               {/* Options */}
               <div className="flex flex-col gap-4">
