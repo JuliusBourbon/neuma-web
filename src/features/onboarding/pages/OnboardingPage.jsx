@@ -44,18 +44,22 @@ function OnboardingPage() {
     {
       value: "communication",
       label: "To communicate with Deaf people",
+      image: firefly1,
     },
     {
       value: "family-friends",
       label: "For my family or friends",
+      image: firefly2,
     },
     {
       value: "work-school",
       label: "For work or school",
+      image: firefly3,
     },
     {
       value: "interest",
       label: "I'm interested in Sign Language",
+      image: firefly4,
     },
   ];
 
@@ -81,15 +85,12 @@ function OnboardingPage() {
   };
 
   const handleClose = () => {
-    // Untuk sementara belum diarahkan ke halaman lain.
     console.log("Close onboarding");
   };
 
   return (
     <div className="min-h-screen bg-primary flex flex-col">
-      {/* =========================
-          TOP NAVIGATION
-      ========================== */}
+      {/* Top Navigation */}
       <div className="relative flex items-center justify-center px-8 pt-8">
         {/* Progress Bar */}
         <div className="flex gap-4">
@@ -114,14 +115,10 @@ function OnboardingPage() {
         </button>
       </div>
 
-      {/* =========================
-          MAIN CONTENT
-      ========================== */}
+      {/* Main content */}
       <div className="flex flex-1 items-center justify-center px-6 py-10">
         <div className="w-full max-w-2xl">
-          {/* =========================
-              STEP 1
-          ========================== */}
+          {/* Step 1 */}
           {currentStep === 1 && (
             <>
               {/* Firefly + Speech Bubble */}
@@ -157,9 +154,7 @@ function OnboardingPage() {
             </>
           )}
 
-          {/* =========================
-              STEP 2
-          ========================== */}
+          {/* Step 2 */}
           {currentStep === 2 && (
             <>
               {/* Firefly + Speech Bubble */}
@@ -186,6 +181,7 @@ function OnboardingPage() {
                   <OptionCard
                     key={option.value}
                     text={option.label}
+                    image={option.image}
                     selected={selectedReason === option.value}
                     onClick={() => setSelectedReason(option.value)}
                   />
@@ -194,9 +190,7 @@ function OnboardingPage() {
             </>
           )}
 
-          {/* =========================
-              STEP 3
-          ========================== */}
+          {/* Step 3 */}
           {currentStep === 3 && (
             <div className="flex flex-col items-center text-center">
               <img
@@ -216,7 +210,7 @@ function OnboardingPage() {
             </div>
           )}
 
-          {/* STEP 4 */}
+          {/* Step 4 */}
           {currentStep === 4 && (
             <div className="flex flex-col items-center text-center">
               <img
