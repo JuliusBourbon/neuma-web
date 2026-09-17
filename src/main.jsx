@@ -8,6 +8,7 @@ import LoginPage from "./features/auth/pages/loginPage.jsx";
 import RegisterPage from "./features/auth/pages/registerPage.jsx";
 import HomePage from "./features/home/pages/HomePage.jsx";
 import LearningPage from "./features/learning/pages/LearningPage.jsx";
+import ScorePage from "./features/learning/pages/scorePage.jsx";
 import OnboardingPage from "./features/onboarding/pages/OnboardingPage.jsx";
 import { ProtectedRoute, GuestRoute } from "./routes/ProtectedRoute.jsx";
 
@@ -34,6 +35,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/learning" element={<LearningPage />} />
+            <Route path="/score" element={<ScorePage />} />
           </Route>
         </Routes>
       </BrowserRouter>
