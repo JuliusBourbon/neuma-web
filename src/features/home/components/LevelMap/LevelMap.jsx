@@ -1,16 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MAP_DIMENSIONS, getLevelPosition } from "./levelMapConfig";
 import MapLines from "./MapLines";
-import LoRLevelNode from "./LoRLevelNode";
+import LevelNode from "./levelNode";
 import MapControls from "./MapControls";
 
-/**
- * Komponen Kanvas Peta Interaktif Level Bergaya Legends of Runeterra:
- * - Hold and slide mouse (Drag-to-pan) tanpa scrollbar browser.
- * - Auto-center pada level aktif pertama kali dimuat.
- * - Garis penghubung LoR (solid glowing untuk unlocked, dashed untuk locked).
- * - Zoom in / out dan kontrol kompas reset fokus.
- */
 export default function LevelMap({ levels = [] }) {
     const containerRef = useRef(null);
 
@@ -240,15 +233,16 @@ export default function LevelMap({ levels = [] }) {
                     {/* Pola Topografi Garis Kontur Map */}
 
                     {/* Ornamen Lembut Nuansa Neuma */}
-                    <div className="absolute top-40 left-80 w-96 h-96 rounded-full bg-secondary/10 blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-60 right-96 w-[500px] h-[500px] rounded-full bg-neon/20 blur-3xl pointer-events-none" />
-                    <div className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full bg-secondary/8 blur-3xl pointer-events-none" />
+                    <div className="absolute top-40 left-80 w-96 h-96 rounded-full bg-orange/30 blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-60 right-96 w-125 h-125 rounded-full bg-neon/20 blur-3xl pointer-events-none" />
+                    <div className="absolute top-1/2 w-80 h-80 rounded-full bg-yellow/40 blur-3xl pointer-events-none" />
+                    <div className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full bg-yellow/40 blur-3xl pointer-events-none" />
                 </div>
 
                 {/* 2. Garis-garis Penghubung Level (MapLines) */}
                 <MapLines levels={levels} />
 
-                {/* 3. Node Level (LoRLevelNode) */}
+                {/* 3. Node Level (LevelNode) */}
                 {(() => {
                     const latestUnlocked = [...levels]
                         .filter((l) => l.status === "available")
@@ -258,7 +252,7 @@ export default function LevelMap({ levels = [] }) {
                     return levels.map((level) => {
                         const pos = getLevelPosition(level.orderIndex);
                         return (
-                            <LoRLevelNode
+                            <LevelNode
                                 key={level.id || level.orderIndex}
                                 level={level}
                                 position={pos}

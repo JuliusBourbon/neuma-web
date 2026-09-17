@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getText } from "../../../../utils/text";
 import LockIcon from "../../../../components/icons/lockIcon";
 
-export default function LoRLevelNode({
+export default function LevelNode({
     level,
     position,
     isDraggingMap = false,
@@ -94,16 +94,16 @@ export default function LoRLevelNode({
                 {/* Outer Ring */}
                 <div
                     className={`relative w-16 h-16 sm:w-18 sm:h-18 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-105 group-active:scale-95 shadow-xl ${isAvailable
-                        ? "bg-secondary p-px shadow-secondary/80"
+                        ? "bg-tertiary p-px shadow-secondary/80"
                         : isCompleted
-                            ? "bg-tertiary p-px"
+                            ? "bg-neon p-px"
                             : "bg-slate-800 p-px shadow-tertiary/70"
                         }`}
                 >
                     {/* Inner Node Content */}
                     <div
                         className={`w-full h-full rounded-full flex flex-col items-center justify-center border ${isAvailable
-                            ? "bg-linear-to-br from-secondary to-[#c2410c] border-amber-200 text-white"
+                            ? "bg-secondary text-white border-tertiary"
                             : isCompleted
                                 ? "bg-neon text-tertiary"
                                 : "bg-tertiary text-slate-300"
