@@ -4,7 +4,7 @@ import MapLines from "./MapLines";
 import LevelNode from "./levelNode";
 import MapControls from "./MapControls";
 
-export default function LevelMap({ levels = [] }) {
+export default function LevelMap({ levels = [], avatar = null }) {
     const containerRef = useRef(null);
 
     // State Transformasi Peta
@@ -259,6 +259,7 @@ export default function LevelMap({ levels = [] }) {
                                 isDraggingMap={isDragging}
                                 isLatestUnlocked={level.orderIndex === latestUnlockedOrder}
                                 to={`/learning?levelId=${level.id}`}
+                                avatar={avatar}
                             />
                         );
                     });

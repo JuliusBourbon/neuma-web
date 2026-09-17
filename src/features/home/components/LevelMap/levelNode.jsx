@@ -18,7 +18,7 @@ export default function LevelNode({
     const isLocked = level.status === "locked";
     const isCompleted = level.status === "completed";
     const isAvailable = level.status === "available" || (!isLocked && !isCompleted);
-    const showPin = isLatestUnlocked !== undefined ? isLatestUnlocked : isAvailable;
+    const isCurrentLevel = Boolean(isLatestUnlocked) && isAvailable;
 
     const titleText = getText(level.title) || `Level ${level.orderIndex}`;
     const descText = getText(level.description);
@@ -59,11 +59,10 @@ export default function LevelNode({
     return (
         <div
             ref={containerRef}
-            className={`absolute transition-all ${openModal ? "z-50" : "z-10"}`}
+            className={`absolute -translate-x-1/2 -translate-y-1/2 transition-all ${openModal ? "z-50" : "z-10"}`}
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
-                transform: "translate(-50%, -50%)",
             }}
         >
             {/* Button Level Node */}
@@ -73,40 +72,34 @@ export default function LevelNode({
                 className="group relative z-10 flex items-center justify-center cursor-pointer select-none focus:outline-none"
                 aria-label={`Level ${level.orderIndex}: ${titleText}`}
             >
-                {/* Pin Latest Unlocked Level */}
-                {!openModal && showPin && (
-                    <div className="absolute -top-9 left-1/2 -translate-x-1/2 pointer-events-none z-30 animate-bounce">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            className="w-16 h-16 text-secondary filter drop-shadow-md"
-                            fill="currentColor"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                    </div>
+                {/* Glow & Radar Pulse Effect for Current Level */}
+                {isCurrentLevel && (
+                    <>
+                        {/* Expanding Radar Ping Ring */}
+                        <span className="absolute -inset-1 rounded-full bg-secondary/15 animate-ping pointer-events-none" />
+                    </>
                 )}
 
                 {/* Outer Ring */}
                 <div
-                    className={`relative w-16 h-16 sm:w-18 sm:h-18 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-105 group-active:scale-95 shadow-xl ${isAvailable
-                        ? "bg-tertiary p-px shadow-secondary/80"
-                        : isCompleted
-                            ? "bg-neon p-px"
-                            : "bg-slate-800 p-px shadow-tertiary/70"
+                    className={`relative w-16 h-16 sm:w-18 sm:h-18 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-active:scale-95 shadow-xl ${isCurrentLevel
+                        ? "bg-tertiary p-px shadow-2xl shadow-secondary/60"
+                        : isAvailable
+                            ? "bg-tertiary p-px shadow-secondary/80"
+                            : isCompleted
+                                ? "bg-neon p-px"
+                                : "bg-slate-800 p-px shadow-tertiary/70"
                         }`}
                 >
                     {/* Inner Node Content */}
                     <div
-                        className={`w-full h-full rounded-full flex flex-col items-center justify-center border ${isAvailable
-                            ? "bg-secondary text-white border-tertiary"
-                            : isCompleted
-                                ? "bg-neon text-tertiary"
-                                : "bg-tertiary text-slate-300"
+                        className={`w-full h-full rounded-full flex flex-col items-center justify-center border ${isCurrentLevel
+                            ? "bg-secondary text-white shadow-inner"
+                            : isAvailable
+                                ? "bg-secondary text-white"
+                                : isCompleted
+                                    ? "bg-neon text-tertiary"
+                                    : "bg-tertiary text-slate-300"
                             }`}
                     >
                         {isLocked ? (
@@ -120,7 +113,7 @@ export default function LevelNode({
                             </div>
                         ) : (
                             <div className="flex flex-col items-center leading-none">
-                                <span className="text-2xl font-black tracking-tight filter drop-shadow">
+                                <span className={`font-black tracking-tight filter drop-shadow ${isCurrentLevel ? "text-2xl sm:text-3xl text-white" : "text-2xl"}`}>
                                     {level.orderIndex}
                                 </span>
                             </div>
@@ -131,11 +124,13 @@ export default function LevelNode({
                 {/* Level Name Badge Below Node */}
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none">
                     <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow tracking-wide ${isAvailable
-                            ? "bg-secondary text-white border border-tertiary"
-                            : isCompleted
-                                ? "bg-neon border text-tertiary"
-                                : "bg-tertiary text-white border border-slate-300"
+                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow tracking-wide transition-all ${isCurrentLevel
+                            ? "bg-secondary text-white border border-tertiary font-black shadow-lg scale-105"
+                            : isAvailable
+                                ? "bg-secondary text-white border border-tertiary"
+                                : isCompleted
+                                    ? "bg-neon border text-tertiary"
+                                    : "bg-tertiary text-white border border-slate-300"
                             }`}
                     >
                         Level {level.orderIndex}

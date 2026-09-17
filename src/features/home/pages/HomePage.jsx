@@ -43,6 +43,15 @@ export default function HomePage() {
         { text: 'Profile', href: '#profile' },
     ];
 
+    const [user] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('user') || '{}');
+        } catch {
+            return {};
+        }
+    });
+    const userAvatar = user?.avatarUrl || user?.avatar || null;
+
     return (
         <div className="relative w-screen h-screen overflow-hidden select-none bg-primary">
             {/* Floating TopBar Navigation */}
@@ -71,10 +80,10 @@ export default function HomePage() {
                 </div>
             ) : (
                 <>
-                    <LevelMap levels={levels} />
+                    <LevelMap levels={levels} avatar={userAvatar} />
                     {/* User Stats Floating Widget in Bottom Left */}
                     <div className="fixed bottom-6 left-6 z-30 pointer-events-auto">
-                        <UserStats />
+                        <UserStats avatar={userAvatar} />
                     </div>
                 </>
             )}
