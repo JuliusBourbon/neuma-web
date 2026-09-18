@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
+
 export default function TopBar({
     brand = 'Neumá',
     links = [
@@ -8,12 +11,14 @@ export default function TopBar({
     className = '',
     classes = '',
 }) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const customClasses = className || classes;
 
     return (
-        <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center bg-secondary/50 text-tertiary rounded-full px-8 py-4 z-50 whitespace-nowrap max-w-[calc(100vw-2rem)] ${customClasses}`.trim()}>
-            {brand && <h4 className='font-bold text-2xl mr-60'>{brand}</h4>}
-            <div className='flex gap-12 font-medium'>
+        <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center bg-secondary/50 text-tertiary rounded-full px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] ${customClasses}`.trim()}>
+            {brand && <h4 className='font-bold text-xl md:text-2xl mr-auto md:mr-60'>{brand}</h4>}
+
+            <div className='hidden md:flex gap-12 font-medium whitespace-nowrap'>
                 {links.map((link, index) => (
                     <a
                         key={link.id || index}
@@ -32,6 +37,37 @@ export default function TopBar({
                     </a>
                 ))}
             </div>
+
+            <button
+                className="md:hidden ml-4 p-1 rounded-lg transition-colors cursor-pointer hover:bg-black/10"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle menu"
+            >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+
+            {isMenuOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-secondary/50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-4 shadow-lg md:hidden">
+                    {links.map((link, index) => (
+                        <a
+                            key={link.id || index}
+                            href={link.href || '#'}
+                            onClick={(e) => {
+                                setIsMenuOpen(false);
+                                if (link.onClick) {
+                                    e.preventDefault();
+                                    link.onClick();
+                                }
+                            }}
+                            target={link.target}
+                            rel={link.target === '_blank' ? 'noopener noreferrer' : undefined}
+                            className={`px-4 py-2 rounded-lg hover:bg-black/5 transition-colors font-medium text-center ${link.className || link.classes || ''}`}
+                        >
+                            {link.text || link.label}
+                        </a>
+                    ))}
+                </div>
+            )}
         </nav>
     )
 }
