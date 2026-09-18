@@ -10,6 +10,7 @@ import HomePage from "./features/home/pages/HomePage.jsx";
 import LearningPage from "./features/learning/pages/LearningPage.jsx";
 import ScorePage from "./features/learning/pages/scorePage.jsx";
 import OnboardingPage from "./features/onboarding/pages/OnboardingPage.jsx";
+import ProfilePage from "./features/profile/pages/ProfilePage.jsx";
 import { ProtectedRoute, GuestRoute } from "./routes/ProtectedRoute.jsx";
 
 const GOOGLE_CLIENT_ID =
@@ -36,6 +37,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/home" element={<HomePage />} />
             <Route path="/learning" element={<LearningPage />} />
             <Route path="/score" element={<ScorePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </BrowserRouter>
