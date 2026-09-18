@@ -5,10 +5,10 @@ import firefly2 from "../../../assets/onboarding/firefly-2.png";
 import StreakIcon from '../../../components/icons/streakIcon';
 
 export default function UserStats({
-    alphabet = '01/26',
-    coins = 10,
-    rank = 1,
-    streak = 1,
+    alphabet = '00/26',
+    coins = 0,
+    rank = '-',
+    streak = 0,
     avatar = null,
     className = '',
 }) {

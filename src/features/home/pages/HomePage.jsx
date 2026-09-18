@@ -4,11 +4,13 @@ import TopBar from '../../../components/common/topBar';
 import LevelMap from '../components/LevelMap/LevelMap';
 import UserStats from '../components/userStats';
 import { getLevels } from '../../../services/api/levelService';
+import { getMyStats } from '../../../services/api/userService';
 import { logout } from '../../../services/api/authService';
 
 export default function HomePage() {
     const navigate = useNavigate();
     const [levels, setLevels] = useState([]);
+    const [userStats, setUserStats] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -17,12 +19,21 @@ export default function HomePage() {
         navigate('/login');
     };
 
-    const fetchLevelsData = async () => {
+    const fetchInitialData = async () => {
         setIsLoading(true);
         setErrorMessage('');
         try {
-            const data = await getLevels();
-            setLevels(data);
+            const [levelsData, statsData] = await Promise.all([
+                getLevels(),
+                getMyStats().catch((err) => {
+                    console.warn('Gagal memuat statistik pengguna:', err);
+                    return null;
+                }),
+            ]);
+            setLevels(levelsData);
+            if (statsData) {
+                setUserStats(statsData);
+            }
         } catch (err) {
             setErrorMessage(err.message || 'Gagal memuat level pembelajaran.');
         } finally {
@@ -31,7 +42,7 @@ export default function HomePage() {
     };
 
     useEffect(() => {
-        fetchLevelsData();
+        fetchInitialData();
     }, []);
 
     // List for TopBar
@@ -50,7 +61,9 @@ export default function HomePage() {
             return {};
         }
     });
-    const userAvatar = user?.avatarUrl || user?.avatar || null;
+
+    const activeAvatar = userStats?.avatar || user?.avatarUrl || user?.avatar || null;
+    const formattedAlphabet = `${String(userStats?.wordsCollected ?? 0).padStart(2, '0')}/26`;
 
     return (
         <div className="relative w-screen h-screen overflow-hidden select-none bg-primary">
@@ -71,7 +84,7 @@ export default function HomePage() {
                         <p className="text-base font-bold mb-3">{errorMessage}</p>
                         <button
                             type="button"
-                            onClick={fetchLevelsData}
+                            onClick={fetchInitialData}
                             className="text-xs bg-secondary text-white px-5 py-2.5 rounded-xl font-bold hover:brightness-110 shadow transition cursor-pointer"
                         >
                             Coba Lagi
@@ -80,10 +93,16 @@ export default function HomePage() {
                 </div>
             ) : (
                 <>
-                    <LevelMap levels={levels} avatar={userAvatar} />
+                    <LevelMap levels={levels} avatar={activeAvatar} />
                     {/* User Stats Floating Widget in Bottom Left */}
                     <div className="fixed bottom-6 left-6 z-30 pointer-events-auto">
-                        <UserStats avatar={userAvatar} />
+                        <UserStats
+                            alphabet={formattedAlphabet}
+                            coins={userStats?.currencyBalance ?? 0}
+                            rank={userStats?.rank ?? '-'}
+                            streak={userStats?.dayStreak ?? 0}
+                            avatar={activeAvatar}
+                        />
                     </div>
                 </>
             )}
