@@ -1,4 +1,4 @@
-import { api } from './apiClient';
+import { api } from "./apiClient";
 
 /**
  * Get current user stats, rank, and avatar
@@ -16,8 +16,8 @@ import { api } from './apiClient';
  * }>}
  */
 export async function getMyStats() {
-    const result = await api.get('/users/me/stats');
-    return result.data?.stats;
+  const result = await api.get("/users/me/stats");
+  return result.data?.stats;
 }
 
 /**
@@ -25,6 +25,11 @@ export async function getMyStats() {
  * Endpoint: GET /api/users/me
  */
 export async function getMyProfile() {
-    const result = await api.get('/users/me');
-    return result.data?.user;
+  const result = await api.get("/users/me");
+  return result.data?.user;
+}
+
+export async function updateMyProfile(data) {
+  const result = await api.patch("/users/me", data);
+  return result.data?.user;
 }
