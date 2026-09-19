@@ -1,113 +1,116 @@
+﻿/**
+ * @param {Float32Array|number[]} coords
+ * @returns {Float32Array}
+ */
 export function normalizeLandmarks(coords) {
     let allZero = true;
     for (let i = 0; i < coords.length; i++) {
-        if (coords[i] !== 0.0) {
-            allZero = false;
-            break;
-        }
+        if (coords[i] !== 0.0) { allZero = false; break; }
     }
-    if (allZero) return new Float32Array(coords.length);
+    if (allZero) return new Float32Array(60);
 
     const wristX = coords[0];
     const wristY = coords[1];
     const wristZ = coords[2];
 
-    const normalized = new Float32Array(coords.length);
+    const shifted = new Float32Array(63);
     let maxVal = 0;
-
-    for (let i = 0; i < coords.length; i += 3) {
-        normalized[i] = coords[i] - wristX;
-        normalized[i + 1] = coords[i + 1] - wristY;
-        normalized[i + 2] = coords[i + 2] - wristZ;
-
-        const absX = Math.abs(normalized[i]);
-        const absY = Math.abs(normalized[i + 1]);
-        const absZ = Math.abs(normalized[i + 2]);
-
-        if (absX > maxVal) maxVal = absX;
-        if (absY > maxVal) maxVal = absY;
-        if (absZ > maxVal) maxVal = absZ;
+    for (let i = 0; i < 63; i += 3) {
+        shifted[i] = coords[i] - wristX;
+        shifted[i + 1] = coords[i + 1] - wristY;
+        shifted[i + 2] = coords[i + 2] - wristZ;
+        if (Math.abs(shifted[i]) > maxVal) maxVal = Math.abs(shifted[i]);
+        if (Math.abs(shifted[i + 1]) > maxVal) maxVal = Math.abs(shifted[i + 1]);
+        if (Math.abs(shifted[i + 2]) > maxVal) maxVal = Math.abs(shifted[i + 2]);
     }
 
     if (maxVal > 0) {
-        for (let i = 0; i < normalized.length; i++) {
-            normalized[i] = normalized[i] / maxVal;
-        }
+        for (let i = 0; i < 63; i++) shifted[i] /= maxVal;
     }
 
-    return normalized;
+    return shifted.slice(3);
 }
 
-function euclideanDistance(p1, p2) {
-    const dx = p1[0] - p2[0];
-    const dy = p1[1] - p2[1];
-    const dz = p1[2] - p2[2];
+function dist3d(ax, ay, az, bx, by, bz) {
+    const dx = ax - bx, dy = ay - by, dz = az - bz;
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-export function computeDerivedFeatures(coords) {
+/**
+ * @param {Float32Array} norm60
+ * @returns {Float32Array}
+ */
+export function computeDerivedFeatures(norm60) {
     let allZero = true;
-    for (let i = 0; i < coords.length; i++) {
-        if (coords[i] !== 0.0) {
-            allZero = false;
-            break;
-        }
+    for (let i = 0; i < norm60.length; i++) {
+        if (norm60[i] !== 0.0) { allZero = false; break; }
     }
     if (allZero) return new Float32Array(15);
 
-    const points = [];
-    for (let i = 0; i < coords.length; i += 3) {
-        points.push([coords[i], coords[i + 1], coords[i + 2]]);
+    function pt(idx) {
+        return [norm60[idx * 3], norm60[ix * 3 + 1], norm60[idx * 3 + 2]];
     }
 
-    const tipIndices = [4, 8, 12, 16, 20];
-    const fingertips = tipIndices.map((idx) => points[idx]);
-    const wrist = points[0];
+    const thumbTip = pt(3);
+    const indexTip = pt(7);
+    const middleTip = pt(11);
+    const ringTip = pt(15);
+    const pinkyTip = pt(19);
 
-    const features = [];
+    const thumbMcp = pt(1);
+    const indexMcp = pt(4);
+    const middleMcp = pt(8);
+    const ringMcp = pt(12);
+    const pinkyMcp = pt(16);
 
-    // Distance between finger tips and wrist (5 features)
-    for (let i = 0; i < fingertips.length; i++) {
-        features.push(euclideanDistance(fingertips[i], wrist));
+    const fingertips = [thumbTip, indexTip, middleTip, ringTip, pinkyTip];
+    const mcps = [thumbMcp, indexMcp, middleMcp, ringMcp, pinkyMcp];
+
+    const features = new Float32Array(15);
+    let f = 0;
+
+    for (let i = 0; i < 5; i++) {
+        const [x, y, z] = fingertips[i];
+        features[f++] = dist3d(x, y, z, 0, 0, 0);
     }
 
-    // Distance between adjacent finger tips (4 features)
-    for (let i = 0; i < fingertips.length - 1; i++) {
-        features.push(euclideanDistance(fingertips[i], fingertips[i + 1]));
+    for (let i = 0; i < 4; i++) {
+        const [ax, ay, az] = fingertips[i];
+        const [bx, by, bz] = fingertips[i + 1];
+        features[f++] = dist3d(ax, ay, az, bx, by, bz);
     }
 
-    // Distance between thumb and other finger tips (4 features)
-    for (let i = 1; i < fingertips.length; i++) {
-        features.push(euclideanDistance(fingertips[0], fingertips[i]));
+    for (let i = 0; i < 5; i++) {
+        const [ax, ay, az] = fingertips[i];
+        const [bx, by, bz] = mcps[i];
+        features[f++] = dist3d(ax, ay, az, bx, by, bz);
     }
 
-    // Distance between middle finger and pinky, and index finger and pinky (2 features)
-    features.push(euclideanDistance(fingertips[2], fingertips[4]));
-    features.push(euclideanDistance(fingertips[1], fingertips[4]));
+    const [ix, iy, iz] = indexTip;
+    const [px, py, pz] = pinkyTip;
+    features[f++] = dist3d(ix, iy, iz, px, py, pz);
 
-    return new Float32Array(features);
+    return features;
 }
 
-export function extractFullFeatures(leftHand, rightHand) {
-    const leftNorm = normalizeLandmarks(leftHand);
-    const leftDerived = computeDerivedFeatures(leftHand);
-    const rightNorm = normalizeLandmarks(rightHand);
-    const rightDerived = computeDerivedFeatures(rightHand);
+/**
+ * @param {Float32Array} leftRaw63
+ * @param {Float32Array} rightRaw63
+ * @returns {Float32Array}
+ */
+export function extractFullFeatures(leftRaw63, rightRaw63) {
+    const leftNorm = normalizeLandmarks(leftRaw63);
+    const leftDerived = computeDerivedFeatures(leftNorm);
+    const rightNorm = normalizeLandmarks(rightRaw63);
+    const rightDerived = computeDerivedFeatures(rightNorm);
 
-    const result = new Float32Array(156);
-    let pos = 0;
+    const result = new Float32Array(150);
+    result.set(leftNorm, 0);
+    result.set(leftDerived, 60);
+    result.set(rightNorm, 75);
+    result.set(rightDerived, 135);
 
-    result.set(leftNorm, pos);
-    pos += leftNorm.length;
-
-    result.set(leftDerived, pos);
-    pos += leftDerived.length;
-
-    result.set(rightNorm, pos);
-    pos += rightNorm.length;
-
-    result.set(rightDerived, pos);
-    pos += rightDerived.length;
+    console.assert(result.length === 150, `[featureExtractor] Expected 150 features, got ${result.length}`);
 
     return result;
 }

@@ -131,15 +131,15 @@ class BisindoClassifier {
         }
 
         // Apply swapHands — swapped by default in neuma (L/R terbalik agar sesuai)
-        const actualLeft = swapHands ? rightHand : leftHand;
-        const actualRight = swapHands ? leftHand : rightHand;
+        const actualLeft = leftHand;
+        const actualRight = rightHand;
 
         // Ekstraksi 156 fitur (persis seperti Android & Python)
-        const features156 = extractFullFeatures(actualLeft, actualRight);
+        const features150 = extractFullFeatures(actualLeft, actualRight);
 
         // Inferensi ONNX
         const inputName = this.onnxSession.inputNames[0];
-        const inputTensor = new ort.Tensor('float32', features156, [1, 156]);
+        const inputTensor = new ort.Tensor('float32', features150, [1, 150]);
         const feeds = { [inputName]: inputTensor };
 
         const results = await this.onnxSession.run(feeds);
@@ -188,3 +188,5 @@ class BisindoClassifier {
 }
 
 export const bisindoClassifier = new BisindoClassifier();
+
+

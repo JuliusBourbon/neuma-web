@@ -29,6 +29,8 @@ export default function Camera({
     const animationFrameId = useRef(null);
     const lastPredictionTime = useRef(0);
     const holdStartTime = useRef(null);
+    const accumulatedHoldMsRef = useRef(0);
+    const lastEvalTimeRef = useRef(null);
 
     // Mode evaluation
     const isSpellingMode =
@@ -141,7 +143,7 @@ export default function Camera({
         }
 
         setHoldProgress(0);
-        holdStartTime.current = null;
+        accumulatedHoldMsRef.current = 0;
         setCurrentPrediction({
             label: "-",
             confidence: 0,
@@ -160,7 +162,7 @@ export default function Camera({
         }
     }, [isSubmitted, isSpellingMode, spellingLetters.length]);
 
-    // L/R swap — TRUE by default
+    // L/R swap TRUE by default
     const swapHandsRef = useRef(true);
 
     // Initialize ML Models
@@ -285,7 +287,7 @@ export default function Camera({
                         confidence: 0,
                         handDetected: false,
                     });
-                    holdStartTime.current = null;
+                    accumulatedHoldMsRef.current = 0;
                     setHoldProgress(0);
                 }
             }
@@ -335,84 +337,100 @@ export default function Camera({
     const evaluateHoldProgress = (pred) => {
         if (isSubmittedRef.current || lockedAnswerRef.current || isTransitioningCardRef.current) return;
 
-        if (!pred || !pred.label || pred.confidence < 0.7) {
-            holdStartTime.current = null;
-            setHoldProgress(0);
+        if (!pred || !pred.label) {
+            lastEvalTimeRef.current = null;
             return;
         }
 
         const cleanTarget = (activeTargetLetterRef.current || "").trim().toUpperCase();
-        const cleanPred = (pred.label || "").trim().toUpperCase();
-        const isMatch = cleanTarget ? cleanPred === cleanTarget : true;
+        let isMatch = false;
+        let meetsConfidence = false;
 
-        if (isMatch && pred.confidence >= 0.85) {
-            const now = Date.now();
-            if (!holdStartTime.current) {
-                holdStartTime.current = now;
-            }
+        if (cleanTarget && pred.topPredictions && pred.topPredictions.length > 0) {
+            // Top 3 Matching & Lowered Threshold
+            const top3 = pred.topPredictions.slice(0, 3);
+            const matchInTop3 = top3.find(p => (p.label || "").trim().toUpperCase() === cleanTarget);
 
-            const elapsedMs = now - holdStartTime.current;
-            // 2000ms (2s) for spelling, 3000ms (3s) for regular questions
-            const REQUIRED_HOLD_MS = isSpellingMode ? 2000 : 3000;
-            const progress = Math.min(100, Math.round((elapsedMs / REQUIRED_HOLD_MS) * 100));
-            setHoldProgress(progress);
-
-            if (progress >= 100 && !lockedAnswerRef.current && !isTransitioningCardRef.current) {
-                if (isSpellingMode) {
-                    isTransitioningCardRef.current = true;
-                    const cardIdx = currentCardIndexRef.current;
-                    cardConfidencesRef.current[cardIdx] = pred.confidence;
-                    setCompletedCards((prev) => [...new Set([...prev, cardIdx])]);
-
-                    const nextIndex = cardIdx + 1;
-                    if (nextIndex < spellingLetters.length) {
-                        // Brief transition delay so completion of this card is visually confirmed
-                        setTimeout(() => {
-                            currentCardIndexRef.current = nextIndex;
-                            setCurrentCardIndex(nextIndex);
-                            holdStartTime.current = null;
-                            setHoldProgress(0);
-                            isTransitioningCardRef.current = false;
-                        }, 400);
-                    } else {
-                        // Auto submit word when all cards completed
-                        const fullWord = spellingLetters.join("");
-                        const avgConf =
-                            cardConfidencesRef.current.reduce((a, b) => a + b, 0) /
-                            (cardConfidencesRef.current.length || 1);
-                        const locked = {
-                            label: fullWord,
-                            confidence: avgConf,
-                        };
-                        setLockedAnswer(locked);
-                        lockedAnswerRef.current = locked;
-                        onDetectedAnswerRef.current?.(fullWord, avgConf);
-                        onCompleteAnswerRef.current?.({
-                            detectedLetter: fullWord,
-                            spelledWord: fullWord,
-                            confidence: avgConf,
-                        });
-                        isTransitioningCardRef.current = false;
-                    }
-                } else {
-                    // Auto submit single letter when hold completed
-                    const locked = {
-                        label: pred.label,
-                        confidence: pred.confidence,
-                    };
-                    setLockedAnswer(locked);
-                    lockedAnswerRef.current = locked;
-                    onDetectedAnswerRef.current?.(pred.label, pred.confidence);
-                    onCompleteAnswerRef.current?.({
-                        detectedLetter: pred.label,
-                        spelledWord: pred.label,
-                        confidence: pred.confidence,
-                    });
+            if (matchInTop3) {
+                const isRank1 = matchInTop3.label === top3[0].label;
+                if ((isRank1 && matchInTop3.confidence >= 0.40) || (!isRank1 && matchInTop3.confidence >= 0.20)) {
+                    isMatch = true;
+                    meetsConfidence = true;
                 }
             }
         } else {
-            holdStartTime.current = null;
-            setHoldProgress((prev) => Math.max(0, prev - 15));
+            isMatch = true;
+            meetsConfidence = pred.confidence >= 0.85;
+        }
+
+        const now = Date.now();
+
+        if (isMatch && meetsConfidence) {
+            if (lastEvalTimeRef.current) {
+                accumulatedHoldMsRef.current += (now - lastEvalTimeRef.current);
+            }
+        } else {
+
+        }
+
+        lastEvalTimeRef.current = now;
+
+        const REQUIRED_HOLD_MS = isSpellingMode ? 2000 : 3000;
+        const progress = Math.min(100, Math.round((accumulatedHoldMsRef.current / REQUIRED_HOLD_MS) * 100));
+        setHoldProgress(progress);
+
+        if (progress >= 100 && !lockedAnswerRef.current && !isTransitioningCardRef.current) {
+            if (isSpellingMode) {
+                isTransitioningCardRef.current = true;
+                const cardIdx = currentCardIndexRef.current;
+                cardConfidencesRef.current[cardIdx] = pred.confidence;
+                setCompletedCards((prev) => [...new Set([...prev, cardIdx])]);
+
+                const nextIndex = cardIdx + 1;
+                if (nextIndex < spellingLetters.length) {
+                    // Brief transition delay so completion of this card is visually confirmed
+                    setTimeout(() => {
+                        currentCardIndexRef.current = nextIndex;
+                        setCurrentCardIndex(nextIndex);
+                        accumulatedHoldMsRef.current = 0;
+                        setHoldProgress(0);
+                        isTransitioningCardRef.current = false;
+                    }, 400);
+                } else {
+                    // Auto submit word when all cards completed
+                    const fullWord = spellingLetters.join("");
+                    const avgConf =
+                        cardConfidencesRef.current.reduce((a, b) => a + b, 0) /
+                        (cardConfidencesRef.current.length || 1);
+                    const locked = {
+                        label: fullWord,
+                        confidence: avgConf,
+                    };
+                    setLockedAnswer(locked);
+                    lockedAnswerRef.current = locked;
+                    onDetectedAnswerRef.current?.(fullWord, avgConf);
+                    onCompleteAnswerRef.current?.({
+                        detectedLetter: fullWord,
+                        spelledWord: fullWord,
+                        confidence: avgConf,
+                    });
+                    isTransitioningCardRef.current = false;
+                }
+            } else {
+                // Auto submit single letter when hold completed
+                const locked = {
+                    label: pred.label,
+                    confidence: pred.confidence,
+                };
+                setLockedAnswer(locked);
+                lockedAnswerRef.current = locked;
+                onDetectedAnswerRef.current?.(pred.label, pred.confidence);
+                onCompleteAnswerRef.current?.({
+                    detectedLetter: pred.label,
+                    spelledWord: pred.label,
+                    confidence: pred.confidence,
+                });
+            }
         }
     };
 
@@ -489,7 +507,7 @@ export default function Camera({
             )}
 
             {/* Camera View */}
-            <div className="relative w-full max-w-3xl max-h-[60vh] rounded-xl overflow-hidden shadow-xl border-2 border-tertiary/20 bg-black aspect-[4/3]">
+            <div className="relative w-full max-w-3xl max-h-[60vh] rounded-xl overflow-hidden shadow-xl border-2 border-tertiary/20 bg-black aspect-4/3">
                 {cameraError ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-tertiary/90 text-white p-6 text-center">
                         <CameraOff size={48} className="text-red-400 mb-3" />
@@ -531,7 +549,7 @@ export default function Camera({
                                         {currentPrediction.topPredictions.slice(0, 3).map((tp) => (
                                             <div
                                                 key={tp.label}
-                                                className={`text-[10px] flex justify-between gap-3 ${tp.label === activeTargetLetter ? "text-[#C2FF00] font-bold" : "text-white/60"
+                                                className={`text-[10px] flex justify-between gap-3 ${tp.label === activeTargetLetter ? "text-neon font-bold" : "text-white/60"
                                                     }`}
                                             >
                                                 <span>{tp.label}</span>
