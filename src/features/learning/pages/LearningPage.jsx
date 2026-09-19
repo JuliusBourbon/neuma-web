@@ -349,7 +349,7 @@ export default function LearningPage() {
 
         return {
             canGoNext: hasAnswer,
-            label: "Kirim Jawaban",
+            label: "Submit",
         };
     };
 
@@ -384,10 +384,10 @@ export default function LearningPage() {
     }
 
     return (
-        <div className="bg-primary min-h-screen flex flex-col text-tertiary">
+        <div className="bg-primary min-h-dvh flex flex-col text-tertiary">
             {/* Time Indicator */}
             {isQuestionStep && (
-                <div className="fixed top-0 left-0 right-0 w-full h-2 z-50 bg-black/25 overflow-hidden">
+                <div className="fixed top-0 left-0 right-0 w-full h-3 lg:h-2 z-50 bg-black/25 overflow-hidden">
                     <div
                         className={`h-full transition-[width] duration-100 ease-linear ${timerColorClass}`}
                         style={{ width: `${timerPercentage}%` }}
@@ -396,14 +396,14 @@ export default function LearningPage() {
             )}
 
             {/* Top Navigation Bar */}
-            <header className="relative w-full max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <header className="relative w-full max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
                 <button
                     onClick={() => navigate("/home")}
-                    className="flex items-center gap-2 px-4 py-4 rounded-full bg-tertiary hover:bg-black text-white font-semibold text-sm shadow-sm transition active:scale-95 cursor-pointer z-10"
+                    className="flex items-center gap-2 px-3 py-3 md:px-4 md:py-4 rounded-full bg-tertiary hover:bg-black text-white font-semibold text-sm shadow-sm transition active:scale-95 cursor-pointer z-10"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
+                        className="h-3 w-3 md:h-4 md:w-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -413,8 +413,8 @@ export default function LearningPage() {
                 </button>
 
                 {/* Progress Indicator */}
-                <div className="absolute left-1/2 -translate-x-1/2 w-full max-w-3xl px-6">
-                    <div className="flex justify-between text-sm font-semibold mb-1 text-tertiary">
+                <div className="absolute left-[55%] md:left-[53%] lg:left-1/2 -translate-x-1/2 w-full max-w-4xl px-14 md:px-10 lg:px-6">
+                    <div className="flex justify-between text-xs md:text-sm font-semibold mb-1 text-tertiary">
                         <span className="text-xs opacity-60">
                             {currentStep + 1} / {totalSteps}
                         </span>
@@ -430,7 +430,7 @@ export default function LearningPage() {
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 flex flex-col items-center justify-between p-2">
+            <main className="flex-1 flex flex-col items-center justify-center lg:justify-between p-2">
                 {currentItem?.type === "material" && <Lesson material={currentItem.data} />}
 
                 {currentItem?.type === "quiz" && (

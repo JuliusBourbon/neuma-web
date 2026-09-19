@@ -68,7 +68,7 @@ export default function HomePage() {
     return (
         <div className="relative w-screen h-screen overflow-hidden select-none bg-primary">
             {/* Floating TopBar Navigation */}
-            <TopBar links={navLinks} className="backdrop-blur-md shadow-2xl border border-tertiary/10" />
+            <TopBar links={navLinks} className="" />
 
             {/* Main Interactive Level Map / Loading / Error Overlay */}
             {isLoading ? (

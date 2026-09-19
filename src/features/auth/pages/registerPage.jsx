@@ -93,7 +93,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
   const handleGoogleError = (errorResponse) => {
     setErrorMessage(
       errorResponse?.error_description ||
-        "Login dengan Google dibatalkan atau terjadi kesalahan.",
+      "Login dengan Google dibatalkan atau terjadi kesalahan.",
     );
   };
 
@@ -205,7 +205,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
             classes="bg-tertiary text-white px-6 py-3 rounded-lg w-full text-center hover:opacity-90"
           />
         </div>
-        <h3 className="text-sm font-medium text-tertiary">
+        <h3 className="text-sm font-medium text-tertiary text-center">
           By signing up to Neumá, you agree to our{" "}
           <span className="font-bold underline">Terms</span> and{" "}
           <span className="font-bold underline">Privacy Policy</span>

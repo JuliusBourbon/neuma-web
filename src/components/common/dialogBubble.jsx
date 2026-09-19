@@ -38,7 +38,7 @@ export default function DialogBubble({
 
   return (
     <div
-      className={`flex items-center justify-center gap-8 ${isRight ? "flex-row-reverse" : ""
+      className={`flex items-center justify-center gap-3 md:gap-8 ${isRight ? "flex-row-reverse" : ""
         } ${customWrapper || "mb-10"}`.trim()}
     >
       {/* Mascot / Avatar Image */}
@@ -46,14 +46,14 @@ export default function DialogBubble({
         <img
           src={image}
           alt={imageAlt}
-          className={customImage || "h-28 w-28 object-contain shrink-0"}
+          className={customImage || "h-20 w-20 md:h-28 md:w-28 object-contain shrink-0"}
         />
       )}
 
       {/* Speech Bubble Container */}
       <div
         className={`relative ${customBubble ||
-          "rounded-xl border-2 border-tertiary bg-primary px-8 py-5"
+          "rounded-xl border-2 border-tertiary bg-primary px-4 md:px-8 py-3 md:py-5"
           }`}
       >
         {/* Speech Bubble Pointer / Tail */}
@@ -65,7 +65,7 @@ export default function DialogBubble({
 
         {/* Dialog Content */}
         {text && (
-          <p className={customText || "relative text-2xl text-tertiary"}>
+          <p className={customText || "relative text-sm md:text-2xl text-tertiary text-justify"}>
             {text}
           </p>
         )}

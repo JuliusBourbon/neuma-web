@@ -15,7 +15,9 @@ export default function TopBar({
     const customClasses = className || classes;
 
     return (
-        <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center bg-secondary/50 text-tertiary rounded-full px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] ${customClasses}`.trim()}>
+        <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center text-tertiary px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] ${customClasses}`.trim()}>
+            <div className="absolute inset-0 bg-secondary/50 backdrop-blur-md shadow-2xl border border-tertiary/10 rounded-full -z-10"></div>
+
             {brand && <h4 className='font-bold text-xl md:text-2xl mr-auto md:mr-60'>{brand}</h4>}
 
             <div className='hidden md:flex gap-12 font-medium whitespace-nowrap'>
@@ -47,7 +49,7 @@ export default function TopBar({
             </button>
 
             {isMenuOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-secondary/50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-4 shadow-lg md:hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-secondary/50 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-4 md:hidden">
                     {links.map((link, index) => (
                         <a
                             key={link.id || index}

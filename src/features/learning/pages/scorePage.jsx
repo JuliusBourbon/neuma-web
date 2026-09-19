@@ -39,7 +39,7 @@ export default function ScorePage() {
     const title = getText(levelTitle) || "Level";
 
     return (
-        <div className="bg-primary min-h-screen flex flex-col items-center justify-center text-tertiary p-6">
+        <div className="bg-primary min-h-screen flex flex-col items-center justify-center text-tertiary p-3 md:p-6">
             <div className="w-full max-w-2xl flex flex-col items-center gap-6">
                 {/* Title */}
                 <h1 className="text-3xl font-bold text-center">
@@ -54,21 +54,21 @@ export default function ScorePage() {
 
                 {/* Stats Cards */}
                 <div className="w-full grid grid-cols-3 gap-3">
-                    <div className="rounded-xl p-2 text-center bg-neon">
-                        <p className="text-sm text-secondary font-bold">XP</p>
-                        <p className="text-2xl font-bold bg-secondary text-neon py-8 rounded-md">
+                    <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
+                        <p className="text-sm text-primary font-bold">XP</p>
+                        <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
                             {stats.totalXp ?? 0}
                         </p>
                     </div>
-                    <div className="rounded-xl p-2 text-center bg-tertiary">
+                    <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
                         <p className="text-sm text-primary font-bold">Coin</p>
                         <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
                             {stats.currencyBalance ?? 0}
                         </p>
                     </div>
-                    <div className="rounded-xl p-2 text-center bg-secondary">
-                        <p className="text-sm text-neon font-bold">Accuracy</p>
-                        <p className="text-2xl font-bold bg-neon text-secondary py-8 rounded-md">
+                    <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
+                        <p className="text-sm text-primary font-bold">Accuracy</p>
+                        <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
                             {scorePercentage}%
                         </p>
                     </div>

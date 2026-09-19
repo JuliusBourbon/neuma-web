@@ -21,7 +21,7 @@ function App() {
         <h1 className='text-tertiary text-5xl text-center p-6'>Neumá</h1>
         <h3 className='text-secondary text-2xl text-center font-medium mb-6'>Open your world with Sign Language, Today!</h3>
       </div>
-      <div className='flex gap-6'>
+      <div className='flex flex-col md:flex-row gap-2 md:gap-6'>
         <FillRoundedButton
           text="Get Started"
           classes="bg-tertiary text-primary"

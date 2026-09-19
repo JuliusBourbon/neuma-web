@@ -507,7 +507,7 @@ export default function Camera({
             )}
 
             {/* Camera View */}
-            <div className="relative w-full max-w-3xl max-h-[60vh] rounded-xl overflow-hidden shadow-xl border-2 border-tertiary/20 bg-black aspect-4/3">
+            <div className={`relative w-full max-w-3xl h-[60vh] ${isSpellingMode ? 'lg:max-h-[50vh]' : 'lg:max-h-[60vh]'} rounded-xl overflow-hidden shadow-xl border-2 border-tertiary/20 bg-black aspect-4/3`}>
                 {cameraError ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-tertiary/90 text-white p-6 text-center">
                         <CameraOff size={48} className="text-red-400 mb-3" />
@@ -599,7 +599,7 @@ export default function Camera({
             {/* Result Toast */}
             {showNotification && result && (
                 <div
-                    className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md rounded-md p-4 flex items-center justify-center shadow-2xl backdrop-blur-md transition-all duration-300 ease-out ${isVisible
+                    className={`fixed top-6 left-[48%] md:left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xs md:max-w-md rounded-md p-4 flex items-center justify-center shadow-2xl backdrop-blur-md transition-all duration-300 ease-out ${isVisible
                         ? "translate-y-0 opacity-100 scale-100"
                         : "-translate-y-12 opacity-0 scale-95 pointer-events-none"
                         } ${result.isCorrect
