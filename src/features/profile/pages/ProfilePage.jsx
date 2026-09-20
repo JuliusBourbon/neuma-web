@@ -137,22 +137,23 @@ function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#263200] text-[#E5FE96] px-8 py-6">
       {/* Header */}
-      <div className="relative flex items-center justify-center mb-24">
+      <div className="relative flex items-center justify-center mb-12 md:mb-24">
+        {" "}
         <button
           type="button"
-          className="absolute left-0 text-5xl text-white cursor-pointer leading-none"
+          className="absolute left-0 text-4xl md:text-5xl text-white cursor-pointer leading-none"
           onClick={() => navigate("/home")}
         >
           ‹
         </button>
-
-        <h1 className="text-4xl font-normal">Profile</h1>
+        <h1 className="text-3xl md:text-4xl font-normal">Profile</h1>{" "}
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1625px] mx-auto px-12 grid grid-cols-2 gap-[100px]">
+      <div className="max-w-[1625px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-[100px]">
         {/* LEFT SIDE */}
-        <div>
+        <div className="order-last lg:order-first">
+          {" "}
           {/* Profile Mode */}
           {mode === "profile" && (
             <ProfileInfo
@@ -162,7 +163,6 @@ function ProfilePage() {
               onChangePassword={() => setMode("password")}
             />
           )}
-
           {/* EDIT PROFILE MODE */}
           {mode === "edit" && (
             <ProfileEditForm
@@ -172,7 +172,6 @@ function ProfilePage() {
               onSave={handleSave}
             />
           )}
-
           {/* CHANGE PASSWORD MODE */}
           {mode === "password" && (
             <ProfilePasswordForm
@@ -182,7 +181,6 @@ function ProfilePage() {
               }}
             />
           )}
-
           {/* Sign Out */}
           <div className="flex justify-center mt-14 max-w-[650px]">
             <FillRoundedButton
@@ -192,9 +190,8 @@ function ProfilePage() {
             />
           </div>
         </div>
-
         {/* RIGHT SIDE */}
-        <div className="flex items-start justify-center pt-4">
+        <div className="order-first lg:order-last flex items-start justify-center pt-0 lg:pt-4">
           <ProfileAvatarCard
             avatar={fireflyMain}
             dayStreak={stats.dayStreak}
