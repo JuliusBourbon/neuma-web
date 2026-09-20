@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @param {Float32Array|number[]} coords
  * @returns {Float32Array}
  */
@@ -48,7 +48,7 @@ export function computeDerivedFeatures(norm60) {
     if (allZero) return new Float32Array(15);
 
     function pt(idx) {
-        return [norm60[idx * 3], norm60[ix * 3 + 1], norm60[idx * 3 + 2]];
+        return [norm60[idx * 3], norm60[idx * 3 + 1], norm60[idx * 3 + 2]];
     }
 
     const thumbTip = pt(3);
