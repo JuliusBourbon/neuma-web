@@ -1,75 +1,67 @@
 import FillRoundedButton from "../../../components/common/fillRoundedButton";
+import ProfileField from "./ProfileField";
 
 function ProfileEditForm({ formData, setFormData, onCancel, onSave }) {
+  const genderOptions = [
+    { value: "", label: "Pilih Gender" },
+    { value: "male", label: "Laki-laki" },
+    { value: "female", label: "Perempuan" },
+    { value: "other", label: "Lainnya" },
+    {
+      value: "prefer_not_to_say",
+      label: "Tidak menjawab",
+    },
+  ];
+
   return (
     <>
       {/* Edit Profile Form */}
       <div className="space-y-5 max-w-[650px]">
-        <div>
-          <label className="block text-xl mb-2">Name</label>
+        <ProfileField
+          label="Name"
+          value={formData.name}
+          editing={true}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              name: e.target.value,
+            })
+          }
+        />
 
-          <input
-            value={formData.name}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                name: e.target.value,
-              })
-            }
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
-          />
-        </div>
+        <ProfileField
+          label="Email"
+          value={formData.email}
+          editing={true}
+          disabled={true}
+        />
 
-        <div>
-          <label className="block text-xl mb-2">Email</label>
+        <ProfileField
+          label="Age"
+          type="number"
+          value={formData.age}
+          editing={true}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              age: e.target.value,
+            })
+          }
+        />
 
-          <input
-            value={formData.email}
-            disabled
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xl mb-2">Age</label>
-
-          <input
-            type="number"
-            min="5"
-            max="100"
-            value={formData.age}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                age: e.target.value,
-              })
-            }
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xl mb-2">Gender</label>
-
-          <select
-            value={formData.gender}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                gender: e.target.value,
-              })
-            }
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
-          >
-            <option value="">Pilih Gender</option>
-            <option value="male">Laki-laki</option>
-            <option value="female">Perempuan</option>
-            <option value="other">Lainnya</option>
-            <option value="prefer_not_to_say">
-              Memilih untuk tidak menjawab
-            </option>
-          </select>
-        </div>
+        <ProfileField
+          label="Gender"
+          type="select"
+          value={formData.gender}
+          editing={true}
+          options={genderOptions}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              gender: e.target.value,
+            })
+          }
+        />
       </div>
 
       {/* Edit Buttons */}
