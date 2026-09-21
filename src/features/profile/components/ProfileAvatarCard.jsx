@@ -3,6 +3,7 @@ import ProfileStats from "./ProfileStats";
 function ProfileAvatarCard({
   avatar,
   dayStreak,
+  rank,
   wordsCollected,
   totalXp,
   currencyBalance,
@@ -21,6 +22,7 @@ function ProfileAvatarCard({
       {/* Statistics */}
       <ProfileStats
         dayStreak={dayStreak}
+        rank={rank}
         wordsCollected={wordsCollected}
         totalXp={totalXp}
         currencyBalance={currencyBalance}
