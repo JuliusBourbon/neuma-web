@@ -12,10 +12,20 @@ import {
   updateMyProfile,
   getMyStats,
 } from "../../../services/api/userService";
+import { logout } from "../../../services/api/authService";
 
 function ProfilePage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("profile");
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/");
+    } catch (error) {
+      console.error("Gagal melakukan logout:", error);
+    }
+  };
 
   function getGenderLabel(gender) {
     const genderLabels = {
@@ -40,6 +50,7 @@ function ProfilePage() {
 
   const [stats, setStats] = useState({
     dayStreak: 0,
+    rank: null,
     wordsCollected: 0,
     totalXp: 0,
     currencyBalance: 0,
@@ -80,6 +91,7 @@ function ProfilePage() {
 
         setStats({
           dayStreak: userStats?.dayStreak ?? 0,
+          rank: userStats?.rank ?? null,
           wordsCollected: userStats?.wordsCollected ?? 0,
           totalXp: userStats?.totalXp ?? 0,
           currencyBalance: userStats?.currencyBalance ?? 0,
@@ -186,7 +198,7 @@ function ProfilePage() {
             <FillRoundedButton
               text="Sign Out"
               classes="bg-[#FE7236] text-white text-lg min-w-64"
-              onClick={() => {}}
+              onClick={handleLogout}
             />
           </div>
         </div>
@@ -195,6 +207,7 @@ function ProfilePage() {
           <ProfileAvatarCard
             avatar={fireflyMain}
             dayStreak={stats.dayStreak}
+            rank={stats.rank}
             wordsCollected={stats.wordsCollected}
             totalXp={stats.totalXp}
             currencyBalance={stats.currencyBalance}
