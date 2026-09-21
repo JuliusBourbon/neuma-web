@@ -13,10 +13,13 @@ function extractTargetLetter(question) {
     if (question.correctAnswer) return String(question.correctAnswer).trim().toUpperCase();
 
     const text = getText(question?.questionText);
+    const quotedMatch = text.match(/['"`]([A-Za-z])['"`]/);
+    if (quotedMatch) return quotedMatch[1].toUpperCase();
+
     const match =
-        text.match(/huruf\s*['"`]?([A-Za-z])['"`]?/i) ||
-        text.match(/letter\s*['"`]?([A-Za-z])['"`]?/i) ||
-        text.match(/['"`]([A-Za-z])['"`]/);
+        text.match(/huruf\s+(?:isyarat\s+)?(?:bisindo\s+)?([A-Za-z])\b/i) ||
+        text.match(/letter\s+([A-Za-z])\b/i) ||
+        text.match(/\b([A-Z])\b/);
     return match ? match[1].toUpperCase() : "";
 }
 

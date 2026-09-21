@@ -13,6 +13,15 @@ const HAND_CONNECTIONS = [
     [0, 17],                                // Palm base
 ];
 
+// Load all hint images from src/assets/hint/*.png
+const hintImages = import.meta.glob("../../../assets/hint/*.png", { eager: true, import: "default" });
+
+function getHintImage(letter) {
+    if (!letter) return null;
+    const key = `../../../assets/hint/${letter.toLowerCase()}.png`;
+    return hintImages[key] || null;
+}
+
 export default function Camera({
     question = null,
     questionId = "",
@@ -56,6 +65,10 @@ export default function Camera({
 
     const activeTargetLetterRef = useRef(activeTargetLetter);
     activeTargetLetterRef.current = activeTargetLetter;
+
+    // Hint Image resolution based on question options
+    const isHintEnabled = Boolean(question?.options?.showHint);
+    const hintImageSrc = isHintEnabled ? getHintImage(activeTargetLetter) : null;
 
     // States
     const [statusText, setStatusText] = useState("Inisialisasi Model ML & Kamera...");
@@ -103,9 +116,11 @@ export default function Camera({
         topPredictions: [],
     });
     const [holdProgress, setHoldProgress] = useState(0);
+    const [isMatching, setIsMatching] = useState(false);
     const [lockedAnswer, setLockedAnswer] = useState(null);
 
     // Refs to eliminate stale closures in requestAnimationFrame loop
+    const isMatchingRef = useRef(false);
     const lockedAnswerRef = useRef(null);
     const onDetectedAnswerRef = useRef(onDetectedAnswer);
     onDetectedAnswerRef.current = onDetectedAnswer;
@@ -264,7 +279,7 @@ export default function Camera({
                 const landmarksResult = bisindoClassifier.detectHands(video, now);
 
                 if (landmarksResult && landmarksResult.landmarks && landmarksResult.landmarks.length > 0) {
-                    drawHandLandmarks(ctx, landmarksResult.landmarks, canvas.width, canvas.height);
+                    // drawHandLandmarks(ctx, landmarksResult.landmarks, canvas.width, canvas.height);
 
                     // Throttle ONNX prediction to ~15-20 FPS
                     if (now - lastPredictionTime.current > 50) {
@@ -369,8 +384,12 @@ export default function Camera({
             if (lastEvalTimeRef.current) {
                 accumulatedHoldMsRef.current += (now - lastEvalTimeRef.current);
             }
-        } else {
+        }
 
+        const currentMatch = isMatch && meetsConfidence;
+        if (isMatchingRef.current !== currentMatch) {
+            isMatchingRef.current = currentMatch;
+            setIsMatching(currentMatch);
         }
 
         lastEvalTimeRef.current = now;
@@ -561,10 +580,19 @@ export default function Camera({
                             </div>
                         </div>
 
-                        {/* Hold Progress Bar */}
+                        {/* Hint & Hold Progress Bar */}
                         {activeTargetLetter && !lockedAnswer && (
-                            <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
-                                <div className="bg-black/50 backdrop-blur-sm rounded-xl px-3 py-2">
+                            <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none flex flex-col items-center gap-3">
+                                {/* Hint Image */}
+                                {hintImageSrc && (
+                                    <img
+                                        src={hintImageSrc}
+                                        alt={`Hint Isyarat ${activeTargetLetter}`}
+                                        className={`w-80 h-80 object-contain drop-shadow-xl pointer-events-none mix-blend-multiply transition-opacity duration-300 ${isMatching ? "opacity-10" : "opacity-70"}`}
+                                    />
+                                )}
+
+                                <div className="bg-black/50 backdrop-blur-sm rounded-xl px-3 py-2 w-full">
                                     <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
                                         <div
                                             className="h-full rounded-full transition-all duration-100 ease-out"
