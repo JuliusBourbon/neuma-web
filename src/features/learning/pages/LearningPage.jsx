@@ -50,6 +50,7 @@ export default function LearningPage() {
     const [timeLeft, setTimeLeft] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
     const timeoutTriggeredRef = useRef(new Set());
+    const submittingQuestionsRef = useRef(new Set());
     const timerStartTimesRef = useRef({});
     const remainingTimesRef = useRef({});
 
@@ -144,6 +145,15 @@ export default function LearningPage() {
 
             if (!isTimeout && !currentAns && question.type !== "camera_practice") return;
 
+            // Guard against duplicate / race condition submissions
+            if (submittingQuestionsRef.current.has(qId) || submitResults[qId]) return;
+            submittingQuestionsRef.current.add(qId);
+
+            // Freeze remaining time as of now so visual timer doesn't keep running down
+            if (remainingTimesRef.current[qId] === undefined) {
+                remainingTimesRef.current[qId] = timeLeft;
+            }
+
             // Wait for startQuestion session if still initializing
             if (questionStartPromisesRef.current.has(qId)) {
                 try {
@@ -187,11 +197,12 @@ export default function LearningPage() {
                 }
             } catch (err) {
                 console.error("Failed to submit answer:", err);
+                submittingQuestionsRef.current.delete(qId);
             } finally {
                 setIsSubmitting(false);
             }
         },
-        [levelId, answers]
+        [levelId, answers, submitResults, timeLeft]
     );
 
     // Handle Next button
@@ -268,9 +279,10 @@ export default function LearningPage() {
         const limit = currentItem.data.timeLimitSeconds || attemptData[currentQId]?.timeLimitSeconds || 30;
         setTotalTime(limit);
 
-        // If question submitted, freeze it
-        if (isCurrentSubmitted) {
-            const saved = remainingTimesRef.current[currentQId] ?? 0;
+        // If question submitted or submitting, freeze it
+        const isSubmittingOrSubmitted = isCurrentSubmitted || submittingQuestionsRef.current.has(currentQId);
+        if (isSubmittingOrSubmitted) {
+            const saved = remainingTimesRef.current[currentQId] ?? timeLeft;
             setTimeLeft(saved);
             return;
         }
@@ -283,6 +295,10 @@ export default function LearningPage() {
         const startTime = timerStartTimesRef.current[currentQId];
 
         const tick = () => {
+            if (submittingQuestionsRef.current.has(currentQId) || submitResults[currentQId]) {
+                return;
+            }
+
             const elapsed = (Date.now() - startTime) / 1000;
             const remaining = Math.max(0, limit - elapsed);
             setTimeLeft(remaining);
@@ -292,6 +308,7 @@ export default function LearningPage() {
                 if (
                     !timeoutTriggeredRef.current.has(currentQId) &&
                     !submitResults[currentQId] &&
+                    !submittingQuestionsRef.current.has(currentQId) &&
                     !isSubmitting
                 ) {
                     timeoutTriggeredRef.current.add(currentQId);

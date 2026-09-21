@@ -35,6 +35,8 @@ export default function Camera({
 }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const streamRef = useRef(null);
+    const isMountedRef = useRef(true);
     const animationFrameId = useRef(null);
     const lastPredictionTime = useRef(0);
     const holdStartTime = useRef(null);
@@ -182,21 +184,21 @@ export default function Camera({
 
     // Initialize ML Models
     useEffect(() => {
-        let isMounted = true;
+        isMountedRef.current = true;
 
         const initML = async () => {
             try {
                 setIsLoadingModel(true);
                 await bisindoClassifier.initialize((msg) => {
-                    if (isMounted) setStatusText(msg);
+                    if (isMountedRef.current) setStatusText(msg);
                 });
-                if (isMounted) {
+                if (isMountedRef.current) {
                     setIsLoadingModel(false);
                     setStatusText("Model siap! Menghubungkan ke kamera...");
                     startCamera();
                 }
             } catch (err) {
-                if (isMounted) {
+                if (isMountedRef.current) {
                     setIsLoadingModel(false);
                     setCameraError("Gagal memuat model: " + (err.message || "Error WebAssembly/WASM"));
                 }
@@ -206,13 +208,22 @@ export default function Camera({
         initML();
 
         return () => {
-            isMounted = false;
+            isMountedRef.current = false;
             stopCamera();
             if (animationFrameId.current) {
                 cancelAnimationFrame(animationFrameId.current);
             }
         };
     }, []);
+
+    // Stop ML prediction loop when answer has been submitted
+    useEffect(() => {
+        if (isSubmitted) {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        }
+    }, [isSubmitted]);
 
     // Start Camera
     const startCamera = async () => {
@@ -227,16 +238,26 @@ export default function Camera({
                 audio: false,
             });
 
+            // If component was unmounted while waiting for userMedia, stop tracks immediately
+            if (!isMountedRef.current) {
+                stream.getTracks().forEach((t) => t.stop());
+                return;
+            }
+
+            streamRef.current = stream;
+
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 videoRef.current.onloadedmetadata = () => {
-                    videoRef.current.play();
+                    if (!isMountedRef.current) return;
+                    videoRef.current.play().catch(() => {});
                     setCameraActive(true);
                     setStatusText("Kamera aktif. Tunjukkan tangan Anda.");
                     startPredictionLoop();
                 };
             }
         } catch (err) {
+            if (!isMountedRef.current) return;
             setCameraError(
                 err.name === "NotAllowedError"
                     ? "Izin akses kamera ditolak. Berikan izin di browser untuk melanjutkan."
@@ -247,9 +268,24 @@ export default function Camera({
 
     // Stop Camera
     const stopCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const tracks = videoRef.current.srcObject.getTracks();
-            tracks.forEach((t) => t.stop());
+        if (streamRef.current) {
+            try {
+                const tracks = streamRef.current.getTracks() || [];
+                tracks.forEach((t) => t.stop());
+            } catch (e) {
+                console.warn("Error stopping stream tracks:", e);
+            }
+            streamRef.current = null;
+        }
+        if (videoRef.current) {
+            try {
+                if (videoRef.current.srcObject) {
+                    const tracks = videoRef.current.srcObject.getTracks?.() || [];
+                    tracks.forEach((t) => t.stop());
+                }
+            } catch (e) {
+                console.warn("Error stopping video srcObject tracks:", e);
+            }
             videoRef.current.srcObject = null;
         }
         setCameraActive(false);
@@ -258,6 +294,7 @@ export default function Camera({
     // Main Prediction Loop
     const startPredictionLoop = () => {
         const detectFrame = async () => {
+            if (!isMountedRef.current || isSubmittedRef.current) return;
             if (!videoRef.current || !canvasRef.current) {
                 animationFrameId.current = requestAnimationFrame(detectFrame);
                 return;

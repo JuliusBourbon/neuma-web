@@ -34,6 +34,7 @@ export default function ScorePage() {
         correctCount = 0,
         totalQuestions = 0,
         stats,
+        coinsEarned = 0,
     } = data;
 
     const title = getText(levelTitle) || "Level";
@@ -63,7 +64,7 @@ export default function ScorePage() {
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
                         <p className="text-sm text-primary font-bold">Coin</p>
                         <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
-                            {stats.currencyBalance ?? 0}
+                            +{coinsEarned}
                         </p>
                     </div>
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
