@@ -19,6 +19,7 @@ export default function LevelNode({
     const isCompleted = level.status === "completed";
     const isAvailable = level.status === "available" || (!isLocked && !isCompleted);
     const isCurrentLevel = Boolean(isLatestUnlocked) && isAvailable;
+    const isTest = level.type === "test";
 
     const titleText = getText(level.title) || `Level ${level.orderIndex}`;
     const descText = getText(level.description);
@@ -75,31 +76,43 @@ export default function LevelNode({
                 {/* Glow & Radar Pulse Effect for Current Level */}
                 {isCurrentLevel && (
                     <>
-                        {/* Expanding Radar Ping Ring */}
-                        <span className="absolute -inset-1 rounded-full bg-secondary/15 animate-ping pointer-events-none" />
+                        <span
+                            className={`absolute -inset-1 bg-secondary/15 animate-ping pointer-events-none ${isTest ? "hidden" : "rounded-full"}`}
+                        />
                     </>
                 )}
 
-                {/* Outer Ring */}
+                {/* Outer Ring (Only for non-test) */}
                 <div
-                    className={`relative w-16 h-16 sm:w-18 sm:h-18 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-active:scale-95 shadow-xl ${isCurrentLevel
-                        ? "bg-tertiary p-px shadow-2xl shadow-secondary/60"
-                        : isAvailable
-                            ? "bg-tertiary p-px shadow-secondary/80"
-                            : isCompleted
-                                ? "bg-neon p-px"
-                                : "bg-slate-800 p-px shadow-tertiary/70"
+                    className={`relative flex transition-all duration-300 group-hover:scale-105 group-active:scale-95 ${isTest
+                        ? "w-20 h-20 sm:w-24 sm:h-24 drop-shadow-xl"
+                        : "w-16 h-16 sm:w-18 sm:h-18 items-center justify-center rounded-full p-px shadow-xl " + (
+                            isCurrentLevel ? "bg-tertiary shadow-2xl shadow-secondary/60"
+                                : isAvailable ? "bg-tertiary shadow-secondary/80"
+                                    : isCompleted ? "bg-neon"
+                                        : "bg-slate-800 shadow-tertiary/70"
+                        )
                         }`}
                 >
+                    {isTest && (
+                        <svg viewBox="0 0 100 100" className={`absolute inset-0 w-full h-full filter drop-shadow-md ${isCurrentLevel || isAvailable ? "fill-secondary text-white"
+                            : isCompleted ? "fill-neon text-tertiary"
+                                : "fill-tertiary text-slate-300"
+                            }`}>
+                            <path d="M44.5 12.3c2.7-4.4 9.3-4.4 12 0l36.5 59.8c2.8 4.6-0.5 10.6-5.9 10.6H13.9c-5.4 0-8.7-6-5.9-10.6l36.5-59.8z" />
+                        </svg>
+                    )}
+
                     {/* Inner Node Content */}
                     <div
-                        className={`w-full h-full rounded-full flex flex-col items-center justify-center border ${isCurrentLevel
-                            ? "bg-secondary text-white shadow-inner"
-                            : isAvailable
-                                ? "bg-secondary text-white"
-                                : isCompleted
-                                    ? "bg-neon text-tertiary"
-                                    : "bg-tertiary text-slate-300"
+                        className={`w-full h-full flex flex-col items-center relative z-10 ${isTest
+                            ? "justify-center pt-3 sm:pt-4"
+                            : "justify-center rounded-full border " + (
+                                isCurrentLevel ? "bg-secondary text-white shadow-inner"
+                                    : isAvailable ? "bg-secondary text-white"
+                                        : isCompleted ? "bg-neon text-tertiary"
+                                            : "bg-tertiary text-slate-300"
+                            )
                             }`}
                     >
                         {isLocked ? (
