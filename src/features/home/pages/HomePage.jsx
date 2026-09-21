@@ -48,7 +48,7 @@ export default function HomePage() {
   // List for TopBar
   const navLinks = [
     { text: "Home", href: "/home" },
-    { text: "Leaderboard", href: "#leaderboard" },
+    { text: "Leaderboard", onClick: () => navigate("/leaderboard") },
     { text: "Quest", href: "#quest" },
     { text: "Shop", href: "#shop" },
     { text: "Profile", onClick: () => navigate("/profile") },
