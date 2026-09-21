@@ -52,14 +52,20 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
     const hasMedia = !!question.mediaUrl;
 
     return (
-        <div className={`w-full flex flex-col items-center gap-6 ${hasMedia ? "lg:gap-2" : "lg:gap-16"} px-4 md:px-0`}>
+        <div
+            className={`w-full flex flex-col items-center px-4 md:px-0 ${
+                isTrueFalse
+                    ? "flex-1 my-auto justify-center gap-6 md:gap-8"
+                    : `gap-6 ${hasMedia ? "lg:gap-2" : "lg:gap-16"}`
+            }`}
+        >
             <h1 className="text-xl md:text-2xl font-bold text-center max-w-4xl">{questionText}</h1>
 
             {/* If question has mediaUrl */}
             {hasMedia && (
                 <div className="flex justify-center">
                     <img
-                        className="h-[18vh] rounded-2xl object-contain"
+                        className={`${isTrueFalse ? "h-[20vh] md:h-[24vh]" : "h-[18vh]"} rounded-2xl object-contain shadow-md`}
                         src={question.mediaUrl}
                         // src={defaultMascot}
                         alt="Visual soal"
@@ -108,6 +114,8 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                             }
                         }
 
+                        const choiceText = getText(choice);
+
                         return (
                             <button
                                 key={choice.key}
@@ -120,12 +128,14 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                                         className="h-24 object-contain rounded-lg"
                                         src={choice.image_url}
                                         // src={defaultMascot}
-                                        alt={getText(choice)}
+                                        alt={choiceText || `Pilihan ${choice.key.toUpperCase()}`}
                                     />
                                 )}
-                                <span className="text-sm">
-                                    {getText(choice)}
-                                </span>
+                                {choiceText && (
+                                    <span className="text-sm">
+                                        {choiceText}
+                                    </span>
+                                )}
                             </button>
                         );
                     })}

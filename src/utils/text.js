@@ -10,13 +10,14 @@ export const getText = (val, lang = 'id') => {
     if (typeof val === 'string') return val;
     if (typeof val === 'number') return String(val);
     if (typeof val === 'object') {
-        if (lang === 'en' && val.en) return val.en;
-        if (val.id && typeof val.id === 'string') return val.id;
-        if (val.en && typeof val.en === 'string') return val.en;
+        if (lang === 'en' && typeof val.en === 'string') return val.en;
+        if (lang === 'id' && typeof val.id === 'string') return val.id;
+        if (typeof val.id === 'string') return val.id;
+        if (typeof val.en === 'string') return val.en;
         if (val.text) return getText(val.text, lang);
         if (val.title) return getText(val.title, lang);
         if (val.name) return getText(val.name, lang);
-        return JSON.stringify(val);
+        return '';
     }
     return String(val);
 };
