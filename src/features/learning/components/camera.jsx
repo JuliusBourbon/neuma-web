@@ -30,6 +30,7 @@ export default function Camera({
     onDetectedAnswer,
     onCompleteAnswer,
     onResetAnswer,
+    onCameraReady,
     isSubmitted = false,
     result = null,
 }) {
@@ -130,6 +131,8 @@ export default function Camera({
     onCompleteAnswerRef.current = onCompleteAnswer;
     const onResetAnswerRef = useRef(onResetAnswer);
     onResetAnswerRef.current = onResetAnswer;
+    const onCameraReadyRef = useRef(onCameraReady);
+    onCameraReadyRef.current = onCameraReady;
     const isSubmittedRef = useRef(isSubmitted);
     isSubmittedRef.current = isSubmitted;
 
@@ -254,6 +257,8 @@ export default function Camera({
                     setCameraActive(true);
                     setStatusText("Kamera aktif. Tunjukkan tangan Anda.");
                     startPredictionLoop();
+                    // Signal parent that ML model + camera are both ready to use
+                    onCameraReadyRef.current?.();
                 };
             }
         } catch (err) {
@@ -334,10 +339,13 @@ export default function Camera({
                         }
                     }
                 } else {
-                    setCurrentPrediction({
-                        label: "-",
-                        confidence: 0,
-                        handDetected: false,
+                    setCurrentPrediction(prev => {
+                        if (!prev.handDetected) return prev;
+                        return {
+                            label: "-",
+                            confidence: 0,
+                            handDetected: false,
+                        };
                     });
                     accumulatedHoldMsRef.current = 0;
                     setHoldProgress(0);

@@ -123,13 +123,15 @@ export default function LearningPage() {
         [levelId, attemptData]
     );
 
-    // Auto-start question attempting quiz/camera step
+    // Auto-start question attempting quiz step only.
+    // Camera questions wait for onCameraReady callback (after ML model + camera are ready)
+    // to avoid backend timer starting before user can actually interact.
     useEffect(() => {
         const currentItem = steps[currentStep];
         if (!currentItem) return;
 
         if (
-            (currentItem.type === "quiz" || currentItem.type === "camera") &&
+            currentItem.type === "quiz" &&
             !attemptData[currentItem.data.id] &&
             !submitResults[currentItem.data.id]
         ) {
@@ -151,14 +153,16 @@ export default function LearningPage() {
 
             // Freeze remaining time as of now so visual timer doesn't keep running down
             if (remainingTimesRef.current[qId] === undefined) {
-                remainingTimesRef.current[qId] = timeLeft;
+                const limit = question.timeLimitSeconds || attemptData[qId]?.timeLimitSeconds || 30;
+                const start = timerStartTimesRef.current[qId] || Date.now();
+                remainingTimesRef.current[qId] = Math.max(0, limit - (Date.now() - start) / 1000);
             }
 
             // Wait for startQuestion session if still initializing
             if (questionStartPromisesRef.current.has(qId)) {
                 try {
                     await questionStartPromisesRef.current.get(qId);
-                } catch {
+                } catch (err) {
                     // Ignore start failure
                     console.error("Failed to start question:", err);
                 }
@@ -184,10 +188,11 @@ export default function LearningPage() {
             setIsSubmitting(true);
             try {
                 const result = await submitQuestion(levelId, qId, payload);
-                const finalResult = isTimeout ? { ...result, isTimeout: true } : result;
+                // Trust backend's isTimeout determination — do NOT override with frontend flag.
+                // Backend evaluates elapsedSeconds vs timeLimitSeconds accurately.
                 setSubmitResults((prev) => ({
                     ...prev,
-                    [qId]: finalResult,
+                    [qId]: result,
                 }));
                 if (directPayload) {
                     setAnswers((prev) => ({
@@ -202,7 +207,7 @@ export default function LearningPage() {
                 setIsSubmitting(false);
             }
         },
-        [levelId, answers, submitResults, timeLeft]
+        [levelId, answers, submitResults, attemptData]
     );
 
     // Handle Next button
@@ -268,18 +273,17 @@ export default function LearningPage() {
 
     // Handle timer
     useEffect(() => {
-        // If it's not a question (material), set time to 0
+        // If it's not a question (material), reset timer
         if (!isQuestionStep || !currentQId) {
             setTimeLeft(0);
             setTotalTime(0);
             return;
         }
 
-        // Set the limit based on the question data, attempt data, or default (30 sec)
         const limit = currentItem.data.timeLimitSeconds || attemptData[currentQId]?.timeLimitSeconds || 30;
         setTotalTime(limit);
 
-        // If question submitted or submitting, freeze it
+        // If question submitted or submitting, freeze the displayed time
         const isSubmittingOrSubmitted = isCurrentSubmitted || submittingQuestionsRef.current.has(currentQId);
         if (isSubmittingOrSubmitted) {
             const saved = remainingTimesRef.current[currentQId] ?? timeLeft;
@@ -287,8 +291,21 @@ export default function LearningPage() {
             return;
         }
 
-        // Record start time if not yet set for this question
-        if (!timerStartTimesRef.current[currentQId]) {
+        // Wait until backend has recorded the attempt start time.
+        // This prevents the timer from counting before startQuestion resolves,
+        // and ensures we sync to the server-side startedAt timestamp.
+        if (!attemptData[currentQId]) {
+            setTimeLeft(limit);
+            return;
+        }
+
+        // Sync timer reference to backend startedAt for accurate server-client alignment.
+        // This is the key fix: backend creates the attempt at a specific timestamp,
+        // and the frontend should count elapsed time from that same point.
+        const backendStartedAt = attemptData[currentQId]?.startedAt;
+        if (backendStartedAt) {
+            timerStartTimesRef.current[currentQId] = new Date(backendStartedAt).getTime();
+        } else if (!timerStartTimesRef.current[currentQId]) {
             timerStartTimesRef.current[currentQId] = Date.now();
         }
 
@@ -487,6 +504,11 @@ export default function LearningPage() {
                         }
                         onCompleteAnswer={(payload) => {
                             handleSubmitAnswer(currentItem.data, false, payload);
+                        }}
+                        onCameraReady={() => {
+                            // Start question session only after ML model + camera are ready.
+                            // This ensures backend timer starts when user can actually interact.
+                            handleStartQuestion(currentItem.data.id);
                         }}
                         onResetAnswer={() =>
                             setAnswers((prev) => {
