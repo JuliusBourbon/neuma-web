@@ -6,12 +6,14 @@ import ProfileInfo from "../components/ProfileInfo";
 import ProfileEditForm from "../components/ProfileEditForm";
 import ProfilePasswordForm from "../components/ProfilePasswordForm";
 import ProfileAvatarCard from "../components/ProfileAvatarCard";
+import AvatarPickerModal from "../components/AvatarPickerModal";
 
 import {
   getMyProfile,
   updateMyProfile,
   getMyStats,
 } from "../../../services/api/userService";
+import { getShopItems } from "../../../services/api/shopService";
 import { logout } from "../../../services/api/authService";
 
 function ProfilePage() {
@@ -49,12 +51,71 @@ function ProfilePage() {
   const [formData, setFormData] = useState(profile);
 
   const [stats, setStats] = useState({
+    avatar: null,
     dayStreak: 0,
     rank: null,
     wordsCollected: 0,
     totalXp: 0,
     currencyBalance: 0,
   });
+
+  const [avatars, setAvatars] = useState([]);
+  const [isLoadingAvatars, setIsLoadingAvatars] = useState(false);
+
+  const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
+  const [selectedAvatarId, setSelectedAvatarId] = useState(null);
+
+  const handleOpenAvatarPicker = () => {
+    setIsAvatarPickerOpen(true);
+  };
+
+  const handleCloseAvatarPicker = () => {
+    setIsAvatarPickerOpen(false);
+  };
+
+  const handleSelectAvatar = async (avatar) => {
+    try {
+      console.log("Avatar dipilih:", avatar);
+
+      const updatedUser = await updateMyProfile({
+        activeAvatarId: avatar.id,
+      });
+
+      console.log("Avatar berhasil diperbarui:", updatedUser);
+
+      setSelectedAvatarId(avatar.id);
+
+      setStats((prevStats) => ({
+        ...prevStats,
+        avatar: updatedUser.activeAvatar?.imageUrl ?? avatar.imageUrl,
+      }));
+
+      setIsAvatarPickerOpen(false);
+    } catch (error) {
+      console.error("Gagal memperbarui avatar:", error);
+    }
+  };
+
+  // Ambil daftar avatar dari API
+  useEffect(() => {
+    async function fetchAvatars() {
+      setIsLoadingAvatars(true);
+
+      try {
+        const shopItems = await getShopItems();
+
+        console.log("Avatar dari API:", shopItems);
+
+        setAvatars(shopItems);
+      } catch (error) {
+        console.error("Gagal mengambil daftar avatar:", error);
+      } finally {
+        setIsLoadingAvatars(false);
+      }
+    }
+
+    fetchAvatars();
+  }, []);
 
   // Ambil data profile dari API
   useEffect(() => {
@@ -90,6 +151,7 @@ function ProfilePage() {
         console.log("Stats dari API:", userStats);
 
         setStats({
+          avatar: userStats?.avatar ?? null,
           dayStreak: userStats?.dayStreak ?? 0,
           rank: userStats?.rank ?? null,
           wordsCollected: userStats?.wordsCollected ?? 0,
@@ -147,7 +209,8 @@ function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#263200] text-[#E5FE96] px-8 py-6">
+    <div className="min-h-screen h-screen overflow-x-hidden bg-[#263200] text-[#E5FE96] px-8 py-6">
+      {" "}
       {/* Header */}
       <div className="relative flex items-center justify-center mb-12 md:mb-24">
         {" "}
@@ -160,12 +223,10 @@ function ProfilePage() {
         </button>
         <h1 className="text-3xl md:text-4xl font-normal">Profile</h1>{" "}
       </div>
-
       {/* Main Content */}
       <div className="max-w-[1625px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-[100px]">
         {/* LEFT SIDE */}
         <div className="order-last lg:order-first">
-          {" "}
           {/* Profile Mode */}
           {mode === "profile" && (
             <ProfileInfo
@@ -203,16 +264,27 @@ function ProfilePage() {
           </div>
         </div>
         {/* RIGHT SIDE */}
-        <div className="order-first lg:order-last flex items-start justify-center pt-0 lg:pt-4">
+        <div className="order-first lg:order-last flex flex-col items-center justify-start pt-0 lg:pt-4">
           <ProfileAvatarCard
-            avatar={fireflyMain}
+            avatar={stats.avatar || fireflyMain}
             dayStreak={stats.dayStreak}
             rank={stats.rank}
             wordsCollected={stats.wordsCollected}
             totalXp={stats.totalXp}
             currencyBalance={stats.currencyBalance}
+            onChangeAvatar={handleOpenAvatarPicker}
           />
         </div>
+
+        {/* AVATAR PICKER MODAL */}
+        <AvatarPickerModal
+          isOpen={isAvatarPickerOpen}
+          avatars={avatars}
+          selectedAvatarId={selectedAvatarId}
+          isLoading={isLoadingAvatars}
+          onClose={handleCloseAvatarPicker}
+          onSelect={handleSelectAvatar}
+        />
       </div>
     </div>
   );
