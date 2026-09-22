@@ -13,6 +13,7 @@ import OnboardingPage from "./features/onboarding/pages/OnboardingPage.jsx";
 import ProfilePage from "./features/profile/pages/ProfilePage.jsx";
 import { ProtectedRoute, GuestRoute } from "./routes/ProtectedRoute.jsx";
 import LeaderboardPage from "./features/leaderboard/pages/leaderboardPage.jsx";
+import ShopPage from "./features/shop/pages/ShopPage.jsx";
 
 const GOOGLE_CLIENT_ID =
   import.meta.env.VITE_GOOGLE_CLIENT_ID ||
@@ -40,6 +41,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/learning" element={<LearningPage />} />
             <Route path="/score" element={<ScorePage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/shop" element={<ShopPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
