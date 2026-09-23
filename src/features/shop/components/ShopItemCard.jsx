@@ -44,7 +44,7 @@ function ShopItemCard({ item, isPurchasing, onPurchase }) {
               <span>Owned</span>
             </>
           ) : isPurchasing ? (
-            "Buying..."
+            "Membeli..."
           ) : (
             <>
               <CoinIcon size={18} color="currentColor" />
