@@ -50,7 +50,7 @@ export default function HomePage() {
     { text: "Home", href: "/home" },
     { text: "Leaderboard", onClick: () => navigate("/leaderboard") },
     { text: "Quest", onClick: () => navigate("/quest") },
-    { text: "Shop", href: "#shop" },
+    { text: "Shop", href: "/shop" },
     { text: "Profile", onClick: () => navigate("/profile") },
   ];
 
