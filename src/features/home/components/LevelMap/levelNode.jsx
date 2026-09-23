@@ -76,9 +76,13 @@ export default function LevelNode({
                 {/* Glow & Radar Pulse Effect for Current Level */}
                 {isCurrentLevel && (
                     <>
-                        <span
-                            className={`absolute -inset-1 bg-secondary/15 animate-ping pointer-events-none ${isTest ? "hidden" : "rounded-full"}`}
-                        />
+                        {isTest ? (
+                            <svg viewBox="0 0 100 100" className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] animate-ping pointer-events-none fill-secondary/40">
+                                <path d="M44.5 12.3c2.7-4.4 9.3-4.4 12 0l36.5 59.8c2.8 4.6-0.5 10.6-5.9 10.6H13.9c-5.4 0-8.7-6-5.9-10.6l36.5-59.8z" />
+                            </svg>
+                        ) : (
+                            <span className="absolute -inset-1 bg-secondary/15 animate-ping pointer-events-none rounded-full" />
+                        )}
                     </>
                 )}
 
