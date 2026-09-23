@@ -15,8 +15,7 @@ export default function TopBar({
     const customClasses = className || classes;
 
     return (
-        <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center text-tertiary px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] ${customClasses}`.trim()}>
-            <div className="absolute inset-0 bg-secondary/50 backdrop-blur-md shadow-2xl border border-tertiary/10 rounded-full -z-10"></div>
+        <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center text-tertiary px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] bg-secondary/50 backdrop-blur-md shadow-2xl border border-tertiary/10 rounded-full animate-topbar ${customClasses}`.trim()}>
 
             {brand && <h4 className='font-bold text-xl md:text-2xl mr-auto md:mr-60'>{brand}</h4>}
 
