@@ -49,7 +49,7 @@ export default function HomePage() {
   const navLinks = [
     { text: "Home", href: "/home" },
     { text: "Leaderboard", onClick: () => navigate("/leaderboard") },
-    { text: "Quest", href: "#quest" },
+    { text: "Quest", onClick: () => navigate("/quest") },
     { text: "Shop", href: "#shop" },
     { text: "Profile", onClick: () => navigate("/profile") },
   ];
