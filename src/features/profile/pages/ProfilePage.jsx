@@ -52,6 +52,7 @@ function ProfilePage() {
 
   const [stats, setStats] = useState({
     avatar: null,
+    activeAvatarId: null,
     dayStreak: 0,
     rank: null,
     wordsCollected: 0,
@@ -87,6 +88,7 @@ function ProfilePage() {
 
       setStats((prevStats) => ({
         ...prevStats,
+        activeAvatarId: avatar.id,
         avatar: updatedUser.activeAvatar?.imageUrl ?? avatar.imageUrl,
       }));
 
@@ -152,12 +154,15 @@ function ProfilePage() {
 
         setStats({
           avatar: userStats?.avatar ?? null,
+          activeAvatarId: userStats?.activeAvatarId ?? null,
           dayStreak: userStats?.dayStreak ?? 0,
           rank: userStats?.rank ?? null,
           wordsCollected: userStats?.wordsCollected ?? 0,
           totalXp: userStats?.totalXp ?? 0,
           currencyBalance: userStats?.currencyBalance ?? 0,
         });
+
+        setSelectedAvatarId(userStats?.activeAvatarId ?? null);
       } catch (error) {
         console.error("Gagal mengambil statistik:", error);
       }
