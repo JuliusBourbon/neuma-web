@@ -87,13 +87,13 @@ function ShopPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E5FE96] px-6 py-8 text-[#263200] md:px-12 lg:px-20">
+    <div className="min-h-screen bg-primary px-6 py-8 text-tertiary md:px-12 lg:px-20">
       {/* Header */}
       <div className="relative mb-12 flex items-center justify-center">
         <button
           type="button"
           onClick={() => navigate("/home")}
-          className="absolute left-0 flex h-16 w-16 items-center justify-center rounded-full bg-[#263200] text-4xl leading-none text-white transition hover:scale-105"
+          className="absolute left-0 flex h-16 w-16 items-center justify-center rounded-full bg-tertiary text-4xl leading-none text-white transition hover:scale-105"
           aria-label="Back to home"
         >
           ‹
@@ -102,7 +102,7 @@ function ShopPage() {
         <div className="text-center">
           <h1 className="text-3xl font-normal md:text-4xl">Shop</h1>
 
-          <p className="mt-4 text-2xl font-medium text-[#FE7236] md:text-3xl">
+          <p className="mt-4 text-2xl font-medium text-secondary md:text-3xl">
             Collect Your Favorite Avatar
           </p>
         </div>
@@ -110,28 +110,28 @@ function ShopPage() {
 
       {/* Currency Balance */}
       <div className="mb-8 flex justify-center">
-        <div className="flex items-center gap-2 rounded-full bg-[#263200] px-6 py-3 text-lg font-medium text-[#E5FE96]">
-          <span className="text-[#FE7236]">◉</span>
+        <div className="flex items-center gap-2 rounded-full bg-tertiary px-6 py-3 text-lg font-medium text-primary">
+          <span className="text-secondary">◉</span>
           <span>{currencyBalance} Coins</span>
         </div>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="mx-auto mb-6 w-full max-w-4xl rounded-lg bg-[#FE7236] px-4 py-3 text-center text-white">
+        <div className="mx-auto mb-6 w-full max-w-4xl rounded-lg bg-secondary px-4 py-3 text-center text-white">
           {error}
         </div>
       )}
 
       {/* Shop Content */}
-      <div className="mx-auto w-full max-w-[1400px] rounded-3xl bg-[#263200] p-6 sm:p-8 lg:p-12">
+      <div className="mx-auto w-full max-w-350 rounded-3xl bg-tertiary p-6 sm:p-8 lg:p-12">
         {isLoading ? (
-          <div className="flex min-h-[300px] items-center justify-center">
-            <p className="text-lg text-[#E5FE96]">Loading shop...</p>
+          <div className="flex min-h-75 items-center justify-center">
+            <p className="text-lg text-primary">Loading shop...</p>
           </div>
         ) : items.length === 0 ? (
-          <div className="flex min-h-[300px] items-center justify-center">
-            <p className="text-lg text-[#E5FE96]">Belum ada item di shop.</p>
+          <div className="flex min-h-75 items-center justify-center">
+            <p className="text-lg text-primary">Belum ada item di shop.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
