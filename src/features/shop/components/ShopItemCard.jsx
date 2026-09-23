@@ -1,3 +1,5 @@
+import CoinIcon from "../../../components/icons/coinIcon";
+
 function ShopItemCard({ item, isPurchasing, onPurchase }) {
   const itemName = item.name?.id || item.name?.en || "Avatar";
   const isOwned = item.isOwned;
@@ -45,7 +47,7 @@ function ShopItemCard({ item, isPurchasing, onPurchase }) {
             "Buying..."
           ) : (
             <>
-              <span>◉</span>
+              <CoinIcon size={18} color="currentColor" />
               <span>{item.price}</span>
             </>
           )}

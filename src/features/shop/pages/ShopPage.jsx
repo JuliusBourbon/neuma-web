@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CoinIcon from "../../../components/icons/coinIcon";
 
 import ShopItemCard from "../components/ShopItemCard";
 import {
@@ -110,8 +111,9 @@ function ShopPage() {
 
       {/* Currency Balance */}
       <div className="mb-8 flex justify-center">
-        <div className="flex items-center gap-2 rounded-full bg-tertiary px-6 py-3 text-lg font-medium text-primary">
-          <span className="text-secondary">◉</span>
+        <div className="flex items-center gap-3 rounded-full bg-tertiary px-6 py-3 text-lg font-medium text-primary">
+          <CoinIcon size={24} color="#E5FE96" />
+
           <span>{currencyBalance} Coins</span>
         </div>
       </div>
