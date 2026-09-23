@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import CoinIcon from "../../../components/icons/coinIcon";
 
 import ShopItemCard from "../components/ShopItemCard";
+import ShopErrorModal from "../components/ShopErrorModal";
+import PageHeader from "../../../components/layout/PageHeader";
+
 import {
   getShopItems,
   purchaseShopItem,
@@ -10,8 +12,6 @@ import {
 import { getMyStats } from "../../../services/api/userService";
 
 function ShopPage() {
-  const navigate = useNavigate();
-
   const [items, setItems] = useState([]);
   const [currencyBalance, setCurrencyBalance] = useState(0);
 
@@ -88,45 +88,26 @@ function ShopPage() {
   };
 
   return (
-    <div className="min-h-screen bg-primary px-6 py-8 text-tertiary md:px-12 lg:px-20">
-      {/* Header */}
-      <div className="relative mb-12 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={() => navigate("/home")}
-          className="absolute left-0 flex h-16 w-16 items-center justify-center rounded-full bg-tertiary text-4xl leading-none text-white transition hover:scale-105"
-          aria-label="Back to home"
-        >
-          ‹
-        </button>
+    <div className="flex h-dvh flex-col overflow-hidden bg-primary text-tertiary">
+      <ShopErrorModal
+        isOpen={Boolean(error)}
+        message={error}
+        onClose={() => setError("")}
+      />
 
-        <div className="text-center">
-          <h1 className="text-3xl font-normal md:text-4xl">Shop</h1>
-
-          <p className="mt-4 text-2xl font-medium text-secondary md:text-3xl">
-            Collect Your Favorite Avatar
-          </p>
-        </div>
-      </div>
+      <PageHeader title="Shop" showBackButton={true} backButtonPath="/home" />
 
       {/* Currency Balance */}
-      <div className="mb-8 flex justify-center">
-        <div className="flex items-center gap-3 rounded-full bg-tertiary px-6 py-3 text-lg font-medium text-primary">
-          <CoinIcon size={24} color="#E5FE96" />
+      <div className="flex shrink-0 justify-center px-4 pb-6 pt-2 sm:pb-8">
+        <div className="flex items-center gap-2 rounded-full border-2 border-secondary bg-white px-4 py-2 text-base font-medium text-secondary shadow-sm sm:gap-3 sm:px-6 sm:py-3 sm:text-lg">
+          <CoinIcon size={20} color="#FE7236" className="sm:h-6 sm:w-6" />
 
           <span>{currencyBalance} Coins</span>
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mx-auto mb-6 w-full max-w-4xl rounded-lg bg-secondary px-4 py-3 text-center text-white">
-          {error}
-        </div>
-      )}
-
       {/* Shop Content */}
-      <div className="mx-auto w-full max-w-350 rounded-3xl bg-tertiary p-6 sm:p-8 lg:p-12">
+      <div className="mx-4 mb-6 flex min-h-0 flex-col overflow-hidden rounded-2xl bg-tertiary p-3 sm:mx-6 sm:rounded-3xl sm:p-6 lg:mx-auto lg:w-full lg:max-w-350 lg:p-10">
         {isLoading ? (
           <div className="flex min-h-75 items-center justify-center">
             <p className="text-lg text-primary">Loading shop...</p>
@@ -136,15 +117,17 @@ function ShopPage() {
             <p className="text-lg text-primary">Belum ada item di shop.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {items.map((item) => (
-              <ShopItemCard
-                key={item.id}
-                item={item}
-                isPurchasing={isPurchasing && purchasingItemId === item.id}
-                onPurchase={handlePurchase}
-              />
-            ))}
+          <div className="min-h-0 max-h-[55dvh] overflow-y-auto px-2 py-2 sm:max-h-[60dvh] lg:max-h-none lg:flex-1">
+            <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {items.map((item) => (
+                <ShopItemCard
+                  key={item.id}
+                  item={item}
+                  isPurchasing={isPurchasing && purchasingItemId === item.id}
+                  onPurchase={handlePurchase}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
