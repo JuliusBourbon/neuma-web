@@ -209,7 +209,7 @@ function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen h-screen overflow-x-hidden bg-[#263200] text-[#E5FE96] px-8 py-6">
+    <div className="min-h-screen h-screen overflow-x-hidden bg-tertiary text-primary px-8 py-6">
       {" "}
       {/* Header */}
       <div className="relative flex items-center justify-center mb-12 md:mb-24">
@@ -224,7 +224,7 @@ function ProfilePage() {
         <h1 className="text-3xl md:text-4xl font-normal">Profile</h1>{" "}
       </div>
       {/* Main Content */}
-      <div className="max-w-[1625px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-[100px]">
+      <div className="max-w-[1625px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-25">
         {/* LEFT SIDE */}
         <div className="order-last lg:order-first">
           {/* Profile Mode */}
@@ -255,7 +255,7 @@ function ProfilePage() {
             />
           )}
           {/* Sign Out */}
-          <div className="flex justify-center mt-14 max-w-[650px]">
+          <div className="flex justify-center mt-14 max-w-162.5">
             <FillRoundedButton
               text="Sign Out"
               classes="bg-[#FE7236] text-white text-lg min-w-64"
