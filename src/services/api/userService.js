@@ -12,6 +12,7 @@ import { api } from "./apiClient";
  *   wordsCollected: number,
  *   rank: number,
  *   avatar: string | null,
+ *   activeAvatarId: string | null,
  *   username: string | null
  * }>}
  */
