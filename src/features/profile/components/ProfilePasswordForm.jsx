@@ -1,52 +1,78 @@
 import FillRoundedButton from "../../../components/common/fillRoundedButton";
 
 function ProfilePasswordForm({ onCancel, onChangePassword }) {
+  const inputClasses = `
+    box-border
+    h-12
+    w-full
+    rounded-md
+    border
+    border-[#D6D6D6]
+    bg-white
+    px-4
+    py-3
+    text-base
+    leading-normal
+    text-[#263200]
+    placeholder:text-[#8C9A54]
+    outline-none
+    transition
+    duration-200
+    hover:border-[#FE7236]/60
+    focus:border-[#FE7236]
+    focus:ring-2
+    focus:ring-[#FE7236]/25
+  `;
+
   return (
     <>
       {/* Change Password Form */}
-      <div className="space-y-5 max-w-[650px]">
+      <div className="max-w-[650px] space-y-5">
+        {/* Old Password */}
         <div>
-          <label className="block text-xl mb-2">Old Password</label>
+          <label className="mb-2 block text-xl">Old Password</label>
 
           <input
             type="password"
             placeholder="Masukkan password lama"
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
+            className={inputClasses}
           />
         </div>
 
+        {/* New Password */}
         <div>
-          <label className="block text-xl mb-2">New Password</label>
+          <label className="mb-2 block text-xl">New Password</label>
 
           <input
             type="password"
             placeholder="Masukkan password baru"
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
+            className={inputClasses}
           />
         </div>
 
+        {/* Confirm Password */}
         <div>
-          <label className="block text-xl mb-2">Confirm Password</label>
+          <label className="mb-2 block text-xl">Confirm Password</label>
 
           <input
             type="password"
             placeholder="Konfirmasi password baru"
-            className="w-full rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] outline-none"
+            className={inputClasses}
           />
         </div>
       </div>
 
       {/* Password Buttons */}
-      <div className="grid grid-cols-2 gap-8 mt-10 max-w-[650px]">
+      <div className="mt-10 grid max-w-[650px] grid-cols-2 gap-8">
         <FillRoundedButton
           text="Cancel"
-          classes="bg-gray-300 text-white text-lg w-full"
+          classes="w-full bg-gray-300 text-lg text-white"
           onClick={onCancel}
         />
 
         <FillRoundedButton
           text="Change Password"
-          classes="bg-[#FE7236] text-white text-lg w-full"
+          classes="w-full bg-[#FE7236] text-lg text-white"
           onClick={onChangePassword}
         />
       </div>
