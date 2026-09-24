@@ -253,7 +253,7 @@ export default function Camera({
                 videoRef.current.srcObject = stream;
                 videoRef.current.onloadedmetadata = () => {
                     if (!isMountedRef.current) return;
-                    videoRef.current.play().catch(() => {});
+                    videoRef.current.play().catch(() => { });
                     setCameraActive(true);
                     setStatusText("Kamera aktif. Tunjukkan tangan Anda.");
                     startPredictionLoop();
@@ -429,6 +429,11 @@ export default function Camera({
             if (lastEvalTimeRef.current) {
                 accumulatedHoldMsRef.current += (now - lastEvalTimeRef.current);
             }
+            // only advance lastEvalTime when actually matching
+            lastEvalTimeRef.current = now;
+        } else {
+            // reset lastEvalTime so gaps aren't bridged
+            lastEvalTimeRef.current = null;
         }
 
         const currentMatch = isMatch && meetsConfidence;
@@ -436,8 +441,6 @@ export default function Camera({
             isMatchingRef.current = currentMatch;
             setIsMatching(currentMatch);
         }
-
-        lastEvalTimeRef.current = now;
 
         const REQUIRED_HOLD_MS = isSpellingMode ? 2000 : 3000;
         const progress = Math.min(100, Math.round((accumulatedHoldMsRef.current / REQUIRED_HOLD_MS) * 100));
@@ -447,7 +450,14 @@ export default function Camera({
             if (isSpellingMode) {
                 isTransitioningCardRef.current = true;
                 const cardIdx = currentCardIndexRef.current;
-                cardConfidencesRef.current[cardIdx] = pred.confidence;
+
+                // store confidence of the actual target letter, not rank-1
+                const cardTarget = spellingLetters[cardIdx] || "";
+                const cardTargetPred = pred.topPredictions?.find(
+                    (p) => (p.label || "").trim().toUpperCase() === cardTarget
+                );
+                cardConfidencesRef.current[cardIdx] = cardTargetPred?.confidence ?? pred.confidence;
+
                 setCompletedCards((prev) => [...new Set([...prev, cardIdx])]);
 
                 const nextIndex = cardIdx + 1;
@@ -481,18 +491,24 @@ export default function Camera({
                     isTransitioningCardRef.current = false;
                 }
             } else {
-                // Auto submit single letter when hold completed
+                // submit activeTargetLetter (verified by hold), not pred.label (rank-1)
+                const targetLetter = activeTargetLetterRef.current;
+                const targetPred = pred.topPredictions?.find(
+                    (p) => (p.label || "").trim().toUpperCase() === targetLetter
+                );
+                const targetConfidence = targetPred?.confidence ?? pred.confidence;
+
                 const locked = {
-                    label: pred.label,
-                    confidence: pred.confidence,
+                    label: targetLetter,
+                    confidence: targetConfidence,
                 };
                 setLockedAnswer(locked);
                 lockedAnswerRef.current = locked;
-                onDetectedAnswerRef.current?.(pred.label, pred.confidence);
+                onDetectedAnswerRef.current?.(targetLetter, targetConfidence);
                 onCompleteAnswerRef.current?.({
-                    detectedLetter: pred.label,
-                    spelledWord: pred.label,
-                    confidence: pred.confidence,
+                    detectedLetter: targetLetter,
+                    spelledWord: targetLetter,
+                    confidence: targetConfidence,
                 });
             }
         }
@@ -604,7 +620,7 @@ export default function Camera({
                         />
 
                         {/* HUD Overlay for Prediction info */}
-                        <div className="absolute top-3 left-3 right-3 flex justify-between items-start pointer-events-none">
+                        {/* <div className="absolute top-3 left-3 right-3 flex justify-between items-start pointer-events-none">
                             <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-white">
                                 <div className="text-xs opacity-70">Huruf Terdeteksi</div>
                                 <div className="text-2xl font-black leading-tight">{currentPrediction.label}</div>
@@ -623,7 +639,7 @@ export default function Camera({
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Hint & Hold Progress Bar */}
                         {activeTargetLetter && !lockedAnswer && (
@@ -686,7 +702,11 @@ export default function Camera({
                         </span>
                         <div className="min-w-0">
                             <p className="font-bold text-xl leading-tight">
-                                {result.isCorrect ? "Jawaban Benar!!" : "Waktu Habis!"}
+                                {result.isCorrect
+                                    ? "Jawaban Benar!!"
+                                    : result.isTimeout
+                                        ? "Waktu Habis!"
+                                        : "System Error"}
                             </p>
                             {result.isCorrect && (
                                 <p className="text-sm text-secondary font-semibold mt-0.5">
