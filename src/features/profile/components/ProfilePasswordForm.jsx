@@ -67,7 +67,7 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
 
   return (
     <>
-      <div className="max-w-[650px] space-y-5">
+      <div className="max-w-162.5 space-y-5">
         {/* Old Password */}
         {hasPassword && (
           <div>
@@ -114,7 +114,7 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-10 grid max-w-[650px] grid-cols-2 gap-8">
+      <div className="mt-10 grid max-w-162.5 grid-cols-2 gap-8">
         <FillRoundedButton
           text="Cancel"
           classes="w-full bg-gray-300 text-lg text-white"
