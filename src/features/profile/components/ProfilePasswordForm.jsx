@@ -1,6 +1,12 @@
+import { useState } from "react";
 import FillRoundedButton from "../../../components/common/fillRoundedButton";
 
-function ProfilePasswordForm({ onCancel, onChangePassword }) {
+function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
   const inputClasses = `
     box-border
     h-12
@@ -24,20 +30,58 @@ function ProfilePasswordForm({ onCancel, onChangePassword }) {
     focus:ring-[#FE7236]/25
   `;
 
+  const handleSubmit = () => {
+    setError("");
+
+    if (hasPassword && !oldPassword.trim()) {
+      setError("Password lama wajib diisi.");
+      return;
+    }
+
+    if (!newPassword.trim()) {
+      setError("Password baru wajib diisi.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setError("Password baru minimal 8 karakter.");
+      return;
+    }
+
+    if (!confirmPassword.trim()) {
+      setError("Konfirmasi password wajib diisi.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Konfirmasi password tidak cocok.");
+      return;
+    }
+
+    onSubmit?.({
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
+  };
+
   return (
     <>
-      {/* Change Password Form */}
       <div className="max-w-[650px] space-y-5">
         {/* Old Password */}
-        <div>
-          <label className="mb-2 block text-xl">Old Password</label>
+        {hasPassword && (
+          <div>
+            <label className="mb-2 block text-xl">Old Password</label>
 
-          <input
-            type="password"
-            placeholder="Masukkan password lama"
-            className={inputClasses}
-          />
-        </div>
+            <input
+              type="password"
+              placeholder="Masukkan password lama"
+              className={inputClasses}
+              value={oldPassword}
+              onChange={(event) => setOldPassword(event.target.value)}
+            />
+          </div>
+        )}
 
         {/* New Password */}
         <div>
@@ -47,6 +91,8 @@ function ProfilePasswordForm({ onCancel, onChangePassword }) {
             type="password"
             placeholder="Masukkan password baru"
             className={inputClasses}
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
           />
         </div>
 
@@ -58,11 +104,16 @@ function ProfilePasswordForm({ onCancel, onChangePassword }) {
             type="password"
             placeholder="Konfirmasi password baru"
             className={inputClasses}
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
           />
         </div>
+
+        {/* Error Message */}
+        {error && <p className="text-sm text-red-500">{error}</p>}
       </div>
 
-      {/* Password Buttons */}
+      {/* Action Buttons */}
       <div className="mt-10 grid max-w-[650px] grid-cols-2 gap-8">
         <FillRoundedButton
           text="Cancel"
@@ -71,9 +122,9 @@ function ProfilePasswordForm({ onCancel, onChangePassword }) {
         />
 
         <FillRoundedButton
-          text="Change Password"
+          text={hasPassword ? "Change Password" : "Set Password"}
           classes="w-full bg-[#FE7236] text-lg text-white"
-          onClick={onChangePassword}
+          onClick={handleSubmit}
         />
       </div>
     </>
