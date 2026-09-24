@@ -4,7 +4,7 @@ export default function Footer() {
             <div className='flex flex-col items-center gap-2'>
                 <span className='text-4xl font-bold text-neon'>Neumá</span>
                 <span className='text-neon font-medium max-w-md'>
-                    Open your world with Sign Language, Today!
+                    Break the Silence, Bridge the World.
                 </span>
             </div>
             <div className='flex flex-col md:flex-row gap-2 md:gap-6 text-neon font-medium text-lg underline'>

@@ -6,7 +6,7 @@ import FillRoundedButton from "../../../components/common/fillRoundedButton";
 import { register, loginWithGoogle } from "../../../services/api/authService";
 import GoogleIcon from "../../../components/icons/googleIcon";
 
-export default function RegisterPage({ onClose, onSwitchToLogin }) {
+export default function RegisterPage({ onClose, onSwitchToLogin, lang = 'id' }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,7 +65,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
       });
       handleSuccessRegister(data);
     } catch (err) {
-      setErrorMessage(err.message || "Pendaftaran gagal. Silakan coba lagi.");
+      setErrorMessage(err.message || (lang === 'id' ? "Pendaftaran gagal. Silakan coba lagi." : "Registration failed. Please try again."));
     } finally {
       setIsLoading(false);
     }
@@ -77,14 +77,14 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
 
     try {
       if (!tokenResponse?.access_token) {
-        throw new Error("Google access token tidak ditemukan.");
+        throw new Error(lang === 'id' ? "Google access token tidak ditemukan." : "Google access token not found.");
       }
       const data = await loginWithGoogle({
         accessToken: tokenResponse.access_token,
       });
       handleSuccessRegister(data);
     } catch (err) {
-      setErrorMessage(err.message || "Login dengan Google gagal.");
+      setErrorMessage(err.message || (lang === 'id' ? "Pendaftaran dengan Google gagal." : "Google registration failed."));
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +93,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
   const handleGoogleError = (errorResponse) => {
     setErrorMessage(
       errorResponse?.error_description ||
-      "Login dengan Google dibatalkan atau terjadi kesalahan.",
+      (lang === 'id' ? "Pendaftaran dengan Google dibatalkan atau terjadi kesalahan." : "Google registration cancelled or an error occurred.")
     );
   };
 
@@ -103,7 +103,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
   });
 
   return (
-    <div className="relative bg-primary min-h-screen w-full flex flex-col items-center justify-center p-8 md:p-16">
+    <div className="relative bg-primary min-h-screen w-full flex flex-col items-center justify-center px-8 md:px-16">
       {/* Close Button (X) */}
       <button
         type="button"
@@ -130,13 +130,13 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
       <div className="flex flex-col items-center gap-6 mb-16 md:mb-20 text-center">
         <h2 className="text-5xl font-medium text-tertiary">Neumá</h2>
         <h3 className="text-xl md:text-2xl font-semibold text-secondary">
-          Open your world with Sign Language, Today!
+          Break the Silence, Bridge the World.
         </h3>
       </div>
 
       <div className="flex flex-col items-center gap-6 w-full max-w-md">
         <h3 className="text-2xl font-medium text-tertiary">
-          Create your profile
+          {lang === 'id' ? "Buat profil Anda" : "Create your profile"}
         </h3>
 
         {errorMessage && (
@@ -151,7 +151,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
         >
           <input
             type="text"
-            placeholder="Username (optional)"
+            placeholder={lang === 'id' ? "Nama Pengguna (opsional)" : "Username (optional)"}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="bg-tertiary/30 text-tertiary placeholder-tertiary/60 px-4 py-2 text-xl rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
@@ -166,7 +166,7 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={lang === 'id' ? "Kata Sandi" : "Password"}
             minLength={8}
             required
             value={password}
@@ -176,14 +176,14 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
           <ActionButton
             type="submit"
             disabled={isLoading}
-            text={isLoading ? "Processing..." : "Sign Up"}
+            text={isLoading ? (lang === 'id' ? "Memproses..." : "Processing...") : (lang === 'id' ? "Daftar" : "Sign Up")}
             classes="bg-secondary text-white px-6 py-3 rounded-lg w-full font-medium shadow-sm hover:opacity-90"
           />
         </form>
 
         <div className="flex items-center w-full">
           <div className="grow border-t border-tertiary"></div>
-          <h3 className="px-3 text-lg font-medium text-tertiary">Or</h3>
+          <h3 className="px-3 text-lg font-medium text-tertiary">{lang === 'id' ? "Atau" : "Or"}</h3>
           <div className="grow border-t border-tertiary"></div>
         </div>
 
@@ -195,20 +195,30 @@ export default function RegisterPage({ onClose, onSwitchToLogin }) {
               onClick={() => triggerGoogleLogin()}
               classes="bg-white rounded-full w-full border border-tertiary hover:bg-gray-200 py-3 text-xl font-medium"
               svg={<GoogleIcon />}
-              text="Sign up with Google"
+              text={lang === 'id' ? "Daftar dengan Google" : "Sign up with Google"}
             />
           </div>
           <FillRoundedButton
-            text="Already have an account"
+            text={lang === 'id' ? "Sudah punya akun" : "Already have an account"}
             href="/login"
             onClick={onSwitchToLogin}
             classes="bg-tertiary text-white px-6 py-3 rounded-lg w-full text-center hover:opacity-90"
           />
         </div>
         <h3 className="text-sm font-medium text-tertiary text-center">
-          By signing up to Neumá, you agree to our{" "}
-          <span className="font-bold underline">Terms</span> and{" "}
-          <span className="font-bold underline">Privacy Policy</span>
+          {lang === 'id' ? (
+            <>
+              Dengan mendaftar ke Neumá, Anda menyetujui
+              <a href="/terms" className="font-bold underline cursor-pointer"> Syarat</a> dan{" "}
+              <a href="/privacy" className="font-bold underline cursor-pointer"> Kebijakan Privasi</a> kami
+            </>
+          ) : (
+            <>
+              By signing up to Neumá, you agree to our
+              <a href="/terms" className="font-bold underline cursor-pointer"> Terms</a> and{" "}
+              <a href="/privacy" className="font-bold underline cursor-pointer"> Privacy Policy</a>
+            </>
+          )}
         </h3>
       </div>
     </div>

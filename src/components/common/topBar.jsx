@@ -4,8 +4,8 @@ import { Menu, X } from 'lucide-react';
 export default function TopBar({
     brand = 'Neumá',
     links = [
-        { text: 'Sign Language', href: '#' },
-        { text: 'About Us', href: '#' },
+        { text: 'Sign Language', href: '/sign-language' },
+        { text: 'About Us', href: '/about-us' },
         { text: 'Sign in', href: '#' },
     ],
     className = '',
@@ -17,7 +17,7 @@ export default function TopBar({
     return (
         <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center text-tertiary px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] bg-secondary/50 backdrop-blur-md shadow-2xl border border-tertiary/10 rounded-full animate-topbar ${customClasses}`.trim()}>
 
-            {brand && <h4 className='font-bold text-xl md:text-2xl mr-auto md:mr-60'>{brand}</h4>}
+            {brand && <a href='/' className='font-bold text-xl md:text-2xl mr-auto md:mr-60'>{brand}</a>}
 
             <div className='hidden md:flex gap-12 font-medium whitespace-nowrap'>
                 {links.map((link, index) => (

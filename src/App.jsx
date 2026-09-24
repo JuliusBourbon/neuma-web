@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import TopBar from './components/common/topBar'
 import Footer from './components/layout/footer'
 import FillRoundedButton from './components/common/fillRoundedButton'
@@ -20,6 +21,19 @@ import mascot_10 from './assets/onboarding/mascot_10.png'
 function App() {
   const [authModal, setAuthModal] = useState(null) // 'login' | 'register' | null
   const [isClosing, setIsClosing] = useState(false)
+
+  const navigate = useNavigate()
+
+  const [lang, setLang] = useState(() => {
+    const savedLang = localStorage.getItem('neuma_lang');
+    return (savedLang === 'en' || savedLang === 'id') ? savedLang : 'id';
+  });
+
+  const toggleLanguage = () => {
+    const newLang = lang === 'id' ? 'en' : 'id'
+    setLang(newLang)
+    localStorage.setItem('neuma_lang', newLang)
+  }
 
   const handleCloseModal = () => {
     setIsClosing(true)
@@ -130,29 +144,37 @@ function App() {
 
   // List for TopBar
   const navLinks = [
-    { text: 'Sign Language', href: '#sign-language' },
-    { text: 'About Us', href: '#about-us' },
+    { text: 'Sign Language', onClick: () => navigate('/sign-language') },
+    { text: 'About Us', onClick: () => navigate('/about-us') },
     { text: 'Sign in', onClick: () => setAuthModal('login') },
   ]
 
   return (
     <div>
+      {/* Floating Language Toggle */}
+      <button
+        onClick={toggleLanguage}
+        className="fixed z-60 bottom-6 right-6 md:top-8 md:bottom-auto md:right-8 bg-tertiary text-primary font-bold py-2 px-4 rounded-full shadow-lg border border-primary/20 hover:scale-105 active:scale-95 transition-transform"
+        title={lang === 'id' ? "Switch to English" : "Ganti ke Bahasa Indonesia"}
+      >
+        {lang === 'id' ? 'EN' : 'ID'}
+      </button>
 
       <div className='bg-primary h-screen flex flex-col justify-center items-center relative overflow-hidden scroll-smooth'>
         <TopBar brand='Neumá' links={navLinks} />
         <div className='flex flex-col items-center animate-fade-in-up'>
           <div className=''>
             <h1 className='text-tertiary text-5xl text-center p-6'>Neumá</h1>
-            <h3 className='text-secondary text-2xl text-center font-medium mb-6'>Open your world with Sign Language, Today!</h3>
+            <h3 className='text-secondary text-2xl text-center font-medium mb-6'>Break the Silence, Bridge the World.</h3>
           </div>
           <div className='flex flex-col md:flex-row gap-2 md:gap-6'>
             <FillRoundedButton
-              text="Get Started"
+              text={lang === 'id' ? "Mulai Sekarang" : "Get Started"}
               classes="bg-tertiary text-primary"
               onClick={() => setAuthModal('register')}
             />
             <FillRoundedButton
-              text="Already have an account"
+              text={lang === 'id' ? "Sudah punya akun" : "Already have an account"}
               classes="bg-secondary text-white"
               onClick={() => setAuthModal('login')}
             />
@@ -164,11 +186,13 @@ function App() {
           <div className={`fixed inset-0 z-50 overflow-y-auto ${isClosing ? 'fade-out' : 'animate-in fade-in duration-300'}`}>
             {authModal === 'login' ? (
               <LoginPage
+                lang={lang}
                 onClose={handleCloseModal}
                 onSwitchToRegister={() => setAuthModal('register')}
               />
             ) : (
               <RegisterPage
+                lang={lang}
                 onClose={handleCloseModal}
                 onSwitchToLogin={() => setAuthModal('login')}
               />
@@ -180,7 +204,9 @@ function App() {
       <div className='bg-primary h-[40vh] lg:h-screen md:px-8 lg:px-16'>
         <div className='h-full w-full bg-tertiary md:rounded-t-4xl flex flex-col md:justify-between'>
           <div className='text-lg md:text-3xl lg:text-4xl py-10 font-bold  text-primary flex flex-col items-center justify-center'>
-            <span className='text-center'>Experience a new experience in learning sign language</span>
+            <span className='text-center'>
+              {lang === 'id' ? "Rasakan pengalaman baru dalam belajar bahasa isyarat" : "Experience a new experience in learning sign language"}
+            </span>
           </div>
           <div className='md:px-16'>
             <img src={preview} alt="Preview" className='md:rounded-t-3xl' />
@@ -205,9 +231,15 @@ function App() {
           <img src={mascot_10} alt="Mascot 10" className='absolute bottom-[30%] right-[25%] float-1 w-16 md:w-24 object-contain' />
 
           {/* Texts */}
-          <span style={getSpanStyle(0)} className='relative z-10 text-center'>Learn all 35+ levels</span>
-          <span style={getSpanStyle(1)} className='relative z-10 text-center'>Complete Challenge</span>
-          <span style={getSpanStyle(2)} className='relative z-10 text-center'>Collect Avatars</span>
+          <span style={getSpanStyle(0)} className='relative z-10 text-center'>
+            {lang === 'id' ? "Pelajari 35+ level" : "Learn all 35+ levels"}
+          </span>
+          <span style={getSpanStyle(1)} className='relative z-10 text-center'>
+            {lang === 'id' ? "Selesaikan Tantangan" : "Complete Challenge"}
+          </span>
+          <span style={getSpanStyle(2)} className='relative z-10 text-center'>
+            {lang === 'id' ? "Kumpulkan Avatar" : "Collect Avatars"}
+          </span>
         </div>
       </div>
 
@@ -217,13 +249,20 @@ function App() {
             ref={bottomSectionRef}
             className={`flex flex-col h-full gap-4 justify-center items-center ${isBottomVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
           >
-            <span className='text-center text-2xl md:text-3xl font-bold '>A New Language in Your Hands <br />
-              A Whole New World in Your Reach</span>
-            <span className='text-center text-base'>Start learning Sign Language with Neumá today!</span>
+            <span className='text-center text-2xl md:text-3xl font-bold '>
+              {lang === 'id' ? (
+                <>Bahasa Baru di Genggaman Anda <br /> Dunia Baru dalam Jangkauan Anda</>
+              ) : (
+                <>A New Language in Your Hands <br /> A Whole New World in Your Reach</>
+              )}
+            </span>
+            <span className='text-center text-base'>
+              {lang === 'id' ? "Mulai belajar Bahasa Isyarat bersama Neumá hari ini!" : "Start learning Sign Language with Neumá today!"}
+            </span>
             <div className='flex flex-col items-center'>
               <img src={muscle} alt="mascot muscle" className='h-24 md:h-30' style={getBottomImgStyle()} />
               <FillRoundedButton
-                text="Get Started"
+                text={lang === 'id' ? "Mulai Sekarang" : "Get Started"}
                 classes="bg-tertiary text-primary z-10"
                 onClick={() => setAuthModal('register')}
               />

@@ -6,7 +6,7 @@ import FillRoundedButton from "../../../components/common/fillRoundedButton";
 import { login, loginWithGoogle } from "../../../services/api/authService";
 import GoogleIcon from "../../../components/icons/googleIcon";
 
-export default function LoginPage({ onClose, onSwitchToRegister }) {
+export default function LoginPage({ onClose, onSwitchToRegister, lang = 'id' }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,7 +61,7 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
       handleSuccessLogin(data);
     } catch (err) {
       setErrorMessage(
-        err.message || "Gagal masuk. Periksa email dan password Anda.",
+        err.message || (lang === 'id' ? "Gagal masuk. Periksa email dan password Anda." : "Failed to log in. Check your email and password.")
       );
     } finally {
       setIsLoading(false);
@@ -74,14 +74,14 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
 
     try {
       if (!tokenResponse?.access_token) {
-        throw new Error("Google access token tidak ditemukan.");
+        throw new Error(lang === 'id' ? "Google access token tidak ditemukan." : "Google access token not found.");
       }
       const data = await loginWithGoogle({
         accessToken: tokenResponse.access_token,
       });
       handleSuccessLogin(data);
     } catch (err) {
-      setErrorMessage(err.message || "Login dengan Google gagal.");
+      setErrorMessage(err.message || (lang === 'id' ? "Login dengan Google gagal." : "Google login failed."));
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +90,7 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
   const handleGoogleError = (errorResponse) => {
     setErrorMessage(
       errorResponse?.error_description ||
-      "Login dengan Google dibatalkan atau terjadi kesalahan.",
+      (lang === 'id' ? "Login dengan Google dibatalkan atau terjadi kesalahan." : "Google login cancelled or an error occurred.")
     );
   };
 
@@ -100,7 +100,7 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
   });
 
   return (
-    <div className="relative bg-primary min-h-screen w-full flex flex-col items-center justify-center p-8 md:p-16">
+    <div className="relative bg-primary min-h-screen w-full flex flex-col items-center justify-center p-8 md:px-16">
       {/* Close Button (X) */}
       <button
         type="button"
@@ -127,12 +127,12 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
       <div className="flex flex-col items-center gap-6 mb-16 md:mb-20 text-center">
         <h2 className="text-5xl font-medium text-tertiary">Neumá</h2>
         <h3 className="text-xl md:text-2xl font-semibold text-secondary">
-          Open your world with Sign Language, Today!
+          Break the Silence, Bridge the World.
         </h3>
       </div>
 
       <div className="flex flex-col items-center gap-6 w-full max-w-md">
-        <h3 className="text-2xl font-medium text-tertiary">Log In</h3>
+        <h3 className="text-2xl font-medium text-tertiary">{lang === 'id' ? "Masuk" : "Log In"}</h3>
 
         {errorMessage && (
           <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm text-center">
@@ -154,7 +154,7 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={lang === 'id' ? "Kata Sandi" : "Password"}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -163,14 +163,14 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
           <ActionButton
             type="submit"
             disabled={isLoading}
-            text={isLoading ? "Processing..." : "Log In"}
+            text={isLoading ? (lang === 'id' ? "Memproses..." : "Processing...") : (lang === 'id' ? "Masuk" : "Log In")}
             classes="bg-secondary text-white px-6 py-3 rounded-lg w-full font-medium shadow-sm hover:opacity-90"
           />
         </form>
 
         <div className="flex items-center w-full">
           <div className="grow border-t border-tertiary"></div>
-          <h3 className="px-3 text-lg font-medium text-tertiary">Or</h3>
+          <h3 className="px-3 text-lg font-medium text-tertiary">{lang === 'id' ? "Atau" : "Or"}</h3>
           <div className="grow border-t border-tertiary"></div>
         </div>
 
@@ -182,20 +182,30 @@ export default function LoginPage({ onClose, onSwitchToRegister }) {
               onClick={() => triggerGoogleLogin()}
               classes="bg-white rounded-full w-full border border-tertiary hover:bg-gray-200 py-3 text-xl font-medium"
               svg={<GoogleIcon />}
-              text="Sign in with Google"
+              text={lang === 'id' ? "Masuk dengan Google" : "Sign in with Google"}
             />
           </div>
           <FillRoundedButton
-            text="Sign Up"
+            text={lang === 'id' ? "Daftar" : "Sign Up"}
             href="/register"
             onClick={onSwitchToRegister}
             classes="bg-tertiary text-white px-6 py-3 rounded-lg w-full text-center hover:opacity-90"
           />
         </div>
         <h3 className="text-sm font-medium text-tertiary text-center">
-          By signing in to Neumá, you agree to our{" "}
-          <span className="font-bold underline">Terms</span> and{" "}
-          <span className="font-bold underline">Privacy Policy</span>
+          {lang === 'id' ? (
+            <>
+              Dengan masuk ke Neumá, Anda menyetujui
+              <a href="/terms" className="font-bold underline cursor-pointer"> Syarat</a> dan{" "}
+              <a href="/privacy" className="font-bold underline cursor-pointer"> Kebijakan Privasi</a> kami
+            </>
+          ) : (
+            <>
+              By signing in to Neumá, you agree to our
+              <a href="/terms" className="font-bold underline cursor-pointer"> Terms</a> and{" "}
+              <a href="/privacy" className="font-bold underline cursor-pointer"> Privacy Policy</a>
+            </>
+          )}
         </h3>
       </div>
     </div>
