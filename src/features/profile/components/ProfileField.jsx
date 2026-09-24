@@ -9,13 +9,41 @@ function ProfileField({
   onChange,
   options = [],
 }) {
-  const fieldClasses =
-    "w-full h-12 rounded-md bg-[#E5FE96] px-4 py-3 text-[#263200] text-base leading-normal outline-none box-border";
+  const fieldClasses = `
+  box-border
+  h-12
+  w-full
+  rounded-md
+  border
+  bg-white
+  px-4
+  py-3
+  text-base
+  leading-normal
+  text-[#263200]
+  outline-none
+  transition
+  duration-200
+  disabled:cursor-default
+  disabled:opacity-100
+`;
 
+  const modeClasses = editing
+    ? `
+    border-[#D6D6D6]
+    hover:border-[#FE7236]/60
+    focus:border-[#FE7236]
+    focus:ring-2
+    focus:ring-[#FE7236]/25
+  `
+    : `
+    border-white
+    shadow-sm
+  `;
   return (
     <div>
       {/* Label */}
-      <label className="block text-xl mb-2">{label}</label>
+      <label className="mb-2 block text-xl">{label}</label>
 
       {/* Dropdown ketika mode edit */}
       {editing && type === "select" ? (
@@ -24,7 +52,7 @@ function ProfileField({
             value={value}
             onChange={onChange}
             disabled={disabled}
-            className={`${fieldClasses} appearance-none pr-10 cursor-pointer`}
+            className={`${fieldClasses} ${modeClasses} cursor-pointer appearance-none pr-10`}
           >
             {options.map((option) => (
               <option key={option.value} value={option.value}>
@@ -38,18 +66,18 @@ function ProfileField({
             <img
               src={dropdownArrow}
               alt="Dropdown"
-              className="w-6 h-6 object-contain"
+              className="h-6 w-6 object-contain"
             />
           </div>
         </div>
       ) : (
-        //  Input ketika mode read atau edit
+        /* Input ketika mode read atau edit */
         <input
           type={type}
           value={value}
           disabled={!editing || disabled}
           onChange={onChange}
-          className={fieldClasses}
+          className={`${fieldClasses} ${modeClasses}`}
         />
       )}
     </div>
