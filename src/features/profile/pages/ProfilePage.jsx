@@ -47,6 +47,7 @@ function ProfilePage() {
     email: "",
     age: "",
     gender: "",
+    hasPassword: false,
   });
 
   const [formData, setFormData] = useState(profile);
@@ -133,6 +134,7 @@ function ProfilePage() {
           email: user.email || "",
           age: user.age ?? "",
           gender: user.gender || "",
+          hasPassword: Boolean(user.hasPassword),
         };
 
         setProfile(profileData);
