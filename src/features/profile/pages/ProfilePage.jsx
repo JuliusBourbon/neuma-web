@@ -199,6 +199,7 @@ function ProfilePage() {
         email: updatedUser.email || "",
         age: updatedUser.age ?? "",
         gender: updatedUser.gender || "",
+        hasPassword: Boolean(updatedUser.hasPassword),
       });
 
       setFormData({
@@ -206,6 +207,7 @@ function ProfilePage() {
         email: updatedUser.email || "",
         age: updatedUser.age ?? "",
         gender: updatedUser.gender || "",
+        hasPassword: Boolean(updatedUser.hasPassword),
       });
 
       setMode("profile");
