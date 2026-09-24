@@ -7,6 +7,7 @@ import ProfileEditForm from "../components/ProfileEditForm";
 import ProfilePasswordForm from "../components/ProfilePasswordForm";
 import ProfileAvatarCard from "../components/ProfileAvatarCard";
 import AvatarPickerModal from "../components/AvatarPickerModal";
+import PageHeader from "../../../components/layout/PageHeader";
 
 import {
   getMyProfile,
@@ -214,97 +215,83 @@ function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen h-screen overflow-x-hidden bg-tertiary text-primary px-8 py-6">
-      {" "}
+    <div className="relative flex h-screen flex-col overflow-hidden bg-primary">
       {/* Header */}
-      <div className="relative flex items-center justify-center mb-12 md:mb-24">
-        {" "}
-        {/* Back Button */}
-        <button
-          type="button"
-          onClick={() => navigate("/home")}
-          aria-label="Back to home"
-          className="absolute left-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-tertiary text-white shadow-sm transition hover:bg-black active:scale-95"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-        <h1 className="text-3xl md:text-4xl font-normal">Profile</h1>{" "}
-      </div>
-      {/* Main Content */}
-      <div className="max-w-[1625px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-25">
-        {/* LEFT SIDE */}
-        <div className="order-last lg:order-first">
-          {/* Profile Mode */}
-          {mode === "profile" && (
-            <ProfileInfo
-              profile={profile}
-              getGenderLabel={getGenderLabel}
-              onEdit={handleEditProfile}
-              onChangePassword={() => setMode("password")}
-            />
-          )}
-          {/* EDIT PROFILE MODE */}
-          {mode === "edit" && (
-            <ProfileEditForm
-              formData={formData}
-              setFormData={setFormData}
-              onCancel={handleCancel}
-              onSave={handleSave}
-            />
-          )}
-          {/* CHANGE PASSWORD MODE */}
-          {mode === "password" && (
-            <ProfilePasswordForm
-              onCancel={handleCancel}
-              onChangePassword={() => {
-                console.log("Fitur change password belum tersedia.");
-              }}
-            />
-          )}
-          {/* Sign Out */}
-          <div className="flex justify-center mt-14 max-w-162.5">
-            <FillRoundedButton
-              text="Sign Out"
-              classes="bg-[#FE7236] text-white text-lg min-w-64"
-              onClick={handleLogout}
+      <PageHeader
+        title="Profile"
+        showBackButton={true}
+        backButtonPath="/home"
+      />
+
+      {/* Scrollable Content */}
+      <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pb-24 pr-1 sm:px-6 lg:px-8">
+        {/* Main Content */}
+        <div className="mx-auto grid w-full max-w-[1625px] grid-cols-1 gap-10 px-4 py-6 sm:px-8 md:py-8 lg:grid-cols-2 lg:gap-25 lg:px-12">
+          {/* LEFT SIDE */}
+          <div className="order-last lg:order-first">
+            {/* Profile Mode */}
+            {mode === "profile" && (
+              <ProfileInfo
+                profile={profile}
+                getGenderLabel={getGenderLabel}
+                onEdit={handleEditProfile}
+                onChangePassword={() => setMode("password")}
+              />
+            )}
+
+            {/* EDIT PROFILE MODE */}
+            {mode === "edit" && (
+              <ProfileEditForm
+                formData={formData}
+                setFormData={setFormData}
+                onCancel={handleCancel}
+                onSave={handleSave}
+              />
+            )}
+
+            {/* CHANGE PASSWORD MODE */}
+            {mode === "password" && (
+              <ProfilePasswordForm
+                onCancel={handleCancel}
+                onChangePassword={() => {
+                  console.log("Fitur change password belum tersedia.");
+                }}
+              />
+            )}
+
+            {/* Sign Out */}
+            <div className="mt-14 flex max-w-162.5 justify-center">
+              <FillRoundedButton
+                text="Sign Out"
+                classes="min-w-64 bg-[#FE7236] text-lg text-white"
+                onClick={handleLogout}
+              />
+            </div>
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="order-first flex flex-col items-center justify-start pt-0 lg:order-last lg:pt-4">
+            <ProfileAvatarCard
+              avatar={stats.avatar || fireflyMain}
+              dayStreak={stats.dayStreak}
+              rank={stats.rank}
+              wordsCollected={stats.wordsCollected}
+              totalXp={stats.totalXp}
+              currencyBalance={stats.currencyBalance}
+              onChangeAvatar={handleOpenAvatarPicker}
             />
           </div>
-        </div>
-        {/* RIGHT SIDE */}
-        <div className="order-first lg:order-last flex flex-col items-center justify-start pt-0 lg:pt-4">
-          <ProfileAvatarCard
-            avatar={stats.avatar || fireflyMain}
-            dayStreak={stats.dayStreak}
-            rank={stats.rank}
-            wordsCollected={stats.wordsCollected}
-            totalXp={stats.totalXp}
-            currencyBalance={stats.currencyBalance}
-            onChangeAvatar={handleOpenAvatarPicker}
+
+          {/* AVATAR PICKER MODAL */}
+          <AvatarPickerModal
+            isOpen={isAvatarPickerOpen}
+            avatars={avatars}
+            selectedAvatarId={selectedAvatarId}
+            isLoading={isLoadingAvatars}
+            onClose={handleCloseAvatarPicker}
+            onSelect={handleSelectAvatar}
           />
         </div>
-
-        {/* AVATAR PICKER MODAL */}
-        <AvatarPickerModal
-          isOpen={isAvatarPickerOpen}
-          avatars={avatars}
-          selectedAvatarId={selectedAvatarId}
-          isLoading={isLoadingAvatars}
-          onClose={handleCloseAvatarPicker}
-          onSelect={handleSelectAvatar}
-        />
       </div>
     </div>
   );
