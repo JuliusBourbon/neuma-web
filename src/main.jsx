@@ -15,10 +15,12 @@ import { ProtectedRoute, GuestRoute } from "./routes/ProtectedRoute.jsx";
 import LeaderboardPage from "./features/leaderboard/pages/leaderboardPage.jsx";
 import ShopPage from "./features/shop/pages/ShopPage.jsx";
 import QuestPage from "./features/quest/pages/questPage.jsx";
+import AboutPage from "./static/aboutPage.jsx";
+import TermsPage from "./static/termsPage.jsx";
+import PrivacyPage from "./static/privacyPage.jsx";
+import SignPage from "./static/signPage.jsx";
 
-const GOOGLE_CLIENT_ID =
-  import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-  "664530130587-8vjleihnfoepful69hq1efudap2m7ut9.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -27,6 +29,10 @@ createRoot(document.getElementById("root")).render(
         <Routes>
           {/* Public Landing */}
           <Route path="/" element={<App />} />
+          <Route path="/sign-language" element={<SignPage />} />
+          <Route path="/about-us" element={<AboutPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           {/* Guest Routes (Hanya untuk yang belum login) */}
           <Route element={<GuestRoute />}>
