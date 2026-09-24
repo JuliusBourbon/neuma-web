@@ -219,12 +219,27 @@ function ProfilePage() {
       {/* Header */}
       <div className="relative flex items-center justify-center mb-12 md:mb-24">
         {" "}
+        {/* Back Button */}
         <button
           type="button"
-          className="absolute left-0 text-4xl md:text-5xl text-white cursor-pointer leading-none"
           onClick={() => navigate("/home")}
+          aria-label="Back to home"
+          className="absolute left-0 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-tertiary text-white shadow-sm transition hover:bg-black active:scale-95"
         >
-          ‹
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
         </button>
         <h1 className="text-3xl md:text-4xl font-normal">Profile</h1>{" "}
       </div>
