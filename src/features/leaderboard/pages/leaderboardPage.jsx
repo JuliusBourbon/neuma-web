@@ -29,10 +29,10 @@ export default function LeaderboardPage() {
   }, []);
 
   const getAvatarUrl = (avatar) => {
-    // use backend imageUrl or fallback to local avatar
-    return avatar?.imageUrl
-      ? `http://localhost:3000${avatar.imageUrl}`
-      : firefly4;
+    if (!avatar || !avatar.imageUrl) return firefly4;
+    return avatar.imageUrl.startsWith("http")
+      ? avatar.imageUrl
+      : `http://localhost:3000${avatar.imageUrl}`;
   };
 
   return (
@@ -78,9 +78,9 @@ export default function LeaderboardPage() {
                     </div>
                     <span
                       className={`truncate max-w-30 md:max-w-xs ${isMe ? "font-semibold" : ""}`}
-                      title={isMe ? `${user.username} (You)` : user.username}
+                      title={isMe ? `${user.username || "Anonymous"} (You)` : (user.username || "Anonymous")}
                     >
-                      {user.username} {isMe ? "(You)" : ""}
+                      {user.username || "Anonymous"} {isMe ? "(You)" : ""}
                     </span>
                   </div>
                   <div className="flex items-center gap-4 md:gap-8 text-right">
@@ -119,9 +119,9 @@ export default function LeaderboardPage() {
               </div>
               <span
                 className="truncate max-w-30 md:max-w-xs font-semibold"
-                title={`${myRank.username} (You)`}
+                title={`${myRank.username || "Anonymous"} (You)`}
               >
-                {myRank.username} (You)
+                {myRank.username || "Anonymous"} (You)
               </span>
             </div>
             <div className="flex items-center gap-4 md:gap-8 text-right">
