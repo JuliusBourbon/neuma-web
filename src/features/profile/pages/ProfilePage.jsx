@@ -15,7 +15,11 @@ import {
   getMyStats,
 } from "../../../services/api/userService";
 import { getShopItems } from "../../../services/api/shopService";
-import { logout } from "../../../services/api/authService";
+import {
+  logout,
+  setPassword,
+  changePassword,
+} from "../../../services/api/authService";
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -218,6 +222,50 @@ function ProfilePage() {
     }
   };
 
+  const handlePasswordSubmit = async ({
+    oldPassword,
+    newPassword,
+    confirmPassword,
+  }) => {
+    try {
+      if (profile.hasPassword) {
+        await changePassword({
+          oldPassword,
+          newPassword,
+          confirmPassword,
+        });
+      } else {
+        await setPassword({
+          newPassword,
+          confirmPassword,
+        });
+      }
+
+      // Setelah berhasil, user sudah memiliki password
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        hasPassword: true,
+      }));
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        hasPassword: true,
+      }));
+
+      setMode("profile");
+
+      alert(
+        profile.hasPassword
+          ? "Password berhasil diubah."
+          : "Password berhasil dibuat.",
+      );
+    } catch (error) {
+      console.error("Gagal memproses password:", error);
+
+      alert(error?.message || "Terjadi kesalahan saat memproses password.");
+    }
+  };
+
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-primary">
       {/* Header */}
@@ -256,10 +304,9 @@ function ProfilePage() {
             {/* CHANGE PASSWORD MODE */}
             {mode === "password" && (
               <ProfilePasswordForm
+                hasPassword={profile.hasPassword}
                 onCancel={handleCancel}
-                onChangePassword={() => {
-                  console.log("Fitur change password belum tersedia.");
-                }}
+                onSubmit={handlePasswordSubmit}
               />
             )}
 
