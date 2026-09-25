@@ -17,9 +17,9 @@ export default function TopBar({
     return (
         <nav className={`fixed top-6 left-1/2 -translate-x-1/2 flex justify-between items-center text-tertiary px-6 md:px-8 py-3 md:py-4 z-50 w-[calc(100vw-2rem)] md:w-auto md:max-w-[calc(100vw-2rem)] bg-secondary/50 backdrop-blur-md shadow-2xl border border-tertiary/10 rounded-full animate-topbar ${customClasses}`.trim()}>
 
-            {brand && <a href='/' className='font-bold text-xl md:text-2xl mr-auto md:mr-60'>{brand}</a>}
+            {brand && <a href='/' className='font-bold text-xl md:text-2xl mr-auto md:mr-40'>{brand}</a>}
 
-            <div className='hidden md:flex gap-12 font-medium whitespace-nowrap'>
+            <div className='hidden md:flex lg:gap-10 md:gap-5 text-sm lg:text-base font-medium whitespace-nowrap'>
                 {links.map((link, index) => (
                     <a
                         key={link.id || index}
