@@ -43,6 +43,15 @@ function App() {
     }, 300) // matches the fade-out duration
   }
 
+  const handleAuthClick = (modalType) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      navigate('/home');
+    } else {
+      setAuthModal(modalType);
+    }
+  };
+
   const sectionRef = useRef(null)
   const [scrollYProgress, setScrollYProgress] = useState(0)
 
@@ -146,7 +155,7 @@ function App() {
   const navLinks = [
     { text: 'Sign Language', onClick: () => navigate('/sign-language') },
     { text: 'About Us', onClick: () => navigate('/about-us') },
-    { text: 'Sign in', onClick: () => setAuthModal('login') },
+    { text: 'Sign in', onClick: () => handleAuthClick('login') },
   ]
 
   return (
@@ -171,12 +180,12 @@ function App() {
             <FillRoundedButton
               text={lang === 'id' ? "Mulai Sekarang" : "Get Started"}
               classes="bg-tertiary text-primary"
-              onClick={() => setAuthModal('register')}
+              onClick={() => handleAuthClick('register')}
             />
             <FillRoundedButton
               text={lang === 'id' ? "Sudah punya akun" : "Already have an account"}
               classes="bg-secondary text-white"
-              onClick={() => setAuthModal('login')}
+              onClick={() => handleAuthClick('login')}
             />
           </div>
         </div>
@@ -264,7 +273,7 @@ function App() {
               <FillRoundedButton
                 text={lang === 'id' ? "Mulai Sekarang" : "Get Started"}
                 classes="bg-tertiary text-primary z-10"
-                onClick={() => setAuthModal('register')}
+                onClick={() => handleAuthClick('register')}
               />
             </div>
           </div>
