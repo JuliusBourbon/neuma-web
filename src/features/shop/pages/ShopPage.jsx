@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import CoinIcon from "../../../components/icons/coinIcon";
 
 import ShopItemCard from "../components/ShopItemCard";
-import ShopErrorModal from "../components/ShopErrorModal";
 import PageHeader from "../../../components/layout/PageHeader";
+import ShopModal from "../components/ShopModal";
 
 import {
   getShopItems,
@@ -18,14 +18,24 @@ function ShopPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [purchasingItemId, setPurchasingItemId] = useState(null);
-  const [error, setError] = useState("");
+
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [modalType, setModalType] = useState(null);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const closeModal = () => {
+    setModalType(null);
+    setSelectedItem(null);
+    setModalMessage("");
+  };
 
   // Ambil daftar item shop dan saldo currency
   useEffect(() => {
     async function fetchShopData() {
       try {
         setIsLoading(true);
-        setError("");
+        setModalType(null);
+        setModalMessage("");
 
         const [shopItems, userStats] = await Promise.all([
           getShopItems(),
@@ -36,7 +46,9 @@ function ShopPage() {
         setCurrencyBalance(userStats?.currencyBalance ?? 0);
       } catch (error) {
         console.error("Gagal mengambil data shop:", error);
-        setError("Gagal memuat data shop. Silakan coba lagi.");
+
+        setModalType("error");
+        setModalMessage("Gagal memuat data shop. Silakan coba lagi.");
       } finally {
         setIsLoading(false);
       }
@@ -45,30 +57,50 @@ function ShopPage() {
     fetchShopData();
   }, []);
 
-  // Handler pembelian item
-  const handlePurchase = async (item) => {
-    if (isPurchasing) return;
+  // Handler konfirmasi pembelian
+  const handlePurchase = (item) => {
+    if (isPurchasing || item.isOwned) return;
+
+    setSelectedItem(item);
+    setModalType("confirmation");
+    setModalMessage(
+      `Apakah kamu yakin ingin membeli ${
+        item.name?.id || item.name?.en || "Avatar"
+      } seharga ${item.price} Coins?`,
+    );
+  };
+
+  // Memproses pembelian setelah user melakukan konfirmasi
+  const confirmPurchase = async () => {
+    if (!selectedItem || isPurchasing) return;
 
     try {
       setIsPurchasing(true);
-      setPurchasingItemId(item.id);
-      setError("");
+      setPurchasingItemId(selectedItem.id);
 
-      const result = await purchaseShopItem(item.id);
+      const result = await purchaseShopItem(selectedItem.id);
 
-      // Perbarui saldo currency setelah pembelian
+      // Perbarui saldo currency
       setCurrencyBalance(result?.newCurrencyBalance ?? currencyBalance);
 
       // Tandai item sebagai sudah dimiliki
       setItems((previousItems) =>
         previousItems.map((shopItem) =>
-          shopItem.id === item.id
+          shopItem.id === selectedItem.id
             ? {
-              ...shopItem,
-              isOwned: true,
-            }
+                ...shopItem,
+                isOwned: true,
+              }
             : shopItem,
         ),
+      );
+
+      // Tutup modal setelah pembelian berhasil
+      setSelectedItem(null);
+      // Tampilkan modal berhasil
+      setModalType("success");
+      setModalMessage(
+        `${selectedItem.name?.id || selectedItem.name?.en || "Avatar"} berhasil dibeli!`,
       );
 
       console.log("Pembelian berhasil:", result);
@@ -80,7 +112,9 @@ function ShopPage() {
         error?.message ||
         "Pembelian gagal. Silakan coba lagi.";
 
-      setError(errorMessage);
+      // Ubah modal menjadi modal error
+      setModalType("error");
+      setModalMessage(errorMessage);
     } finally {
       setIsPurchasing(false);
       setPurchasingItemId(null);
@@ -89,10 +123,18 @@ function ShopPage() {
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-primary text-tertiary">
-      <ShopErrorModal
-        isOpen={Boolean(error)}
-        message={error}
-        onClose={() => setError("")}
+      <ShopModal
+        isOpen={Boolean(modalType)}
+        type={modalType}
+        message={modalMessage}
+        item={selectedItem}
+        onClose={() => {
+          if (isPurchasing) return;
+
+          closeModal();
+        }}
+        onConfirm={confirmPurchase}
+        isConfirming={isPurchasing}
       />
 
       <PageHeader title="Shop" showBackButton={true} backButtonPath="/home" />
