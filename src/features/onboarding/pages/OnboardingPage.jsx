@@ -134,7 +134,7 @@ function OnboardingPage() {
       {/* Top Navigation */}
       <div className="relative flex items-center justify-center px-4 pt-5 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
         {/* Progress Bar */}
-        <div className="flex w-full max-w-[520px] justify-center gap-2 sm:gap-3 md:gap-4">
+        <div className="flex w-full max-w-130 justify-center gap-2 sm:gap-3 md:gap-4">
           {[1, 2, 3, 4].map((step) => (
             <div
               key={step}
