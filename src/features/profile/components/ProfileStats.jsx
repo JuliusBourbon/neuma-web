@@ -11,35 +11,42 @@ function ProfileStats({
   totalXp,
   currencyBalance,
 }) {
+  const statItemClasses =
+    "flex items-center justify-center gap-3 text-lg whitespace-nowrap sm:text-xl";
+
   return (
-    <div className="p-8 grid grid-cols-2 gap-8 text-tertiary mx-10">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-6 px-6 py-7 text-tertiary sm:gap-x-8 sm:px-8">
       {/* Day Streak */}
-      <div className="text-xl flex justify-between items-center gap-2">
+      <div className={statItemClasses}>
         <StreakIcon color="#FE7236" />
-        {dayStreak} days
+        <span>{dayStreak} days</span>
       </div>
 
       {/* Rank */}
-      <div className="text-xl flex justify-between items-center gap-2">
-        <RankIcon color="#FE7236" />#{rank}
+      <div className={statItemClasses}>
+        <RankIcon color="#FE7236" />
+        <span>Rank #{rank}</span>
       </div>
 
       {/* Total XP */}
-      <div className="text-xl flex justify-between items-center gap-2">
+      <div className={statItemClasses}>
         <StarIcon color="#FE7236" />
-        {totalXp} XP
+        <span>{totalXp} XP</span>
       </div>
 
-      {/* Capaian Belajar */}
-      <div className="text-xl flex justify-between items-center gap-2">
+      {/* Capaian Belajar Abjad */}
+      <div className={statItemClasses}>
         <BookIcon color="#FE7236" />
-        {wordsCollected}
+        <span>{wordsCollected}/26</span>
       </div>
 
       {/* Currency */}
-      <div className="text-xl flex justify-between items-center gap-2">
-        <CoinIcon color="#FE7236" />
-        {currencyBalance}
+      <div className="col-span-2 flex items-center justify-center gap-3">
+        <div className="scale-125">
+          <CoinIcon color="#FE7236" />
+        </div>
+
+        <span className="text-2xl font-semibold">{currencyBalance} coins</span>
       </div>
     </div>
   );
