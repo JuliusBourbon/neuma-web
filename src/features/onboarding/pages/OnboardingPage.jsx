@@ -164,14 +164,14 @@ function OnboardingPage() {
   };
 
   const handleClose = () => {
-    console.log("Close onboarding");
+    navigate("/home");
   };
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-primary">
       {/* Floating Language Toggle */}
 
-      <button
+      {/* <button
         type="button"
         onClick={toggleLanguage}
         className="fixed right-8 top-8 z-50 hidden rounded-full border border-primary/20 bg-tertiary px-4 py-2 font-bold text-primary shadow-lg transition-transform hover:scale-105 active:scale-95 md:block"
@@ -183,7 +183,7 @@ function OnboardingPage() {
         }
       >
         {lang === "id" ? "EN" : "ID"}
-      </button>
+      </button> */}
       {/* Top Navigation */}
       <div className="relative flex items-center justify-center px-4 pt-5 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
         {/* Progress Bar */}
@@ -191,9 +191,8 @@ function OnboardingPage() {
           {[1, 2, 3, 4, 5].map((step) => (
             <div
               key={step}
-              className={`h-2 w-14 rounded-full sm:h-2.5 sm:w-20 md:h-3 md:w-32 ${
-                currentStep >= step ? "bg-tertiary" : "bg-secondary"
-              }`}
+              className={`h-2 w-14 rounded-full sm:h-2.5 sm:w-20 md:h-3 md:w-32 ${currentStep >= step ? "bg-tertiary" : "bg-secondary"
+                }`}
             />
           ))}
         </div>
@@ -202,7 +201,7 @@ function OnboardingPage() {
         <button
           type="button"
           onClick={handleClose}
-          className="absolute right-4 top-3 text-3xl font-light leading-none text-primary sm:right-6 sm:top-4 sm:text-4xl md:right-8 md:top-5"
+          className="absolute right-4 top-3 cursor-pointer text-3xl font-light leading-none text-tertiary sm:right-6 sm:top-4 sm:text-4xl md:right-8 md:top-5"
           aria-label="Close onboarding"
         >
           ×
@@ -221,14 +220,14 @@ function OnboardingPage() {
                 className="onboarding-fade-up h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
               />
 
-              <h1 className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
-                {lang === "id" ? "Pilih bahasa kamu" : "Choose your language"}
-              </h1>
+              <p className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+                {lang === "id" ? "Pilih bahasa yang ingin kamu gunakan di Neuma." : "Choose the language you want to use in Neuma."}
+              </p>
 
-              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
+              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-tertiary sm:mt-6 sm:text-lg">
                 {lang === "id"
-                  ? "Pilih bahasa yang ingin kamu gunakan di Neuma."
-                  : "Choose the language you want to use in Neuma."}
+                  ? "Kamu bisa mengubah bahasa kapan saja di pengaturan profil."
+                  : "You can change your language anytime in your profile settings."}
               </p>
 
               <div className="mt-6 flex w-full flex-col gap-3 sm:mt-8 sm:gap-4">
@@ -237,11 +236,10 @@ function OnboardingPage() {
                     key={option.value}
                     type="button"
                     onClick={() => handleLanguageSelect(option.value)}
-                    className={`rounded-2xl border-2 p-4 text-left transition-all duration-200 ${
-                      lang === option.value
-                        ? "border-tertiary bg-tertiary text-primary"
-                        : "border-secondary bg-white text-secondary hover:border-tertiary"
-                    }`}
+                    className={`cursor-pointer rounded-2xl border-2 p-4 text-left transition-all duration-200 ${lang === option.value
+                      ? "border-tertiary bg-tertiary text-primary"
+                      : "border-secondary bg-white text-secondary hover:border-tertiary"
+                      }`}
                   >
                     <p className="text-base font-bold sm:text-lg">
                       {option.label}
@@ -306,17 +304,46 @@ function OnboardingPage() {
                 />
               </div>
 
-              <h1 className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+              <p className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 {lang === "id"
-                  ? "Keren! Di Neuma, kita akan belajar Bahasa Isyarat bersama."
-                  : "Cool! Here at Neuma, we will learn Sign Language together."}
-              </h1>
-
-              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
-                {lang === "id"
-                  ? "Kami akan membimbingmu langkah demi langkah untuk belajar dan berlatih Bahasa Isyarat."
-                  : "We will guide you step by step to learn and practice Sign Language."}
+                  ? "Keren! Di Neuma, kita akan belajar Bahasa Isyarat bersama melalui 4 tahap:"
+                  : "Cool! Here at Neuma, we will learn Sign Language together through 4 stages:"}
               </p>
+
+              <div className="onboarding-fade-up-delay-more mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-left w-full max-w-2xl">
+                <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
+                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                    {lang === 'id' ? "1. Pelajari Huruf" : "1. Learn the Alphabet"}
+                  </h4>
+                  <p className="text-tertiary/80 text-sm sm:text-base">
+                    {lang === 'id' ? "Kenali bentuk tangan dari A sampai Z secara visual dan teori." : "Get to know the hand shapes from A to Z visually and theoretically."}
+                  </p>
+                </div>
+                <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
+                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                    {lang === 'id' ? "2. Kuis Interaktif" : "2. Interactive Quiz"}
+                  </h4>
+                  <p className="text-tertiary/80 text-sm sm:text-base">
+                    {lang === 'id' ? "Uji ingatanmu tentang bentuk-bentuk isyarat yang baru dipelajari." : "Test your memory of the newly learned sign shapes."}
+                  </p>
+                </div>
+                <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
+                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                    {lang === 'id' ? "3. Ujian Praktik" : "3. Practical Test"}
+                  </h4>
+                  <p className="text-tertiary/80 text-sm sm:text-base">
+                    {lang === 'id' ? "Peragakan isyarat di depan kamera dan AI akan mendeteksinya secara langsung." : "Perform signs in front of the camera and our AI will detect it in real-time."}
+                  </p>
+                </div>
+                <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
+                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                    {lang === 'id' ? "4. Mengeja Kata" : "4. Spelling Words"}
+                  </h4>
+                  <p className="text-tertiary/80 text-sm sm:text-base">
+                    {lang === 'id' ? "Tantang dirimu dengan merangkai isyarat huruf menjadi sebuah kata utuh." : "Challenge yourself by combining sign letters into a complete word."}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -331,14 +358,8 @@ function OnboardingPage() {
                 />
               </div>
 
-              <h1 className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+              <p className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 {lang === "id" ? "Mari kita mulai!" : "Let's get started!"}
-              </h1>
-
-              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
-                {lang === "id"
-                  ? "Semuanya sudah siap! Mari mulai belajar Bahasa Isyarat bersama Neuma."
-                  : "You're all set! Let's start learning Sign Language with Neuma."}
               </p>
             </div>
           )}
@@ -358,7 +379,7 @@ function OnboardingPage() {
           {/* Mobile Language Toggle + Next */}
           <div className="flex flex-col items-end gap-2">
             {/* Mobile Language Toggle */}
-            <button
+            {/* <button
               type="button"
               onClick={toggleLanguage}
               className="rounded-full border border-primary/20 bg-tertiary px-4 py-2 text-sm font-bold text-primary shadow-md transition-transform hover:scale-105 active:scale-95 md:hidden"
@@ -374,7 +395,7 @@ function OnboardingPage() {
               }
             >
               {lang === "id" ? "EN" : "ID"}
-            </button>
+            </button> */}
 
             {/* Next */}
             <ActionButton

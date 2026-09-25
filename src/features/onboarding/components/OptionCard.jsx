@@ -12,11 +12,10 @@ function OptionCard({ text, image, selected = false, onClick }) {
   transition-all duration-300 ease-out
   hover:-translate-y-1 hover:scale-[1.01]
   active:scale-[0.98]
-  ${
-    selected
-      ? "border-tertiary bg-tertiary text-primary shadow-md"
-      : "border-secondary bg-secondary text-primary hover:border-tertiary hover:shadow-md"
-  }
+  ${selected
+          ? "border-tertiary bg-tertiary text-primary shadow-md"
+          : "border-secondary bg-secondary/70 text-primary hover:border-tertiary hover:shadow-md"
+        }
 `}
     >
       {image && (
