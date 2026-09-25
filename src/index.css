@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
 body {
@@ -9,12 +9,12 @@ body {
 }
 
 @theme {
-  --color-primary: #E5FE96;
-  --color-secondary: #FE7236;
+  --color-primary: #e5fe96;
+  --color-secondary: #fe7236;
   --color-tertiary: #263200;
-  --color-neon: #C2FF00;
-  --color-orange: #FFD600;
-  --color-yellow: #F5FF00;
+  --color-neon: #c2ff00;
+  --color-orange: #ffd600;
+  --color-yellow: #f5ff00;
 }
 
 /* Custom Scrollbar */
@@ -55,7 +55,6 @@ body {
 
 /* Floating Animations for Mascots */
 @keyframes float-1 {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -67,7 +66,6 @@ body {
 }
 
 @keyframes float-2 {
-
   0%,
   100% {
     transform: translateY(0) translateX(0);
@@ -79,7 +77,6 @@ body {
 }
 
 @keyframes float-3 {
-
   0%,
   100% {
     transform: translateY(0) scale(1);
@@ -91,7 +88,6 @@ body {
 }
 
 @keyframes float-4 {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -249,4 +245,43 @@ body {
 
 .map-hint-container {
   animation: hint-fade-lifecycle 3.8s ease-in-out 1 forwards;
+}
+
+@keyframes onboardingFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes onboardingFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.onboarding-fade-up {
+  animation: onboardingFadeUp 0.6s ease-out both;
+}
+
+.onboarding-fade-up-delay {
+  animation: onboardingFadeUp 0.6s ease-out 0.2s both;
+}
+
+.onboarding-fade-up-delay-more {
+  animation: onboardingFadeUp 0.6s ease-out 0.4s both;
+}
+
+.onboarding-float {
+  animation: onboardingFloat 3s ease-in-out infinite;
 }
