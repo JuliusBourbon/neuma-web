@@ -24,13 +24,18 @@ function OnboardingPage() {
   const [selectedReason, setSelectedReason] = useState(null);
   const [typedText, setTypedText] = useState("");
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const toggleLanguage = () => {
     const newLang = lang === "id" ? "en" : "id";
 
     setLang(newLang);
     localStorage.setItem("neuma_lang", newLang);
+  };
+
+  const handleLanguageSelect = (selectedLanguage) => {
+    setLang(selectedLanguage);
+    localStorage.setItem("neuma_lang", selectedLanguage);
   };
 
   const knowledgeOptions = [
@@ -92,12 +97,25 @@ function OnboardingPage() {
     },
   ];
 
+  const languageOptions = [
+    {
+      value: "id",
+      label: "Bahasa Indonesia",
+      description: "Gunakan Bahasa Indonesia",
+    },
+    {
+      value: "en",
+      label: "English",
+      description: "Use English",
+    },
+  ];
+
   const dialogText =
-    currentStep === 1
+    currentStep === 2
       ? lang === "id"
         ? "Seberapa banyak yang kamu ketahui tentang Bahasa Isyarat?"
         : "How much do you know about Sign Language?"
-      : currentStep === 2
+      : currentStep === 3
         ? lang === "id"
           ? "Mengapa kamu ingin belajar Bahasa Isyarat?"
           : "Why do you want to learn Sign Language?"
@@ -132,7 +150,7 @@ function OnboardingPage() {
     }
 
     try {
-      await completeOnboarding();
+      await completeOnboarding(lang);
       navigate("/home");
     } catch (error) {
       console.error("Gagal menyelesaikan onboarding:", error);
@@ -170,7 +188,7 @@ function OnboardingPage() {
       <div className="relative flex items-center justify-center px-4 pt-5 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
         {/* Progress Bar */}
         <div className="flex w-full max-w-130 justify-center gap-2 sm:gap-3 md:gap-4">
-          {[1, 2, 3, 4].map((step) => (
+          {[1, 2, 3, 4, 5].map((step) => (
             <div
               key={step}
               className={`h-2 w-14 rounded-full sm:h-2.5 sm:w-20 md:h-3 md:w-32 ${
@@ -194,8 +212,51 @@ function OnboardingPage() {
       {/* Main Content */}
       <main className="flex flex-1 items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
         <div className="w-full max-w-2xl">
-          {/* Step 1 */}
+          {/* Step 1 - Language Selection */}
           {currentStep === 1 && (
+            <div className="flex flex-col items-center px-2 text-center sm:px-4">
+              <img
+                src={fireflyMain}
+                alt="Neuma mascot"
+                className="onboarding-fade-up h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
+              />
+
+              <h1 className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+                {lang === "id" ? "Pilih bahasa kamu" : "Choose your language"}
+              </h1>
+
+              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
+                {lang === "id"
+                  ? "Pilih bahasa yang ingin kamu gunakan di Neuma."
+                  : "Choose the language you want to use in Neuma."}
+              </p>
+
+              <div className="mt-6 flex w-full flex-col gap-3 sm:mt-8 sm:gap-4">
+                {languageOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleLanguageSelect(option.value)}
+                    className={`rounded-2xl border-2 p-4 text-left transition-all duration-200 ${
+                      lang === option.value
+                        ? "border-tertiary bg-tertiary text-primary"
+                        : "border-secondary bg-white text-secondary hover:border-tertiary"
+                    }`}
+                  >
+                    <p className="text-base font-bold sm:text-lg">
+                      {option.label}
+                    </p>
+
+                    <p className="mt-1 text-sm opacity-80">
+                      {option.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Step 2 */}
+          {currentStep === 2 && (
             <>
               <DialogBubble image={fireflyMain} text={typedText} />
 
@@ -214,8 +275,8 @@ function OnboardingPage() {
             </>
           )}
 
-          {/* Step 2 */}
-          {currentStep === 2 && (
+          {/* Step 3 */}
+          {currentStep === 3 && (
             <>
               <DialogBubble image={fireflyMain} text={typedText} />
 
@@ -234,8 +295,8 @@ function OnboardingPage() {
             </>
           )}
 
-          {/* Step 3 */}
-          {currentStep === 3 && (
+          {/* Step 4 */}
+          {currentStep === 4 && (
             <div className="flex flex-col items-center px-2 text-center sm:px-4">
               <div className="onboarding-fade-up">
                 <img
@@ -259,8 +320,8 @@ function OnboardingPage() {
             </div>
           )}
 
-          {/* Step 4 */}
-          {currentStep === 4 && (
+          {/* Step 5 */}
+          {currentStep === 5 && (
             <div className="flex flex-col items-center px-2 text-center sm:px-4">
               <div className="onboarding-fade-up">
                 <img
@@ -320,8 +381,8 @@ function OnboardingPage() {
               text={lang === "id" ? "Lanjut" : "Next"}
               onClick={handleNext}
               disabled={
-                (currentStep === 1 && !selectedKnowledge) ||
-                (currentStep === 2 && !selectedReason)
+                (currentStep === 2 && !selectedKnowledge) ||
+                (currentStep === 3 && !selectedReason)
               }
               classes="rounded-full bg-tertiary px-5 py-2.5 text-sm text-primary sm:px-8 sm:py-3 sm:text-base"
             />
@@ -331,5 +392,4 @@ function OnboardingPage() {
     </div>
   );
 }
-
 export default OnboardingPage;
