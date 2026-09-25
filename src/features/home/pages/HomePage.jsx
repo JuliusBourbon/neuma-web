@@ -3,15 +3,26 @@ import { useNavigate } from "react-router-dom";
 import TopBar from "../../../components/common/topBar";
 import LevelMap from "../components/LevelMap/LevelMap";
 import UserStats from "../components/userStats";
-import { getLevels } from "../../../services/api/levelService";
-import { getMyStats, getMyProfile } from "../../../services/api/userService";
+import { getHomeData } from "../../../services/api/userService";
 import { logout } from "../../../services/api/authService";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [levels, setLevels] = useState([]);
-  const [userStats, setUserStats] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [levels, setLevels] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("cachedLevels")) || [];
+    } catch {
+      return [];
+    }
+  });
+  const [userStats, setUserStats] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("cachedStats")) || null;
+    } catch {
+      return null;
+    }
+  });
+  const [isLoading, setIsLoading] = useState(levels.length === 0);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogout = async () => {
@@ -20,30 +31,32 @@ export default function HomePage() {
   };
 
   const fetchInitialData = async () => {
-    setIsLoading(true);
+    if (levels.length === 0) setIsLoading(true);
     setErrorMessage("");
     try {
-      const [levelsData, statsData, userProfile] = await Promise.all([
-        getLevels(),
-        getMyStats().catch((err) => {
-          console.warn("Gagal memuat statistik pengguna:", err);
-          return null;
-        }),
-        getMyProfile().catch((err) => {
-          console.warn("Gagal memuat profil pengguna:", err);
-          return null;
-        }),
-      ]);
-      setLevels(levelsData);
+      const response = await getHomeData();
+      const levelsData = response?.levels;
+      const statsData = response?.stats;
+      const userProfile = response?.user;
+
+      if (levelsData) {
+        setLevels(levelsData);
+        localStorage.setItem("cachedLevels", JSON.stringify(levelsData));
+      }
       if (statsData) {
         setUserStats(statsData);
+        localStorage.setItem("cachedStats", JSON.stringify(statsData));
       }
       if (userProfile) {
         setUser(userProfile);
         localStorage.setItem("user", JSON.stringify(userProfile));
       }
     } catch (err) {
-      setErrorMessage(err.message || "Gagal memuat level pembelajaran.");
+      if (levels.length === 0) {
+        setErrorMessage(err.message || "Gagal memuat data pembelajaran.");
+      } else {
+        console.warn("Background fetch failed:", err);
+      }
     } finally {
       setIsLoading(false);
     }

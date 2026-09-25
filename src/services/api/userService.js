@@ -21,6 +21,11 @@ export async function getMyStats() {
   return result.data?.stats;
 }
 
+export async function getHomeData() {
+  const result = await api.get("/users/me/home");
+  return result.data;
+}
+
 /**
  * Get current user profile
  * Endpoint: GET /api/users/me
