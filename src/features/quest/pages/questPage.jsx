@@ -18,16 +18,17 @@ export default function QuestPage() {
     const [quests, setQuests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [claimingQuestId, setClaimingQuestId] = useState(null);
 
-    const fetchQuests = async () => {
-        setIsLoading(true);
+    const fetchQuests = async (showLoading = true) => {
+        if (showLoading) setIsLoading(true);
         try {
             const data = await getQuests();
             setQuests(data.quests || []);
         } catch (err) {
             setError(err.message || (lang === 'id' ? "Gagal memuat quest." : "Failed to load quests."));
         } finally {
-            setIsLoading(false);
+            if (showLoading) setIsLoading(false);
         }
     };
 
@@ -36,12 +37,16 @@ export default function QuestPage() {
     }, []);
 
     const handleClaim = async (questId) => {
+        if (claimingQuestId) return; // Prevent multiple clicks
+        setClaimingQuestId(questId);
         try {
             await claimQuest(questId);
-            // Refresh quest list after claiming
-            fetchQuests();
+            // Refresh quest list after claiming without global loading
+            await fetchQuests(false);
         } catch (err) {
             alert(err.message || (lang === 'id' ? "Gagal mengklaim quest." : "Failed to claim quest."));
+        } finally {
+            setClaimingQuestId(null);
         }
     };
 
@@ -120,12 +125,16 @@ export default function QuestPage() {
                                         {isClaimed ? (
                                             <span className="text-xs font-bold text-secondary px-2 uppercase tracking-wide">{lang === 'id' ? "Selesai" : "Done"}</span>
                                         ) : isAchieved ? (
-                                            <button
-                                                onClick={() => handleClaim(quest.id)}
-                                                className="bg-secondary hover:brightness-110 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-secondary/30 cursor-pointer"
-                                            >
-                                                {lang === 'id' ? "Klaim!" : "Claim!"}
-                                            </button>
+                                            claimingQuestId === quest.id ? (
+                                                <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin my-1 mx-4"></div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleClaim(quest.id)}
+                                                    className="bg-secondary hover:brightness-110 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-secondary/30 cursor-pointer"
+                                                >
+                                                    {lang === 'id' ? "Klaim!" : "Claim!"}
+                                                </button>
+                                            )
                                         ) : (
                                             <span className="text-xs font-bold text-gray-500 px-2">
                                                 {quest.currentProgress} / {quest.targetValue}
