@@ -1,4 +1,4 @@
-export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, currentZoom = 1 }) {
+export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, currentZoom = 1, lang = 'id' }) {
     return (
         <aside
             aria-label="Map navigation controls"
@@ -9,7 +9,7 @@ export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, current
                 <button
                     type="button"
                     onClick={onZoomIn}
-                    title="Perbesar Peta (+)"
+                    title={lang === 'id' ? "Perbesar Peta (+)" : "Zoom In (+)"}
                     className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xl transition active:scale-90 cursor-pointer"
                 >
                     +
@@ -24,7 +24,7 @@ export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, current
                 <button
                     type="button"
                     onClick={onZoomOut}
-                    title="Perkecil Peta (-)"
+                    title={lang === 'id' ? "Perkecil Peta (-)" : "Zoom Out (-)"}
                     className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xl transition active:scale-90 cursor-pointer"
                 >
                     −
@@ -35,7 +35,7 @@ export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, current
             <button
                 type="button"
                 onClick={onResetFocus}
-                title="Pusatkan ke Level Aktif"
+                title={lang === 'id' ? "Pusatkan ke Level Aktif" : "Center on Active Level"}
                 className="w-12 h-12 rounded-2xl bg-secondary hover:brightness-110 text-white shadow-xl flex items-center justify-center transition active:scale-90 border-2 border-amber-200/50 cursor-pointer group"
             >
                 <svg

@@ -5,7 +5,7 @@ import LevelNode from "./levelNode";
 import MapControls from "./MapControls";
 import DragHandIcon from "../../../../components/icons/dragHandIcon";
 
-export default function LevelMap({ levels = [], avatar = null }) {
+export default function LevelMap({ levels = [], avatar = null, lang = 'id' }) {
     const containerRef = useRef(null);
 
     // State Transformasi Peta
@@ -306,6 +306,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
                                 isLatestUnlocked={level.orderIndex === latestUnlockedOrder}
                                 to={`/learning?levelId=${level.id}`}
                                 avatar={avatar}
+                                lang={lang}
                             />
                         );
                     });
@@ -321,6 +322,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
                 onZoomOut={handleZoomOut}
                 onResetFocus={handleResetFocus}
                 currentZoom={zoom}
+                lang={lang}
             />
 
             {/* Map Drag Hint */}
@@ -336,7 +338,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
                     </div>
 
                     <div className="text-secondary font-semibold py-2 text-center">
-                        Tahan klik &amp; geser untuk menjelajahi peta
+                        {lang === 'id' ? "Tahan klik & geser untuk menjelajahi peta" : "Click & drag to explore the map"}
                     </div>
                 </div>
             )}

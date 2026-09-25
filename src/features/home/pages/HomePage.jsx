@@ -4,7 +4,7 @@ import TopBar from "../../../components/common/topBar";
 import LevelMap from "../components/LevelMap/LevelMap";
 import UserStats from "../components/userStats";
 import { getLevels } from "../../../services/api/levelService";
-import { getMyStats } from "../../../services/api/userService";
+import { getMyStats, getMyProfile } from "../../../services/api/userService";
 import { logout } from "../../../services/api/authService";
 
 export default function HomePage() {
@@ -23,16 +23,24 @@ export default function HomePage() {
     setIsLoading(true);
     setErrorMessage("");
     try {
-      const [levelsData, statsData] = await Promise.all([
+      const [levelsData, statsData, userProfile] = await Promise.all([
         getLevels(),
         getMyStats().catch((err) => {
           console.warn("Gagal memuat statistik pengguna:", err);
+          return null;
+        }),
+        getMyProfile().catch((err) => {
+          console.warn("Gagal memuat profil pengguna:", err);
           return null;
         }),
       ]);
       setLevels(levelsData);
       if (statsData) {
         setUserStats(statsData);
+      }
+      if (userProfile) {
+        setUser(userProfile);
+        localStorage.setItem("user", JSON.stringify(userProfile));
       }
     } catch (err) {
       setErrorMessage(err.message || "Gagal memuat level pembelajaran.");
@@ -45,16 +53,7 @@ export default function HomePage() {
     fetchInitialData();
   }, []);
 
-  // List for TopBar
-  const navLinks = [
-    { text: "Home", href: "/home" },
-    { text: "Leaderboard", onClick: () => navigate("/leaderboard") },
-    { text: "Quest", onClick: () => navigate("/quest") },
-    { text: "Shop", href: "/shop" },
-    { text: "Profile", onClick: () => navigate("/profile") },
-  ];
-
-  const [user] = useState(() => {
+  const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "{}");
     } catch {
@@ -62,8 +61,18 @@ export default function HomePage() {
     }
   });
 
-  const activeAvatar =
-    userStats?.avatar || user?.avatarUrl || user?.avatar || null;
+  const lang = user?.preferredLanguage || 'id';
+
+  // List for TopBar
+  const navLinks = [
+    { text: lang === 'id' ? "Beranda" : "Home", href: "/home" },
+    { text: lang === 'id' ? "Peringkat" : "Leaderboard", onClick: () => navigate("/leaderboard") },
+    { text: lang === 'id' ? "Misi" : "Quest", onClick: () => navigate("/quest") },
+    { text: lang === 'id' ? "Toko" : "Shop", href: "/shop" },
+    { text: lang === 'id' ? "Profil" : "Profile", onClick: () => navigate("/profile") },
+  ];
+
+  const activeAvatar = userStats?.avatar || user?.avatarUrl || user?.avatar || null;
   const formattedAlphabet = `${String(userStats?.wordsCollected ?? 0).padStart(2, "0")}/26`;
 
   return (
@@ -76,7 +85,7 @@ export default function HomePage() {
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary z-40">
           <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-tertiary/80 font-medium text-sm tracking-wide">
-            Memuat Peta Petualangan BISINDO...
+            {lang === 'id' ? "Memuat Peta Petualangan BISINDO..." : "Loading BISINDO Adventure Map..."}
           </p>
         </div>
       ) : errorMessage ? (
@@ -88,13 +97,13 @@ export default function HomePage() {
               onClick={fetchInitialData}
               className="text-xs bg-secondary text-white px-5 py-2.5 rounded-xl font-bold hover:brightness-110 shadow transition cursor-pointer"
             >
-              Coba Lagi
+              {lang === 'id' ? "Coba Lagi" : "Try Again"}
             </button>
           </div>
         </div>
       ) : (
         <>
-          <LevelMap levels={levels} avatar={activeAvatar} />
+          <LevelMap levels={levels} avatar={activeAvatar} lang={lang} />
           {/* User Stats Floating Widget in Bottom Left */}
           <div className="fixed bottom-6 left-6 z-30 pointer-events-auto">
             <UserStats

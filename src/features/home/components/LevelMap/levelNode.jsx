@@ -10,6 +10,7 @@ export default function LevelNode({
     isLatestUnlocked,
     to = "/learning",
     onClick,
+    lang = 'id',
 }) {
     const navigate = useNavigate();
     const [openModal, setOpenModal] = useState(false);
@@ -21,8 +22,8 @@ export default function LevelNode({
     const isCurrentLevel = Boolean(isLatestUnlocked) && isAvailable;
     const isTest = level.type === "test";
 
-    const titleText = getText(level.title) || `Level ${level.orderIndex}`;
-    const descText = getText(level.description);
+    const titleText = getText(level.title, lang) || `Level ${level.orderIndex}`;
+    const descText = getText(level.description, lang);
 
     const handleNodeClick = (e) => {
         e.stopPropagation();
@@ -168,10 +169,10 @@ export default function LevelNode({
                             {isLocked && (
                                 <span className="inline-flex items-center gap-1 text-xs text-red-700 font-semibold bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
                                     <LockIcon className="w-3 h-3 text-red-600" />
-                                    <span>Terkunci</span>
+                                    <span>{lang === 'id' ? "Terkunci" : "Locked"}</span>
                                 </span>
                             )}
-                            {isCompleted && <span className="text-xs text-tertiary bg-neon px-3 py-1 rounded-full font-bold">✓ Selesai</span>}
+                            {isCompleted && <span className="text-xs text-tertiary bg-neon px-3 py-1 rounded-full font-bold">✓ {lang === 'id' ? "Selesai" : "Completed"}</span>}
                         </div>
 
                         <h4 className="font-bold text-base text-tertiary mt-1">
@@ -186,7 +187,7 @@ export default function LevelNode({
 
                         {isCompleted && (
                             <div className="text-xs font-semibold text-white bg-tertiary px-3 py-1 rounded-full mb-1">
-                                Skor Terbaik: {level.bestScore ?? 0}%
+                                {lang === 'id' ? "Skor Terbaik: " : "Best Score: "}{level.bestScore ?? 0}%
                             </div>
                         )}
 
@@ -202,7 +203,7 @@ export default function LevelNode({
                                 disabled
                                 className="mt-2 w-full py-2.5 px-4 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold cursor-not-allowed flex items-center justify-center gap-1.5"
                             >
-                                <span>Terkunci</span>
+                                <span>{lang === 'id' ? "Terkunci" : "Locked"}</span>
                                 <LockIcon className="w-4 h-4 text-gray-400" />
                             </button>
                         ) : (
@@ -214,7 +215,7 @@ export default function LevelNode({
                                     : "bg-secondary hover:brightness-105 text-white"
                                     }`}
                             >
-                                {isCompleted ? "Ulangi" : "Mulai"}
+                                {isCompleted ? (lang === 'id' ? "Ulangi" : "Retry") : (lang === 'id' ? "Mulai" : "Start")}
                             </button>
                         )}
                     </div>

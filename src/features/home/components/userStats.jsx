@@ -26,7 +26,7 @@ export default function UserStats({
                             className="w-full h-full object-cover"
                         />
                     ) : (
-                        <img src={firefly2} alt="" />
+                        <img src={firefly2} alt="Avatar" />
                     )}
                 </div>
             </div>
@@ -34,7 +34,7 @@ export default function UserStats({
             {/* Square */}
             <div className="flex items-center h-15 bg-neon pl-6 pr-6 py-2 rounded-r-2xl sm:rounded-r-3xl gap-10 border border-tertiary">
                 {/* Alphabet / Words Collected */}
-                <div className="flex flex-col items-center justify-center min-w-9">
+                <div className="flex flex-col items-center justify-center min-w-9" aria-label="Words Collected" title='Words Collected' >
                     <BookIcon size={24} color="#FE7236" />
                     <span className="text-xs sm:text-sm font-bold text-tertiary tracking-tight mt-0.5">
                         {alphabet}
@@ -42,7 +42,7 @@ export default function UserStats({
                 </div>
 
                 {/* Coins */}
-                <div className="flex flex-col items-center justify-center min-w-7">
+                <div className="flex flex-col items-center justify-center min-w-7" aria-label="Coins" title='Coins' >
                     <CoinIcon size={24} color="#FE7236" />
                     <span className="text-xs sm:text-sm font-bold text-tertiary tracking-tight mt-0.5">
                         {coins}
@@ -50,7 +50,7 @@ export default function UserStats({
                 </div>
 
                 {/* Rank */}
-                <div className="flex flex-col items-center justify-center min-w-6">
+                <div className="flex flex-col items-center justify-center min-w-6" aria-label="Rank" title='Rank' >
                     <RankIcon size={24} color="#FE7236" />
                     <span className="text-xs sm:text-sm font-bold text-tertiary tracking-tight mt-0.5">
                         {rank}
@@ -58,7 +58,7 @@ export default function UserStats({
                 </div>
 
                 {/* Streak / Flame */}
-                <div className="flex flex-col items-center justify-center min-w-6">
+                <div className="flex flex-col items-center justify-center min-w-6" aria-label="Streak" title='Streak' >
                     <StreakIcon size={24} color="#FE7236" active={streak > 0} />
                     <span className="text-xs sm:text-sm font-bold text-tertiary tracking-tight mt-0.5">
                         {streak}
