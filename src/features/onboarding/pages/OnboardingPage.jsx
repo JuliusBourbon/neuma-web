@@ -4,6 +4,9 @@ import ActionButton from "../../../components/common/actionButton";
 import DialogBubble from "../../../components/common/dialogBubble";
 import OptionCard from "../components/OptionCard";
 import fireflyMain from "../../../assets/onboarding/firefly-main.png";
+import mascot1 from "../../../assets/onboarding/mascot_1.png";
+import mascot3 from "../../../assets/onboarding/mascot_3.png";
+import mascot9 from "../../../assets/onboarding/mascot_9.png";
 import firefly1 from "../../../assets/onboarding/firefly-1.png";
 import firefly2 from "../../../assets/onboarding/firefly-2.png";
 import firefly3 from "../../../assets/onboarding/firefly-3.png";
@@ -215,7 +218,7 @@ function OnboardingPage() {
           {currentStep === 1 && (
             <div className="flex flex-col items-center px-2 text-center sm:px-4">
               <img
-                src={fireflyMain}
+                src={mascot1}
                 alt="Neuma mascot"
                 className="onboarding-fade-up h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
               />
@@ -256,7 +259,7 @@ function OnboardingPage() {
           {/* Step 2 */}
           {currentStep === 2 && (
             <>
-              <DialogBubble image={fireflyMain} text={typedText} />
+              <DialogBubble image={mascot3} text={typedText} />
 
               {/* Options */}
               <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
@@ -276,7 +279,7 @@ function OnboardingPage() {
           {/* Step 3 */}
           {currentStep === 3 && (
             <>
-              <DialogBubble image={fireflyMain} text={typedText} />
+              <DialogBubble image={mascot9} text={typedText} />
 
               {/* Options */}
               <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
@@ -352,7 +355,7 @@ function OnboardingPage() {
             <div className="flex flex-col items-center px-2 text-center sm:px-4">
               <div className="onboarding-fade-up">
                 <img
-                  src={fireflyMain}
+                  src={mascot1}
                   alt="Neuma mascot"
                   className="onboarding-float h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
                 />

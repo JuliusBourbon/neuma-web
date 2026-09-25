@@ -1,4 +1,4 @@
-import defaultMascot from "../../assets/onboarding/firefly-main.png";
+import defaultMascot from "../../assets/onboarding/mascot_1.png";
 
 /**
  * Reusable DialogBubble component (Image / Mascot + Speech Bubble).
