@@ -12,31 +12,47 @@ import { completeOnboarding } from "../../../services/api/onboardingService";
 
 function OnboardingPage() {
   const navigate = useNavigate();
+
+  const [lang, setLang] = useState(() => {
+    const savedLang = localStorage.getItem("neuma_lang");
+
+    return savedLang === "en" || savedLang === "id" ? savedLang : "id";
+  });
+
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedKnowledge, setSelectedKnowledge] = useState(null);
   const [selectedReason, setSelectedReason] = useState(null);
 
   const totalSteps = 4;
 
+  const toggleLanguage = () => {
+    const newLang = lang === "id" ? "en" : "id";
+
+    setLang(newLang);
+    localStorage.setItem("neuma_lang", newLang);
+  };
   const knowledgeOptions = [
     {
       value: "no-idea",
-      label: "No idea",
+      label: lang === "id" ? "Belum tahu" : "No idea",
       image: firefly1,
     },
     {
       value: "basic",
-      label: "Basic understanding",
+      label: lang === "id" ? "Pemahaman dasar" : "Basic understanding",
       image: firefly2,
     },
     {
       value: "studied-before",
-      label: "Have studied it before",
+      label:
+        lang === "id"
+          ? "Pernah mempelajarinya sebelumnya"
+          : "Have studied it before",
       image: firefly3,
     },
     {
       value: "knowledgeable",
-      label: "Knowledgeable",
+      label: lang === "id" ? "Sudah menguasai" : "Knowledgeable",
       image: firefly4,
     },
   ];
@@ -72,7 +88,6 @@ function OnboardingPage() {
 
     try {
       await completeOnboarding();
-
       navigate("/home");
     } catch (error) {
       console.error("Gagal menyelesaikan onboarding:", error);
@@ -90,16 +105,32 @@ function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-primary flex flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-primary">
+      {/* Floating Language Toggle */}
+
+      <button
+        type="button"
+        onClick={toggleLanguage}
+        className="fixed right-8 top-8 z-50 hidden rounded-full border border-primary/20 bg-tertiary px-4 py-2 font-bold text-primary shadow-lg transition-transform hover:scale-105 active:scale-95 md:block"
+        title={
+          lang === "id" ? "Switch to English" : "Ganti ke Bahasa Indonesia"
+        }
+        aria-label={
+          lang === "id" ? "Switch to English" : "Ganti ke Bahasa Indonesia"
+        }
+      >
+        {lang === "id" ? "EN" : "ID"}
+      </button>
       {/* Top Navigation */}
-      <div className="relative flex items-center justify-center px-8 pt-8">
+      <div className="relative flex items-center justify-center px-4 pt-5 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
         {/* Progress Bar */}
-        <div className="flex gap-4">
+        <div className="flex w-full max-w-[520px] justify-center gap-2 sm:gap-3 md:gap-4">
           {[1, 2, 3, 4].map((step) => (
             <div
               key={step}
-              className={`h-3 w-32 rounded-full ${currentStep >= step ? "bg-tertiary" : "bg-secondary"
-                }`}
+              className={`h-2 w-14 rounded-full sm:h-2.5 sm:w-20 md:h-3 md:w-32 ${
+                currentStep >= step ? "bg-tertiary" : "bg-secondary"
+              }`}
             />
           ))}
         </div>
@@ -108,15 +139,15 @@ function OnboardingPage() {
         <button
           type="button"
           onClick={handleClose}
-          className="absolute right-8 top-5 text-4xl font-light leading-none text-primary"
+          className="absolute right-4 top-3 text-3xl font-light leading-none text-primary sm:right-6 sm:top-4 sm:text-4xl md:right-8 md:top-5"
           aria-label="Close onboarding"
         >
           ×
         </button>
       </div>
 
-      {/* Main content */}
-      <div className="flex flex-1 items-center justify-center px-6 py-10">
+      {/* Main Content */}
+      <main className="flex flex-1 items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
         <div className="w-full max-w-2xl">
           {/* Step 1 */}
           {currentStep === 1 && (
@@ -127,7 +158,7 @@ function OnboardingPage() {
               />
 
               {/* Options */}
-              <div className="flex flex-col gap-4">
+              <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
                 {knowledgeOptions.map((option) => (
                   <OptionCard
                     key={option.value}
@@ -150,7 +181,7 @@ function OnboardingPage() {
               />
 
               {/* Options */}
-              <div className="flex flex-col gap-4">
+              <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
                 {reasonOptions.map((option) => (
                   <OptionCard
                     key={option.value}
@@ -166,18 +197,18 @@ function OnboardingPage() {
 
           {/* Step 3 */}
           {currentStep === 3 && (
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center px-2 text-center sm:px-4">
               <img
                 src={fireflyMain}
                 alt="Neuma mascot"
-                className="h-32 w-32 object-contain"
+                className="h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
               />
 
-              <h1 className="mt-8 text-3xl font-bold text-tertiary">
+              <h1 className="mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 Cool! Here at Neuma, we will learn Sign Language together.
               </h1>
 
-              <p className="mt-6 text-lg text-primary">
+              <p className="mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
                 We will guide you step by step to learn and practice Sign
                 Language.
               </p>
@@ -186,48 +217,69 @@ function OnboardingPage() {
 
           {/* Step 4 */}
           {currentStep === 4 && (
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center px-2 text-center sm:px-4">
               <img
                 src={fireflyMain}
                 alt="Neuma mascot"
-                className="h-32 w-32 object-contain"
+                className="h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
               />
 
-              <h1 className="mt-8 text-3xl font-bold text-tertiary">
+              <h1 className="mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 Let's get started!
               </h1>
 
-              <p className="mt-6 text-lg text-primary">
+              <p className="mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
                 You're all set! Let's start learning Sign Language with Neuma.
               </p>
             </div>
           )}
         </div>
-      </div>
-
-      {/* FOOTER BUTTON */}
-      <div className="border-t border-primary/30 px-8 py-6">
-        <div className="flex items-center justify-between">
+      </main>
+      {/* Footer Button */}
+      <footer className="border-t border-primary/30 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+        <div className="flex items-end justify-between gap-4">
           {/* Back */}
           <ActionButton
             text="Back"
             onClick={handleBack}
             disabled={currentStep === 1}
-            classes="rounded-full bg-secondary px-8 py-3 text-white"
+            classes="rounded-full bg-secondary px-5 py-2.5 text-sm text-white sm:px-8 sm:py-3 sm:text-base"
           />
 
-          {/* Next */}
-          <ActionButton
-            text="Next"
-            onClick={handleNext}
-            disabled={
-              (currentStep === 1 && !selectedKnowledge) ||
-              (currentStep === 2 && !selectedReason)
-            }
-            classes="rounded-full bg-tertiary px-8 py-3 text-primary"
-          />
+          {/* Mobile Language Toggle + Next */}
+          <div className="flex flex-col items-end gap-2">
+            {/* Mobile Language Toggle */}
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="rounded-full border border-primary/20 bg-tertiary px-4 py-2 text-sm font-bold text-primary shadow-md transition-transform hover:scale-105 active:scale-95 md:hidden"
+              title={
+                lang === "id"
+                  ? "Switch to English"
+                  : "Ganti ke Bahasa Indonesia"
+              }
+              aria-label={
+                lang === "id"
+                  ? "Switch to English"
+                  : "Ganti ke Bahasa Indonesia"
+              }
+            >
+              {lang === "id" ? "EN" : "ID"}
+            </button>
+
+            {/* Next */}
+            <ActionButton
+              text="Next"
+              onClick={handleNext}
+              disabled={
+                (currentStep === 1 && !selectedKnowledge) ||
+                (currentStep === 2 && !selectedReason)
+              }
+              classes="rounded-full bg-tertiary px-5 py-2.5 text-sm text-primary sm:px-8 sm:py-3 sm:text-base"
+            />
+          </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
