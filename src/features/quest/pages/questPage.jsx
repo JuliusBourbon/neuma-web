@@ -2,9 +2,19 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CoinIcon from "../../../components/icons/coinIcon";
 import { getQuests, claimQuest } from "../../../services/api/questService";
+import { getText } from "../../../utils/text";
 
 export default function QuestPage() {
     const navigate = useNavigate();
+    const [user] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("user") || "{}");
+        } catch {
+            return {};
+        }
+    });
+    const lang = user?.preferredLanguage || 'id';
+
     const [quests, setQuests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,7 +25,7 @@ export default function QuestPage() {
             const data = await getQuests();
             setQuests(data.quests || []);
         } catch (err) {
-            setError(err.message || "Gagal memuat quest.");
+            setError(err.message || (lang === 'id' ? "Gagal memuat quest." : "Failed to load quests."));
         } finally {
             setIsLoading(false);
         }
@@ -31,7 +41,7 @@ export default function QuestPage() {
             // Refresh quest list after claiming
             fetchQuests();
         } catch (err) {
-            alert(err.message || "Gagal mengklaim quest.");
+            alert(err.message || (lang === 'id' ? "Gagal mengklaim quest." : "Failed to claim quest."));
         }
     };
 
@@ -57,7 +67,7 @@ export default function QuestPage() {
             </div>
 
             <div className="flex items-center justify-center shrink-0">
-                <h3 className="text-lg md:text-xl font-medium text-secondary">Selesaikan misi dan dapatkan coin!</h3>
+                <h3 className="text-lg md:text-xl font-medium text-secondary">{lang === 'id' ? "Selesaikan misi dan dapatkan coin!" : "Complete quests and earn coins!"}</h3>
             </div>
 
             <div className="flex-1 overflow-y-auto pb-20 mt-6 py-2 custom-scrollbar">
@@ -69,13 +79,13 @@ export default function QuestPage() {
                     ) : error ? (
                         <div className="text-red-500 mt-10 font-medium">{error}</div>
                     ) : quests.length === 0 ? (
-                        <div className="text-gray-500 mt-10">Belum ada quest yang tersedia.</div>
+                        <div className="text-gray-500 mt-10">{lang === 'id' ? "Belum ada quest yang tersedia." : "No quests available."}</div>
                     ) : (
                         quests.map((quest) => {
                             const isClaimed = quest.status === 'claimed';
                             const isAchieved = quest.status === 'achieved';
-                            const title = quest.title.id || quest.title.en;
-                            const description = quest.description.id || quest.description.en;
+                            const title = getText(quest.title, lang);
+                            const description = getText(quest.description, lang);
 
                             return (
                                 <div
@@ -108,13 +118,13 @@ export default function QuestPage() {
                                         </div>
 
                                         {isClaimed ? (
-                                            <span className="text-xs font-bold text-secondary px-2 uppercase tracking-wide">Selesai</span>
+                                            <span className="text-xs font-bold text-secondary px-2 uppercase tracking-wide">{lang === 'id' ? "Selesai" : "Done"}</span>
                                         ) : isAchieved ? (
                                             <button
                                                 onClick={() => handleClaim(quest.id)}
                                                 className="bg-secondary hover:brightness-110 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-secondary/30 cursor-pointer"
                                             >
-                                                Klaim!
+                                                {lang === 'id' ? "Klaim!" : "Claim!"}
                                             </button>
                                         ) : (
                                             <span className="text-xs font-bold text-gray-500 px-2">
