@@ -60,22 +60,32 @@ function OnboardingPage() {
   const reasonOptions = [
     {
       value: "communication",
-      label: "To communicate with Deaf people",
+      label:
+        lang === "id"
+          ? "Untuk berkomunikasi dengan teman Tuli"
+          : "To communicate with Deaf people",
       image: firefly1,
     },
     {
       value: "family-friends",
-      label: "For my family or friends",
+      label:
+        lang === "id"
+          ? "Untuk keluarga atau teman"
+          : "For my family or friends",
       image: firefly2,
     },
     {
       value: "work-school",
-      label: "For work or school",
+      label:
+        lang === "id" ? "Untuk pekerjaan atau sekolah" : "For work or school",
       image: firefly3,
     },
     {
       value: "interest",
-      label: "I'm interested in Sign Language",
+      label:
+        lang === "id"
+          ? "Saya tertarik dengan Bahasa Isyarat"
+          : "I'm interested in Sign Language",
       image: firefly4,
     },
   ];
@@ -154,7 +164,11 @@ function OnboardingPage() {
             <>
               <DialogBubble
                 image={fireflyMain}
-                text="How much do you know about Sign Language?"
+                text={
+                  lang === "id"
+                    ? "Seberapa banyak yang kamu ketahui tentang Bahasa Isyarat?"
+                    : "How much do you know about Sign Language?"
+                }
               />
 
               {/* Options */}
@@ -177,7 +191,11 @@ function OnboardingPage() {
             <>
               <DialogBubble
                 image={fireflyMain}
-                text="Why do you want to learn Sign Language?"
+                text={
+                  lang === "id"
+                    ? "Mengapa kamu ingin belajar Bahasa Isyarat?"
+                    : "Why do you want to learn Sign Language?"
+                }
               />
 
               {/* Options */}
@@ -205,12 +223,15 @@ function OnboardingPage() {
               />
 
               <h1 className="mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
-                Cool! Here at Neuma, we will learn Sign Language together.
+                {lang === "id"
+                  ? "Keren! Di Neuma, kita akan belajar Bahasa Isyarat bersama."
+                  : "Cool! Here at Neuma, we will learn Sign Language together."}
               </h1>
 
               <p className="mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
-                We will guide you step by step to learn and practice Sign
-                Language.
+                {lang === "id"
+                  ? "Kami akan membimbingmu langkah demi langkah untuk belajar dan berlatih Bahasa Isyarat."
+                  : "We will guide you step by step to learn and practice Sign Language."}
               </p>
             </div>
           )}
@@ -225,11 +246,13 @@ function OnboardingPage() {
               />
 
               <h1 className="mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
-                Let's get started!
+                {lang === "id" ? "Mari kita mulai!" : "Let's get started!"}
               </h1>
 
               <p className="mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
-                You're all set! Let's start learning Sign Language with Neuma.
+                {lang === "id"
+                  ? "Semuanya sudah siap! Mari mulai belajar Bahasa Isyarat bersama Neuma."
+                  : "You're all set! Let's start learning Sign Language with Neuma."}
               </p>
             </div>
           )}
@@ -240,7 +263,7 @@ function OnboardingPage() {
         <div className="flex items-end justify-between gap-4">
           {/* Back */}
           <ActionButton
-            text="Back"
+            text={lang === "id" ? "Kembali" : "Back"}
             onClick={handleBack}
             disabled={currentStep === 1}
             classes="rounded-full bg-secondary px-5 py-2.5 text-sm text-white sm:px-8 sm:py-3 sm:text-base"
@@ -269,7 +292,7 @@ function OnboardingPage() {
 
             {/* Next */}
             <ActionButton
-              text="Next"
+              text={lang === "id" ? "Lanjut" : "Next"}
               onClick={handleNext}
               disabled={
                 (currentStep === 1 && !selectedKnowledge) ||
