@@ -10,8 +10,18 @@ import {
   purchaseShopItem,
 } from "../../../services/api/shopService";
 import { getMyStats } from "../../../services/api/userService";
+import { getText } from "../../../utils/text";
 
 function ShopPage() {
+  const [user] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  });
+  const lang = user?.preferredLanguage || 'id';
+
   const [items, setItems] = useState([]);
   const [currencyBalance, setCurrencyBalance] = useState(0);
 
@@ -48,7 +58,7 @@ function ShopPage() {
         console.error("Gagal mengambil data shop:", error);
 
         setModalType("error");
-        setModalMessage("Gagal memuat data shop. Silakan coba lagi.");
+        setModalMessage(lang === 'id' ? "Gagal memuat data shop. Silakan coba lagi." : "Failed to load shop data. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -64,9 +74,9 @@ function ShopPage() {
     setSelectedItem(item);
     setModalType("confirmation");
     setModalMessage(
-      `Apakah kamu yakin ingin membeli ${
-        item.name?.id || item.name?.en || "Avatar"
-      } seharga ${item.price} Coins?`,
+      lang === 'id'
+        ? `Apakah kamu yakin ingin membeli ${getText(item.name, lang) || "Avatar"} seharga ${item.price} Coins?`
+        : `Are you sure you want to buy ${getText(item.name, lang) || "Avatar"} for ${item.price} Coins?`
     );
   };
 
@@ -88,9 +98,9 @@ function ShopPage() {
         previousItems.map((shopItem) =>
           shopItem.id === selectedItem.id
             ? {
-                ...shopItem,
-                isOwned: true,
-              }
+              ...shopItem,
+              isOwned: true,
+            }
             : shopItem,
         ),
       );
@@ -100,17 +110,23 @@ function ShopPage() {
       // Tampilkan modal berhasil
       setModalType("success");
       setModalMessage(
-        `${selectedItem.name?.id || selectedItem.name?.en || "Avatar"} berhasil dibeli!`,
+        lang === 'id'
+          ? `${getText(selectedItem.name, lang) || "Avatar"} berhasil dibeli!`
+          : `${getText(selectedItem.name, lang) || "Avatar"} successfully purchased!`
       );
 
       console.log("Pembelian berhasil:", result);
     } catch (error) {
       console.error("Gagal membeli item:", error);
 
-      const errorMessage =
+      let errorMessage =
         error?.response?.data?.message ||
         error?.message ||
-        "Pembelian gagal. Silakan coba lagi.";
+        (lang === 'id' ? "Pembelian gagal. Silakan coba lagi." : "Purchase failed. Please try again.");
+
+      if (lang !== 'id' && errorMessage === "Saldo currency tidak mencukupi.") {
+        errorMessage = "Insufficient currency balance.";
+      }
 
       // Ubah modal menjadi modal error
       setModalType("error");
@@ -122,7 +138,7 @@ function ShopPage() {
   };
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-primary text-tertiary">
+    <div className="flex h-dvh flex-col overflow-hidden justify-between bg-primary text-tertiary">
       <ShopModal
         isOpen={Boolean(modalType)}
         type={modalType}
@@ -135,6 +151,7 @@ function ShopPage() {
         }}
         onConfirm={confirmPurchase}
         isConfirming={isPurchasing}
+        lang={lang}
       />
 
       <PageHeader title="Shop" showBackButton={true} backButtonPath="/home" />
@@ -149,24 +166,25 @@ function ShopPage() {
       </div>
 
       {/* Shop Content */}
-      <div className="mx-4 mb-6 flex min-h-0 flex-col overflow-hidden rounded-2xl bg-tertiary p-3 sm:mx-6 sm:rounded-3xl sm:p-6 lg:mx-auto lg:w-full lg:max-w-350 lg:px-10">
+      <div className="mx-4 mb-6 flex h-dvh md:min-h-0 flex-col overflow-hidden rounded-2xl bg-tertiary p-3 sm:mx-6 sm:rounded-3xl sm:p-6 lg:mx-auto lg:w-full lg:max-w-350 lg:px-10">
         {isLoading ? (
           <div className="flex min-h-75 items-center justify-center">
-            <p className="text-lg text-primary">Loading shop...</p>
+            <p className="text-lg text-primary">{lang === 'id' ? "Memuat shop..." : "Loading shop..."}</p>
           </div>
         ) : items.length === 0 ? (
           <div className="flex min-h-75 items-center justify-center">
-            <p className="text-lg text-primary">Belum ada item di shop.</p>
+            <p className="text-lg text-primary">{lang === 'id' ? "Belum ada item di shop." : "No items in the shop yet."}</p>
           </div>
         ) : (
-          <div className="min-h-0 max-h-[55dvh] overflow-y-auto px-2 py-2 sm:max-h-[60dvh] lg:max-h-none lg:flex-1 custom-scrollbar-primary">
-            <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+          <div className="min-h-0 md:max-h-[80dvh] overflow-y-auto px-2 py-2 sm:max-h-[60dvh] lg:max-h-none lg:flex-1 custom-scrollbar-primary">
+            <div className="grid justify-items-center gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
               {items.map((item) => (
                 <ShopItemCard
                   key={item.id}
                   item={item}
                   isPurchasing={isPurchasing && purchasingItemId === item.id}
                   onPurchase={handlePurchase}
+                  lang={lang}
                 />
               ))}
             </div>

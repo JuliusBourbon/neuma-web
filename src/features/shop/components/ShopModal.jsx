@@ -1,4 +1,5 @@
 import CoinIcon from "../../../components/icons/coinIcon";
+import { getText } from "../../../utils/text";
 
 function ShopModal({
   isOpen,
@@ -8,6 +9,7 @@ function ShopModal({
   onClose,
   onConfirm,
   isConfirming = false,
+  lang = 'id',
 }) {
   if (!isOpen) {
     return null;
@@ -16,13 +18,13 @@ function ShopModal({
   const isConfirmation = type === "confirmation";
   const isSuccess = type === "success";
 
-  const itemName = item?.name?.id || item?.name?.en || "Avatar";
+  const itemName = getText(item?.name, lang) || "Avatar";
 
   const title = isConfirmation
-    ? "Konfirmasi Pembelian"
+    ? (lang === 'id' ? "Konfirmasi Pembelian" : "Purchase Confirmation")
     : isSuccess
-      ? "Pembelian Berhasil"
-      : "Pembayaran Gagal";
+      ? (lang === 'id' ? "Pembelian Berhasil" : "Purchase Successful")
+      : (lang === 'id' ? "Pembayaran Gagal" : "Payment Failed");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-tertiary/70 px-4 backdrop-blur-sm">
@@ -58,13 +60,13 @@ function ShopModal({
         )}
 
         {/* Message */}
-        <p className="mt-4 text-base leading-relaxed text-tertiary/80">
+        <p>
           {message ||
             (isConfirmation
-              ? "Apakah kamu yakin ingin membeli item ini?"
+              ? (lang === 'id' ? "Apakah kamu yakin ingin membeli item ini?" : "Are you sure you want to buy this item?")
               : isSuccess
-                ? "Item berhasil dibeli dan ditambahkan ke koleksimu."
-                : "Pembelian gagal. Silakan coba lagi.")}
+                ? (lang === 'id' ? "Item berhasil dibeli dan ditambahkan ke koleksimu." : "Item successfully purchased and added to your collection.")
+                : (lang === 'id' ? "Pembelian gagal. Silakan coba lagi." : "Purchase failed. Please try again."))}
         </p>
 
         {/* Actions */}
@@ -77,7 +79,7 @@ function ShopModal({
               disabled={isConfirming}
               className="rounded-full border-2 border-secondary px-6 py-3 font-medium text-secondary transition hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Batal
+              {lang === 'id' ? "Batal" : "Cancel"}
             </button>
 
             {/* Confirm Button */}
@@ -87,7 +89,7 @@ function ShopModal({
               disabled={isConfirming}
               className="rounded-full bg-secondary px-6 py-3 font-medium text-white transition hover:bg-secondary/80 disabled:cursor-wait disabled:opacity-60"
             >
-              {isConfirming ? "Membeli..." : "Beli"}
+              {isConfirming ? (lang === 'id' ? "Membeli..." : "Purchasing...") : (lang === 'id' ? "Beli" : "Buy")}
             </button>
           </div>
         ) : (
@@ -97,7 +99,7 @@ function ShopModal({
             onClick={onClose}
             className="mt-6 rounded-full bg-secondary px-8 py-3 font-medium text-white transition hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2"
           >
-            {isSuccess ? "Lanjutkan" : "Tutup"}
+            {isSuccess ? (lang === 'id' ? "Lanjutkan" : "Continue") : (lang === 'id' ? "Tutup" : "Close")}
           </button>
         )}
       </div>

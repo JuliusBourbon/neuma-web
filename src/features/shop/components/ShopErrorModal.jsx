@@ -1,4 +1,4 @@
-function ShopErrorModal({ isOpen, message, onClose }) {
+function ShopErrorModal({ isOpen, message, onClose, lang = 'id' }) {
   if (!isOpen) {
     return null;
   }
@@ -12,7 +12,9 @@ function ShopErrorModal({ isOpen, message, onClose }) {
         </div>
 
         {/* Judul */}
-        <h2 className="text-2xl font-bold text-tertiary">Pembayaran Gagal</h2>
+        <h2 className="text-2xl font-bold text-tertiary">
+          {lang === 'id' ? "Pembayaran Gagal" : "Payment Failed"}
+        </h2>
 
         {/* Message */}
         <p className="mt-3 text-base leading-relaxed text-tertiary/80">
@@ -25,7 +27,7 @@ function ShopErrorModal({ isOpen, message, onClose }) {
           onClick={onClose}
           className="mt-6 rounded-full bg-secondary px-8 py-3 font-medium text-white transition hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2"
         >
-          Tutup
+          {lang === 'id' ? "Tutup" : "Close"}
         </button>
       </div>
     </div>
