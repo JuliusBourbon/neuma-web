@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ActionButton from "../../../components/common/actionButton";
 import DialogBubble from "../../../components/common/dialogBubble";
@@ -22,6 +22,7 @@ function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedKnowledge, setSelectedKnowledge] = useState(null);
   const [selectedReason, setSelectedReason] = useState(null);
+  const [typedText, setTypedText] = useState("");
 
   const totalSteps = 4;
 
@@ -31,6 +32,7 @@ function OnboardingPage() {
     setLang(newLang);
     localStorage.setItem("neuma_lang", newLang);
   };
+
   const knowledgeOptions = [
     {
       value: "no-idea",
@@ -89,6 +91,39 @@ function OnboardingPage() {
       image: firefly4,
     },
   ];
+
+  const dialogText =
+    currentStep === 1
+      ? lang === "id"
+        ? "Seberapa banyak yang kamu ketahui tentang Bahasa Isyarat?"
+        : "How much do you know about Sign Language?"
+      : currentStep === 2
+        ? lang === "id"
+          ? "Mengapa kamu ingin belajar Bahasa Isyarat?"
+          : "Why do you want to learn Sign Language?"
+        : "";
+
+  useEffect(() => {
+    if (!dialogText) {
+      return;
+    }
+
+    let currentIndex = 0;
+
+    const intervalId = setInterval(() => {
+      currentIndex += 1;
+
+      setTypedText(dialogText.slice(0, currentIndex));
+
+      if (currentIndex >= dialogText.length) {
+        clearInterval(intervalId);
+      }
+    }, 35);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dialogText]);
 
   const handleNext = async () => {
     if (currentStep < totalSteps) {
@@ -162,14 +197,7 @@ function OnboardingPage() {
           {/* Step 1 */}
           {currentStep === 1 && (
             <>
-              <DialogBubble
-                image={fireflyMain}
-                text={
-                  lang === "id"
-                    ? "Seberapa banyak yang kamu ketahui tentang Bahasa Isyarat?"
-                    : "How much do you know about Sign Language?"
-                }
-              />
+              <DialogBubble image={fireflyMain} text={typedText} />
 
               {/* Options */}
               <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
@@ -189,14 +217,7 @@ function OnboardingPage() {
           {/* Step 2 */}
           {currentStep === 2 && (
             <>
-              <DialogBubble
-                image={fireflyMain}
-                text={
-                  lang === "id"
-                    ? "Mengapa kamu ingin belajar Bahasa Isyarat?"
-                    : "Why do you want to learn Sign Language?"
-                }
-              />
+              <DialogBubble image={fireflyMain} text={typedText} />
 
               {/* Options */}
               <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:gap-4">
@@ -216,19 +237,21 @@ function OnboardingPage() {
           {/* Step 3 */}
           {currentStep === 3 && (
             <div className="flex flex-col items-center px-2 text-center sm:px-4">
-              <img
-                src={fireflyMain}
-                alt="Neuma mascot"
-                className="h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
-              />
+              <div className="onboarding-fade-up">
+                <img
+                  src={fireflyMain}
+                  alt="Neuma mascot"
+                  className="onboarding-float h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
+                />
+              </div>
 
-              <h1 className="mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+              <h1 className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 {lang === "id"
                   ? "Keren! Di Neuma, kita akan belajar Bahasa Isyarat bersama."
                   : "Cool! Here at Neuma, we will learn Sign Language together."}
               </h1>
 
-              <p className="mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
+              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
                 {lang === "id"
                   ? "Kami akan membimbingmu langkah demi langkah untuk belajar dan berlatih Bahasa Isyarat."
                   : "We will guide you step by step to learn and practice Sign Language."}
@@ -239,17 +262,19 @@ function OnboardingPage() {
           {/* Step 4 */}
           {currentStep === 4 && (
             <div className="flex flex-col items-center px-2 text-center sm:px-4">
-              <img
-                src={fireflyMain}
-                alt="Neuma mascot"
-                className="h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
-              />
+              <div className="onboarding-fade-up">
+                <img
+                  src={fireflyMain}
+                  alt="Neuma mascot"
+                  className="onboarding-float h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
+                />
+              </div>
 
-              <h1 className="mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+              <h1 className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 {lang === "id" ? "Mari kita mulai!" : "Let's get started!"}
               </h1>
 
-              <p className="mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
+              <p className="onboarding-fade-up-delay-more mt-4 text-base leading-relaxed text-primary sm:mt-6 sm:text-lg">
                 {lang === "id"
                   ? "Semuanya sudah siap! Mari mulai belajar Bahasa Isyarat bersama Neuma."
                   : "You're all set! Let's start learning Sign Language with Neuma."}
