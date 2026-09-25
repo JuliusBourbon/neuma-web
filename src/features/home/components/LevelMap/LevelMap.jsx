@@ -3,13 +3,14 @@ import { MAP_DIMENSIONS, getLevelPosition } from "./levelMapConfig";
 import MapLines from "./MapLines";
 import LevelNode from "./levelNode";
 import MapControls from "./MapControls";
+import DragHandIcon from "../../../../components/icons/dragHandIcon";
 
 export default function LevelMap({ levels = [], avatar = null }) {
     const containerRef = useRef(null);
 
     // State Transformasi Peta
     const [pan, setPan] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
+    const [zoom, setZoom] = useState(0.65);
 
     // State Dragging
     const [isDragging, setIsDragging] = useState(false);
@@ -17,7 +18,50 @@ export default function LevelMap({ levels = [], avatar = null }) {
     const startCoordsRef = useRef({ x: 0, y: 0 });
     const panStartRef = useRef({ x: 0, y: 0 });
     const hasDraggedRef = useRef(false);
-    const [hasInteracted, setHasInteracted] = useState(false);
+
+    // Hint: shows after 5s of no interaction, then every 10s gap
+    const [showHint, setShowHint] = useState(false);
+    const [hintKey, setHintKey] = useState(0);
+    const hintDismissedRef = useRef(false);
+    const hintInitTimerRef = useRef(null);
+    const hintHideTimerRef = useRef(null);
+    const hintIntervalRef = useRef(null);
+
+    const stopHintTimers = () => {
+        clearTimeout(hintInitTimerRef.current);
+        clearTimeout(hintHideTimerRef.current);
+        clearInterval(hintIntervalRef.current);
+    };
+
+    const dismissHintPermanently = () => {
+        if (!hintDismissedRef.current) {
+            hintDismissedRef.current = true;
+            setShowHint(false);
+            stopHintTimers();
+        }
+    };
+
+    const triggerHintCycle = () => {
+        if (hintDismissedRef.current) return;
+        setHintKey((k) => k + 1);
+        setShowHint(true);
+        hintHideTimerRef.current = setTimeout(() => {
+            setShowHint(false);
+        }, 4000);
+    };
+
+    useEffect(() => {
+        hintInitTimerRef.current = setTimeout(() => {
+            if (!hintDismissedRef.current) {
+                triggerHintCycle();
+                hintIntervalRef.current = setInterval(() => {
+                    if (!hintDismissedRef.current) triggerHintCycle();
+                }, 14000);
+            }
+        }, 4000);
+
+        return () => stopHintTimers();
+    }, []);
 
     // Helper Clamping agar peta tidak keluar dari jangkauan pandangan
     const clampPan = useCallback((newX, newY, currentZoom = zoom) => {
@@ -85,7 +129,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
         if (distance > 5) {
             hasDraggedRef.current = true;
             setIsDragging(true);
-            setHasInteracted(true);
+            dismissHintPermanently();
 
             const nextX = panStartRef.current.x + deltaX;
             const nextY = panStartRef.current.y + deltaY;
@@ -126,7 +170,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
         if (distance > 5) {
             hasDraggedRef.current = true;
             setIsDragging(true);
-            setHasInteracted(true);
+            dismissHintPermanently();
 
             const nextX = panStartRef.current.x + deltaX;
             const nextY = panStartRef.current.y + deltaY;
@@ -148,18 +192,20 @@ export default function LevelMap({ levels = [], avatar = null }) {
         const nextZoom = Math.min(1.4, Number((zoom + 0.15).toFixed(2)));
         setZoom(nextZoom);
         setPan((prev) => clampPan(prev.x, prev.y, nextZoom));
+        dismissHintPermanently();
     };
 
     const handleZoomOut = () => {
         const nextZoom = Math.max(0.65, Number((zoom - 0.15).toFixed(2)));
         setZoom(nextZoom);
         setPan((prev) => clampPan(prev.x, prev.y, nextZoom));
+        dismissHintPermanently();
     };
 
     const handleResetFocus = () => {
         const activeLevel = levels.find((l) => l.status === "available") || levels[0];
-        centerOnLevel(activeLevel ? activeLevel.orderIndex : 1, 1);
-        setZoom(1);
+        centerOnLevel(activeLevel ? activeLevel.orderIndex : 1, 0.65);
+        setZoom(0.65);
     };
 
     // Scroll Wheel Event Handler untuk Zoom In & Zoom Out
@@ -170,7 +216,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
         const handleWheel = (e) => {
             // Mencegah scroll halaman browser bawaan
             e.preventDefault();
-            setHasInteracted(true);
+            dismissHintPermanently();
 
             // Arah zoom: deltaY < 0 = scroll up (zoom in), deltaY > 0 = scroll down (zoom out)
             const zoomDelta = e.deltaY < 0 ? 0.1 : -0.1;
@@ -277,11 +323,21 @@ export default function LevelMap({ levels = [], avatar = null }) {
                 currentZoom={zoom}
             />
 
-            {/* Petunjuk Interaksi Bawah Layar (Menghilang setelah digeser) */}
-            {!hasInteracted && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-tertiary/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-bounce">
-                    <span>🗺️</span>
-                    <span>Tahan klik & geser mouse untuk menjelajahi peta</span>
+            {/* Map Drag Hint */}
+            {showHint && (
+                <div
+                    key={hintKey}
+                    className="map-hint-container fixed bottom-30 md:bottom-20 left-1/2 -translate-x-1/2 z-30 pointer-events-none flex flex-col items-center"
+                >
+                    <div className="relative flex items-center justify-start w-32 h-16">
+                        <div className="map-hint-cursor absolute top-0 left-2 drop-shadow-lg">
+                            <DragHandIcon size={48} stroke="var(--color-secondary)" />
+                        </div>
+                    </div>
+
+                    <div className="text-secondary font-semibold py-2 text-center">
+                        Tahan klik &amp; geser untuk menjelajahi peta
+                    </div>
                 </div>
             )}
         </div>

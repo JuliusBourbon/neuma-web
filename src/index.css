@@ -162,3 +162,69 @@ body {
 .fade-out {
   animation: fade-out 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Map Drag Hint */
+@keyframes hint-cursor-drag {
+  0% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(52px);
+  }
+
+  38% {
+    transform: translateX(0);
+  }
+
+  48% {
+    transform: translateX(0);
+  }
+
+  68% {
+    transform: translateX(52px);
+  }
+
+  86% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Hint container */
+@keyframes hint-fade-lifecycle {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  8% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.map-hint-cursor {
+  animation: hint-cursor-drag 3.2s ease-in-out 1 forwards;
+}
+
+.map-hint-arrow {
+  animation: hint-arrow-drift 3.2s ease-in-out 1 forwards;
+}
+
+.map-hint-container {
+  animation: hint-fade-lifecycle 3.8s ease-in-out 1 forwards;
+}
