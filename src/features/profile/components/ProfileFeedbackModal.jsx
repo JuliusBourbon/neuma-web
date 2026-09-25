@@ -6,6 +6,7 @@ function ProfileFeedbackModal({
   onClose,
   onConfirm,
   isConfirming = false,
+  lang = 'id',
 }) {
   if (!isOpen) {
     return null;
@@ -15,16 +16,16 @@ function ProfileFeedbackModal({
   const isSuccess = type === "success";
 
   const defaultTitle = isConfirmation
-    ? "Konfirmasi"
+    ? (lang === 'id' ? "Konfirmasi" : "Confirmation")
     : isSuccess
-      ? "Berhasil"
-      : "Terjadi Kesalahan";
+      ? (lang === 'id' ? "Berhasil" : "Success")
+      : (lang === 'id' ? "Terjadi Kesalahan" : "An Error Occurred");
 
   const defaultMessage = isConfirmation
-    ? "Apakah kamu yakin ingin melanjutkan tindakan ini?"
+    ? (lang === 'id' ? "Apakah kamu yakin ingin melanjutkan tindakan ini?" : "Are you sure you want to proceed with this action?")
     : isSuccess
-      ? "Data berhasil disimpan."
-      : "Terjadi kesalahan. Silakan coba lagi.";
+      ? (lang === 'id' ? "Data berhasil disimpan." : "Data saved successfully.")
+      : (lang === 'id' ? "Terjadi kesalahan. Silakan coba lagi." : "An error occurred. Please try again.");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-tertiary/70 px-4 backdrop-blur-sm">
@@ -54,7 +55,7 @@ function ProfileFeedbackModal({
               disabled={isConfirming}
               className="rounded-full border-2 border-secondary px-6 py-3 font-medium text-secondary transition hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Batal
+              {lang === 'id' ? "Batal" : "Cancel"}
             </button>
 
             {/* Confirm Button */}
@@ -64,7 +65,7 @@ function ProfileFeedbackModal({
               disabled={isConfirming}
               className="rounded-full bg-secondary px-6 py-3 font-medium text-white transition hover:bg-secondary/80 disabled:cursor-wait disabled:opacity-60"
             >
-              {isConfirming ? "Memproses..." : "Konfirmasi"}
+              {isConfirming ? (lang === 'id' ? "Memproses..." : "Processing...") : (lang === 'id' ? "Konfirmasi" : "Confirm")}
             </button>
           </div>
         ) : (
@@ -74,7 +75,7 @@ function ProfileFeedbackModal({
             onClick={onClose}
             className="mt-6 rounded-full bg-secondary px-8 py-3 font-medium text-white transition hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2"
           >
-            {isSuccess ? "Lanjutkan" : "Tutup"}
+            {isSuccess ? (lang === 'id' ? "Lanjutkan" : "Continue") : (lang === 'id' ? "Tutup" : "Close")}
           </button>
         )}
       </div>

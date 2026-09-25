@@ -24,6 +24,15 @@ import {
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const [userStore, setUserStore] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  });
+  const lang = userStore?.preferredLanguage || 'id';
+
   const [mode, setMode] = useState("profile");
 
   const handleLogout = async () => {
@@ -37,10 +46,10 @@ function ProfilePage() {
 
   function getGenderLabel(gender) {
     const genderLabels = {
-      male: "Laki-laki",
-      female: "Perempuan",
-      other: "Lainnya",
-      prefer_not_to_say: "Memilih untuk tidak menjawab",
+      male: lang === 'id' ? "Laki-laki" : "Male",
+      female: lang === 'id' ? "Perempuan" : "Female",
+      other: lang === 'id' ? "Lainnya" : "Other",
+      prefer_not_to_say: lang === 'id' ? "Memilih untuk tidak menjawab" : "Prefer not to say",
     };
 
     return genderLabels[gender] || "";
@@ -52,6 +61,7 @@ function ProfilePage() {
     email: "",
     age: "",
     gender: "",
+    preferredLanguage: "id",
     hasPassword: false,
   });
 
@@ -169,10 +179,11 @@ function ProfilePage() {
         console.log("Profile dari API:", user);
 
         const profileData = {
-          name: user.username || "User",
+          name: user.username || "Anonymous",
           email: user.email || "",
           age: user.age ?? "",
           gender: user.gender || "",
+          preferredLanguage: user.preferredLanguage || "id",
           hasPassword: Boolean(user.hasPassword),
         };
 
@@ -230,8 +241,8 @@ function ProfilePage() {
 
     showFeedbackModal({
       type: "confirmation",
-      title: "Konfirmasi Perubahan Profile",
-      message: "Apakah kamu yakin ingin menyimpan perubahan profile?",
+      title: lang === 'id' ? "Konfirmasi Perubahan Profil" : "Confirm Profile Changes",
+      message: lang === 'id' ? "Apakah kamu yakin ingin menyimpan perubahan profil?" : "Are you sure you want to save profile changes?",
     });
   };
 
@@ -247,6 +258,7 @@ function ProfilePage() {
         username: formData.name,
         age: formData.age === "" ? null : Number(formData.age),
         gender: formData.gender === "" ? null : formData.gender,
+        preferredLanguage: formData.preferredLanguage,
       });
 
       const updatedProfile = {
@@ -254,30 +266,36 @@ function ProfilePage() {
         email: updatedUser.email || "",
         age: updatedUser.age ?? "",
         gender: updatedUser.gender || "",
+        preferredLanguage: updatedUser.preferredLanguage || "id",
         hasPassword: Boolean(updatedUser.hasPassword),
       };
 
       setProfile(updatedProfile);
       setFormData(updatedProfile);
+      setUserStore(prev => ({ ...prev, preferredLanguage: updatedUser.preferredLanguage || "id" }));
+      
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+      localStorage.setItem("user", JSON.stringify({ ...currentUser, ...updatedUser }));
+
       setMode("profile");
 
       setPendingAction(null);
 
       showFeedbackModal({
         type: "success",
-        title: "Profile Berhasil Diperbarui",
-        message: "Perubahan profile kamu berhasil disimpan.",
+        title: lang === 'id' ? "Profil Berhasil Diperbarui" : "Profile Successfully Updated",
+        message: lang === 'id' ? "Perubahan profil kamu berhasil disimpan." : "Your profile changes have been saved successfully.",
       });
     } catch (error) {
-      console.error("Gagal memperbarui profile:", error);
+      console.error("Gagal memperbarui profil:", error);
 
       showFeedbackModal({
         type: "error",
-        title: "Gagal Memperbarui Profile",
+        title: lang === 'id' ? "Gagal Memperbarui Profil" : "Failed to Update Profile",
         message:
           error?.response?.data?.message ||
           error?.message ||
-          "Terjadi kesalahan saat memperbarui profile.",
+          (lang === 'id' ? "Terjadi kesalahan saat memperbarui profil." : "An error occurred while updating the profile."),
       });
     } finally {
       setIsProcessingAction(false);
@@ -324,22 +342,22 @@ function ProfilePage() {
       showFeedbackModal({
         type: "success",
         title: profile.hasPassword
-          ? "Password Berhasil Diubah"
-          : "Password Berhasil Dibuat",
+          ? (lang === 'id' ? "Sandi Berhasil Diubah" : "Password Successfully Changed")
+          : (lang === 'id' ? "Sandi Berhasil Dibuat" : "Password Successfully Created"),
         message: profile.hasPassword
-          ? "Password kamu berhasil diperbarui."
-          : "Password kamu berhasil dibuat.",
+          ? (lang === 'id' ? "Sandi kamu berhasil diperbarui." : "Your password has been successfully updated.")
+          : (lang === 'id' ? "Sandi kamu berhasil dibuat." : "Your password has been successfully created."),
       });
     } catch (error) {
-      console.error("Gagal memproses password:", error);
+      console.error("Gagal memproses sandi:", error);
 
       showFeedbackModal({
         type: "error",
-        title: "Gagal Memproses Password",
+        title: lang === 'id' ? "Gagal Memproses Sandi" : "Failed to Process Password",
         message:
           error?.response?.data?.message ||
           error?.message ||
-          "Terjadi kesalahan saat memproses password.",
+          (lang === 'id' ? "Terjadi kesalahan saat memproses sandi." : "An error occurred while processing the password."),
       });
     } finally {
       setIsProcessingAction(false);
@@ -363,11 +381,11 @@ function ProfilePage() {
     showFeedbackModal({
       type: "confirmation",
       title: profile.hasPassword
-        ? "Konfirmasi Perubahan Password"
-        : "Konfirmasi Pembuatan Password",
+        ? (lang === 'id' ? "Konfirmasi Perubahan Sandi" : "Confirm Password Change")
+        : (lang === 'id' ? "Konfirmasi Pembuatan Sandi" : "Confirm Password Creation"),
       message: profile.hasPassword
-        ? "Apakah kamu yakin ingin mengubah password?"
-        : "Apakah kamu yakin ingin membuat password?",
+        ? (lang === 'id' ? "Apakah kamu yakin ingin mengubah sandi?" : "Are you sure you want to change your password?")
+        : (lang === 'id' ? "Apakah kamu yakin ingin membuat sandi?" : "Are you sure you want to set your password?"),
     });
   };
 
@@ -375,13 +393,13 @@ function ProfilePage() {
     <div className="relative flex h-screen flex-col overflow-hidden bg-primary">
       {/* Header */}
       <PageHeader
-        title="Profile"
+        title={lang === 'id' ? "Profil" : "Profile"}
         showBackButton={true}
         backButtonPath="/home"
       />
 
       {/* Scrollable Content */}
-      <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pb-24 pr-1 sm:px-6 lg:px-8">
+      <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pr-1 sm:px-6 lg:px-8">
         {/* Main Content */}
         <div className="mx-auto grid w-full max-w-[1625px] grid-cols-1 gap-10 px-4 py-6 sm:px-8 md:py-8 lg:grid-cols-2 lg:gap-25 lg:px-12">
           {/* LEFT SIDE */}
@@ -393,6 +411,7 @@ function ProfilePage() {
                 getGenderLabel={getGenderLabel}
                 onEdit={handleEditProfile}
                 onChangePassword={() => setMode("password")}
+                lang={lang}
               />
             )}
 
@@ -403,6 +422,7 @@ function ProfilePage() {
                 setFormData={setFormData}
                 onCancel={handleCancel}
                 onSave={handleSave}
+                lang={lang}
               />
             )}
 
@@ -412,13 +432,14 @@ function ProfilePage() {
                 hasPassword={profile.hasPassword}
                 onCancel={handleCancel}
                 onSubmit={handlePasswordSubmit}
+                lang={lang}
               />
             )}
 
             {/* Sign Out */}
-            <div className="mt-14 flex max-w-162.5 justify-center">
+            <div className="mt-8 flex max-w-162.5 justify-center">
               <FillRoundedButton
-                text="Sign Out"
+                text={lang === 'id' ? "Keluar" : "Sign Out"}
                 classes="min-w-64 bg-[#FE7236] text-lg text-white"
                 onClick={handleLogout}
               />
@@ -435,6 +456,7 @@ function ProfilePage() {
               totalXp={stats.totalXp}
               currencyBalance={stats.currencyBalance}
               onChangeAvatar={handleOpenAvatarPicker}
+              lang={lang}
             />
           </div>
 
@@ -446,6 +468,7 @@ function ProfilePage() {
             isLoading={isLoadingAvatars}
             onClose={handleCloseAvatarPicker}
             onSelect={handleSelectAvatar}
+            lang={lang}
           />
 
           {/* PROFILE FEEDBACK MODAL */}
@@ -457,6 +480,7 @@ function ProfilePage() {
             onClose={closeFeedbackModal}
             onConfirm={handleConfirmAction}
             isConfirming={isProcessingAction}
+            lang={lang}
           />
         </div>
       </div>

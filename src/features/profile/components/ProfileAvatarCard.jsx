@@ -8,24 +8,25 @@ function ProfileAvatarCard({
   totalXp,
   currencyBalance,
   onChangeAvatar,
+  lang = 'id',
 }) {
   return (
-    <div className="relative w-full max-w-xl overflow-hidden rounded-3xl shadow-xl">
+    <div className="relative w-full lg:max-w-xl overflow-hidden rounded-3xl shadow-xl">
       {/* Avatar Section */}
-      <div className="relative h-70 overflow-hidden bg-primary sm:h-80 md:h-88">
+      <div className="relative h-70 overflow-hidden bg-tertiary sm:h-80 md:h-88">
         {/* Decorative Circle - Top Right */}
-        <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-lime-400 sm:h-36 sm:w-36" />
+        <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-neon sm:h-36 sm:w-36" />
 
         {/* Decorative Circle - Bottom Left */}
-        <div className="absolute -bottom-12 -left-12 h-36 w-36 rounded-full bg-yellow-200 sm:h-44 sm:w-44" />
+        <div className="absolute -bottom-12 -left-12 h-36 w-36 rounded-full bg-primary sm:h-44 sm:w-44" />
 
         {/* Edit Avatar Button */}
         <button
           type="button"
           onClick={onChangeAvatar}
-          aria-label="Ubah avatar"
-          title="Ubah avatar"
-          className="absolute left-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-white shadow-md transition duration-200 hover:scale-110 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2"
+          aria-label={lang === 'id' ? "Ubah avatar" : "Change avatar"}
+          title={lang === 'id' ? "Ubah avatar" : "Change avatar"}
+          className="absolute left-4 top-4 z-10 flex cursor-pointer h-10 w-10 items-center justify-center rounded-full bg-secondary text-white shadow-md transition duration-200 hover:scale-110 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,13 +54,14 @@ function ProfileAvatarCard({
       </div>
 
       {/* Statistics Section */}
-      <div className="bg-lime-400">
+      <div className="bg-neon">
         <ProfileStats
           dayStreak={dayStreak}
           rank={rank}
           wordsCollected={wordsCollected}
           totalXp={totalXp}
           currencyBalance={currencyBalance}
+          lang={lang}
         />
       </div>
     </div>

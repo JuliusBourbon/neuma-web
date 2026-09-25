@@ -10,6 +10,7 @@ function ProfileStats({
   wordsCollected,
   totalXp,
   currencyBalance,
+  lang = 'id',
 }) {
   const statItemClasses =
     "flex items-center justify-center gap-3 text-lg whitespace-nowrap sm:text-xl";
@@ -19,13 +20,13 @@ function ProfileStats({
       {/* Day Streak */}
       <div className={statItemClasses}>
         <StreakIcon color="#FE7236" />
-        <span>{dayStreak} days</span>
+        <span>{dayStreak} {lang === 'id' ? "hari" : "days"}</span>
       </div>
 
       {/* Rank */}
       <div className={statItemClasses}>
         <RankIcon color="#FE7236" />
-        <span>Rank #{rank}</span>
+        <span>{lang === 'id' ? "Peringkat #" : "Rank #"}{rank}</span>
       </div>
 
       {/* Total XP */}
@@ -46,7 +47,7 @@ function ProfileStats({
           <CoinIcon color="#FE7236" />
         </div>
 
-        <span className="text-2xl font-semibold">{currencyBalance} coins</span>
+        <span className="text-2xl font-semibold">{currencyBalance} {lang === 'id' ? "koin" : "coins"}</span>
       </div>
     </div>
   );

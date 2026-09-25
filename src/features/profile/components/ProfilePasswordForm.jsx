@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FillRoundedButton from "../../../components/common/fillRoundedButton";
 
-function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
+function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit, lang = 'id' }) {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,27 +34,27 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
     setError("");
 
     if (hasPassword && !oldPassword.trim()) {
-      setError("Password lama wajib diisi.");
+      setError(lang === 'id' ? "Sandi lama wajib diisi." : "Old password is required.");
       return;
     }
 
     if (!newPassword.trim()) {
-      setError("Password baru wajib diisi.");
+      setError(lang === 'id' ? "Sandi baru wajib diisi." : "New password is required.");
       return;
     }
 
     if (newPassword.length < 8) {
-      setError("Password baru minimal 8 karakter.");
+      setError(lang === 'id' ? "Sandi baru minimal 8 karakter." : "New password must be at least 8 characters.");
       return;
     }
 
     if (!confirmPassword.trim()) {
-      setError("Konfirmasi password wajib diisi.");
+      setError(lang === 'id' ? "Konfirmasi sandi wajib diisi." : "Password confirmation is required.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError("Konfirmasi password tidak cocok.");
+      setError(lang === 'id' ? "Konfirmasi sandi tidak cocok." : "Password confirmation does not match.");
       return;
     }
 
@@ -71,11 +71,11 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
         {/* Old Password */}
         {hasPassword && (
           <div>
-            <label className="mb-2 block text-xl">Old Password</label>
+            <label className="mb-2 block text-xl">{lang === 'id' ? "Sandi Lama" : "Old Password"}</label>
 
             <input
               type="password"
-              placeholder="Masukkan password lama"
+              placeholder={lang === 'id' ? "Masukkan sandi lama" : "Enter old password"}
               className={inputClasses}
               value={oldPassword}
               onChange={(event) => setOldPassword(event.target.value)}
@@ -85,11 +85,11 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
 
         {/* New Password */}
         <div>
-          <label className="mb-2 block text-xl">New Password</label>
+          <label className="mb-2 block text-xl">{lang === 'id' ? "Sandi Baru" : "New Password"}</label>
 
           <input
             type="password"
-            placeholder="Masukkan password baru"
+            placeholder={lang === 'id' ? "Masukkan sandi baru" : "Enter new password"}
             className={inputClasses}
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
@@ -98,11 +98,11 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
 
         {/* Confirm Password */}
         <div>
-          <label className="mb-2 block text-xl">Confirm Password</label>
+          <label className="mb-2 block text-xl">{lang === 'id' ? "Konfirmasi Sandi" : "Confirm Password"}</label>
 
           <input
             type="password"
-            placeholder="Konfirmasi password baru"
+            placeholder={lang === 'id' ? "Konfirmasi sandi baru" : "Confirm new password"}
             className={inputClasses}
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
@@ -116,14 +116,14 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit }) {
       {/* Action Buttons */}
       <div className="mt-10 grid max-w-162.5 grid-cols-2 gap-8">
         <FillRoundedButton
-          text="Cancel"
-          classes="w-full bg-gray-300 text-lg text-white"
+          text={lang === 'id' ? "Batal" : "Cancel"}
+          classes="w-full bg-tertiary md:text-lg text-white"
           onClick={onCancel}
         />
 
         <FillRoundedButton
-          text={hasPassword ? "Change Password" : "Set Password"}
-          classes="w-full bg-[#FE7236] text-lg text-white"
+          text={hasPassword ? (lang === 'id' ? "Ubah Sandi" : "Change Password") : (lang === 'id' ? "Buat Sandi" : "Set Password")}
+          classes="w-full bg-secondary md:text-lg text-white"
           onClick={handleSubmit}
         />
       </div>

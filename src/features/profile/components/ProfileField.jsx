@@ -15,12 +15,13 @@ function ProfileField({
   w-full
   rounded-md
   border
-  bg-white
+  bg-white/50
   px-4
   py-3
   text-base
   leading-normal
-  text-[#263200]
+  text-tertiary
+  font-medium
   outline-none
   transition
   duration-200
@@ -30,15 +31,15 @@ function ProfileField({
 
   const modeClasses = editing
     ? `
-    border-[#D6D6D6]
-    hover:border-[#FE7236]/60
-    focus:border-[#FE7236]
-    focus:ring-2
-    focus:ring-[#FE7236]/25
+    ${disabled ? "!bg-white/50" : "!bg-white !border-secondary/50"}
+    border-white
+    ${!disabled
+      ? "hover:border-secondary focus:border-secondary focus:ring-2 focus:ring-secondary/25"
+      : ""
+    }
   `
     : `
     border-white
-    shadow-sm
   `;
   return (
     <div>

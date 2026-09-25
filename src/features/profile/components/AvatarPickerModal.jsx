@@ -1,3 +1,5 @@
+import { getText } from "../../../utils/text";
+
 function AvatarPickerModal({
   isOpen,
   avatars,
@@ -5,6 +7,7 @@ function AvatarPickerModal({
   isLoading,
   onClose,
   onSelect,
+  lang = 'id',
 }) {
   if (!isOpen) {
     return null;
@@ -14,15 +17,15 @@ function AvatarPickerModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-tertiary/70 px-4 backdrop-blur-sm">
       <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-primary p-6 shadow-2xl">
         {/* Header Modal */}
-        <div className="mb-5 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           <h2 className="text-xl font-bold text-tertiary sm:text-2xl">
-            Choose Your Avatar
+            {lang === 'id' ? "Pilih Avatar Anda" : "Choose Your Avatar"}
           </h2>
 
           <button
             type="button"
             onClick={onClose}
-            className="text-3xl font-bold leading-none text-secondary transition hover:scale-110 hover:text-orange-600"
+            className="text-4xl mb-2 font-bold leading-none text-secondary transition hover:scale-110 hover:text-orange-600"
             aria-label="Close avatar picker"
           >
             &times;
@@ -32,11 +35,11 @@ function AvatarPickerModal({
         {/* Loading State */}
         {isLoading ? (
           <div className="flex min-h-50 items-center justify-center">
-            <p className="text-tertiary">Loading avatars...</p>
+            <p className="text-tertiary">{lang === 'id' ? "Memuat avatar..." : "Loading avatars..."}</p>
           </div>
         ) : avatars.length === 0 ? (
           <div className="flex min-h-50 items-center justify-center">
-            <p className="text-tertiary">No avatars available.</p>
+            <p className="text-tertiary">{lang === 'id' ? "Tidak ada avatar tersedia." : "No avatars available."}</p>
           </div>
         ) : (
           /* Avatar List */
@@ -51,11 +54,11 @@ function AvatarPickerModal({
                   type="button"
                   disabled={!isOwned}
                   onClick={() => onSelect(avatar)}
-                  className={`relative flex flex-col items-center rounded-2xl border-2 p-3 transition duration-200 ${isSelected
-                      ? "border-tertiary bg-lime-400 shadow-md"
-                      : isOwned
-                        ? "border-lime-200 bg-lime-50 hover:border-secondary hover:shadow-md"
-                        : "cursor-not-allowed border-lime-200 bg-lime-200 opacity-60"
+                  className={`relative flex flex-col items-center cursor-pointer rounded-2xl border-2 p-3 transition duration-200 ${isSelected
+                    ? "border-tertiary bg-neon shadow-md"
+                    : isOwned
+                      ? "border-lime-200 bg-lime-50 hover:border-secondary hover:shadow-md"
+                      : "cursor-not-allowed border-lime-200 bg-lime-200 opacity-60"
                     }`}
                 >
                   {/* Selected Indicator */}
@@ -69,7 +72,7 @@ function AvatarPickerModal({
                   <div className="flex h-20 w-20 items-center justify-center">
                     <img
                       src={avatar.imageUrl}
-                      alt={avatar.name?.id || avatar.name?.en || "Avatar"}
+                      alt={getText(avatar.name, lang) || "Avatar"}
                       onError={(event) => {
                         event.currentTarget.style.visibility = "hidden";
                       }}
@@ -79,20 +82,20 @@ function AvatarPickerModal({
 
                   {/* Avatar Name */}
                   <p className="mt-2 text-center text-sm font-medium text-tertiary">
-                    {avatar.name?.id || avatar.name?.en || "Avatar"}
+                    {getText(avatar.name, lang) || "Avatar"}
                   </p>
 
                   {/* Ownership Status */}
                   {!isOwned && (
                     <span className="mt-1 text-xs font-medium text-stone-500">
-                      Locked
+                      {lang === 'id' ? "Terkunci" : "Locked"}
                     </span>
                   )}
 
                   {/* Selected Status */}
                   {isSelected && (
                     <span className="mt-1 text-xs font-bold text-tertiary">
-                      Selected
+                      {lang === 'id' ? "Terpilih" : "Selected"}
                     </span>
                   )}
                 </button>
@@ -102,7 +105,7 @@ function AvatarPickerModal({
         )}
 
         {/* Footer */}
-        <div className="mt-5 flex justify-end">
+        {/* <div className="mt-5 flex justify-end">
           <button
             type="button"
             onClick={onClose}
@@ -110,7 +113,7 @@ function AvatarPickerModal({
           >
             Close
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
