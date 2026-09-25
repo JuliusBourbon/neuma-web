@@ -24,7 +24,7 @@ function ProfileInfo({ profile, getGenderLabel, onEdit, onChangePassword }) {
         />
 
         <FillRoundedButton
-          text="Change Password"
+          text={profile.hasPassword ? "Change Password" : "Set Password"}
           classes="bg-[#FE7236] text-white text-lg w-full"
           onClick={onChangePassword}
         />
