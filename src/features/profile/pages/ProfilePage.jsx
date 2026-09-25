@@ -8,6 +8,7 @@ import ProfilePasswordForm from "../components/ProfilePasswordForm";
 import ProfileAvatarCard from "../components/ProfileAvatarCard";
 import AvatarPickerModal from "../components/AvatarPickerModal";
 import PageHeader from "../../../components/layout/PageHeader";
+import ProfileFeedbackModal from "../components/ProfileFeedbackModal";
 
 import {
   getMyProfile,
@@ -71,6 +72,40 @@ function ProfilePage() {
 
   const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
   const [selectedAvatarId, setSelectedAvatarId] = useState(null);
+
+  const [feedbackModal, setFeedbackModal] = useState({
+    isOpen: false,
+    type: "error",
+    title: "",
+    message: "",
+  });
+
+  const [pendingAction, setPendingAction] = useState(null);
+  const [pendingPasswordData, setPendingPasswordData] = useState(null);
+  const [isProcessingAction, setIsProcessingAction] = useState(false);
+
+  const showFeedbackModal = ({ type, title = "", message = "" }) => {
+    setFeedbackModal({
+      isOpen: true,
+      type,
+      title,
+      message,
+    });
+  };
+
+  const closeFeedbackModal = () => {
+    if (isProcessingAction) {
+      return;
+    }
+
+    setFeedbackModal((prevModal) => ({
+      ...prevModal,
+      isOpen: false,
+    }));
+
+    setPendingAction(null);
+    setPendingPasswordData(null);
+  };
 
   const handleOpenAvatarPicker = () => {
     setIsAvatarPickerOpen(true);
@@ -190,7 +225,23 @@ function ProfilePage() {
     setMode("profile");
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
+    setPendingAction("profile");
+
+    showFeedbackModal({
+      type: "confirmation",
+      title: "Konfirmasi Perubahan Profile",
+      message: "Apakah kamu yakin ingin menyimpan perubahan profile?",
+    });
+  };
+
+  const confirmSaveProfile = async () => {
+    if (isProcessingAction) {
+      return;
+    }
+
+    setIsProcessingAction(true);
+
     try {
       const updatedUser = await updateMyProfile({
         username: formData.name,
@@ -198,36 +249,51 @@ function ProfilePage() {
         gender: formData.gender === "" ? null : formData.gender,
       });
 
-      setProfile({
+      const updatedProfile = {
         name: updatedUser.username || "User",
         email: updatedUser.email || "",
         age: updatedUser.age ?? "",
         gender: updatedUser.gender || "",
         hasPassword: Boolean(updatedUser.hasPassword),
-      });
+      };
 
-      setFormData({
-        name: updatedUser.username || "User",
-        email: updatedUser.email || "",
-        age: updatedUser.age ?? "",
-        gender: updatedUser.gender || "",
-        hasPassword: Boolean(updatedUser.hasPassword),
-      });
-
+      setProfile(updatedProfile);
+      setFormData(updatedProfile);
       setMode("profile");
 
-      console.log("Profile berhasil diperbarui:", updatedUser);
+      setPendingAction(null);
+
+      showFeedbackModal({
+        type: "success",
+        title: "Profile Berhasil Diperbarui",
+        message: "Perubahan profile kamu berhasil disimpan.",
+      });
     } catch (error) {
       console.error("Gagal memperbarui profile:", error);
+
+      showFeedbackModal({
+        type: "error",
+        title: "Gagal Memperbarui Profile",
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Terjadi kesalahan saat memperbarui profile.",
+      });
+    } finally {
+      setIsProcessingAction(false);
     }
   };
 
-  const handlePasswordSubmit = async ({
-    oldPassword,
-    newPassword,
-    confirmPassword,
-  }) => {
+  const confirmPasswordChange = async () => {
+    if (isProcessingAction || !pendingPasswordData) {
+      return;
+    }
+
+    setIsProcessingAction(true);
+
     try {
+      const { oldPassword, newPassword, confirmPassword } = pendingPasswordData;
+
       if (profile.hasPassword) {
         await changePassword({
           oldPassword,
@@ -241,7 +307,6 @@ function ProfilePage() {
         });
       }
 
-      // Setelah berhasil, user sudah memiliki password
       setProfile((prevProfile) => ({
         ...prevProfile,
         hasPassword: true,
@@ -253,17 +318,57 @@ function ProfilePage() {
       }));
 
       setMode("profile");
+      setPendingAction(null);
+      setPendingPasswordData(null);
 
-      alert(
-        profile.hasPassword
-          ? "Password berhasil diubah."
-          : "Password berhasil dibuat.",
-      );
+      showFeedbackModal({
+        type: "success",
+        title: profile.hasPassword
+          ? "Password Berhasil Diubah"
+          : "Password Berhasil Dibuat",
+        message: profile.hasPassword
+          ? "Password kamu berhasil diperbarui."
+          : "Password kamu berhasil dibuat.",
+      });
     } catch (error) {
       console.error("Gagal memproses password:", error);
 
-      alert(error?.message || "Terjadi kesalahan saat memproses password.");
+      showFeedbackModal({
+        type: "error",
+        title: "Gagal Memproses Password",
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Terjadi kesalahan saat memproses password.",
+      });
+    } finally {
+      setIsProcessingAction(false);
     }
+  };
+
+  const handleConfirmAction = () => {
+    if (pendingAction === "profile") {
+      return confirmSaveProfile();
+    }
+
+    if (pendingAction === "password") {
+      return confirmPasswordChange();
+    }
+  };
+
+  const handlePasswordSubmit = (passwordData) => {
+    setPendingPasswordData(passwordData);
+    setPendingAction("password");
+
+    showFeedbackModal({
+      type: "confirmation",
+      title: profile.hasPassword
+        ? "Konfirmasi Perubahan Password"
+        : "Konfirmasi Pembuatan Password",
+      message: profile.hasPassword
+        ? "Apakah kamu yakin ingin mengubah password?"
+        : "Apakah kamu yakin ingin membuat password?",
+    });
   };
 
   return (
@@ -341,6 +446,17 @@ function ProfilePage() {
             isLoading={isLoadingAvatars}
             onClose={handleCloseAvatarPicker}
             onSelect={handleSelectAvatar}
+          />
+
+          {/* PROFILE FEEDBACK MODAL */}
+          <ProfileFeedbackModal
+            isOpen={feedbackModal.isOpen}
+            type={feedbackModal.type}
+            title={feedbackModal.title}
+            message={feedbackModal.message}
+            onClose={closeFeedbackModal}
+            onConfirm={handleConfirmAction}
+            isConfirming={isProcessingAction}
           />
         </div>
       </div>
