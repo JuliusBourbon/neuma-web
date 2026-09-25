@@ -40,7 +40,7 @@ function AvatarPickerModal({
           </div>
         ) : (
           /* Avatar List */
-          <div className="grid max-h-105 grid-cols-2 gap-4 overflow-y-auto p-2 sm:grid-cols-3 md:grid-cols-4">
+          <div className="grid max-h-105 grid-cols-2 gap-4 overflow-y-auto p-2 sm:grid-cols-3 md:grid-cols-4 custom-scrollbar">
             {avatars.map((avatar) => {
               const isSelected = avatar.id === selectedAvatarId;
               const isOwned = avatar.isOwned;
@@ -51,13 +51,12 @@ function AvatarPickerModal({
                   type="button"
                   disabled={!isOwned}
                   onClick={() => onSelect(avatar)}
-                  className={`relative flex flex-col items-center rounded-2xl border-2 p-3 transition duration-200 ${
-                    isSelected
+                  className={`relative flex flex-col items-center rounded-2xl border-2 p-3 transition duration-200 ${isSelected
                       ? "border-tertiary bg-lime-400 shadow-md"
                       : isOwned
                         ? "border-lime-200 bg-lime-50 hover:border-secondary hover:shadow-md"
                         : "cursor-not-allowed border-lime-200 bg-lime-200 opacity-60"
-                  }`}
+                    }`}
                 >
                   {/* Selected Indicator */}
                   {isSelected && (

@@ -10,7 +10,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
 
     // State Transformasi Peta
     const [pan, setPan] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(0.65);
+    const [zoom, setZoom] = useState(0.85);
 
     // State Dragging
     const [isDragging, setIsDragging] = useState(false);
@@ -196,7 +196,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
     };
 
     const handleZoomOut = () => {
-        const nextZoom = Math.max(0.65, Number((zoom - 0.15).toFixed(2)));
+        const nextZoom = Math.max(0.60, Number((zoom - 0.15).toFixed(2)));
         setZoom(nextZoom);
         setPan((prev) => clampPan(prev.x, prev.y, nextZoom));
         dismissHintPermanently();
@@ -204,8 +204,8 @@ export default function LevelMap({ levels = [], avatar = null }) {
 
     const handleResetFocus = () => {
         const activeLevel = levels.find((l) => l.status === "available") || levels[0];
-        centerOnLevel(activeLevel ? activeLevel.orderIndex : 1, 0.65);
-        setZoom(0.65);
+        centerOnLevel(activeLevel ? activeLevel.orderIndex : 1, 0.85);
+        setZoom(0.85);
     };
 
     // Scroll Wheel Event Handler untuk Zoom In & Zoom Out
@@ -222,7 +222,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
             const zoomDelta = e.deltaY < 0 ? 0.1 : -0.1;
 
             setZoom((prevZoom) => {
-                const nextZoom = Math.min(1.4, Math.max(0.65, Number((prevZoom + zoomDelta).toFixed(2))));
+                const nextZoom = Math.min(1.4, Math.max(0.60, Number((prevZoom + zoomDelta).toFixed(2))));
                 if (nextZoom === prevZoom) return prevZoom;
 
                 setPan((prevPan) => {
@@ -261,7 +261,7 @@ export default function LevelMap({ levels = [], avatar = null }) {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className={`fixed inset-0 w-screen h-screen overflow-hidden select-none bg-primary ${isDragging ? "cursor-grabbing" : "cursor-grab"
+            className={`fade-in-delay fixed inset-0 w-screen h-screen overflow-hidden select-none bg-primary ${isDragging ? "cursor-grabbing" : "cursor-grab"
                 }`}
         >
             {/* Kanvas Peta Utama yang Bergeser */}

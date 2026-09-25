@@ -81,7 +81,7 @@ export default function HomePage() {
         </div>
       ) : errorMessage ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/95 z-40 p-6">
-          <div className="bg-white/95 backdrop-blur-md border border-red-300 text-red-700 px-8 py-6 rounded-3xl max-w-md text-center shadow-2xl">
+          <div className="text-red-700 px-8 py-6 max-w-md text-center">
             <p className="text-base font-bold mb-3">{errorMessage}</p>
             <button
               type="button"

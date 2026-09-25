@@ -60,7 +60,7 @@ export default function QuestPage() {
                 <h3 className="text-lg md:text-xl font-medium text-secondary">Selesaikan misi dan dapatkan coin!</h3>
             </div>
 
-            <div className="flex-1 overflow-y-auto pb-20 mt-6">
+            <div className="flex-1 overflow-y-auto pb-20 mt-6 py-2 custom-scrollbar">
                 <div className="flex flex-col items-center w-full max-w-3xl mx-auto px-4 gap-4">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center mt-10">
@@ -78,12 +78,11 @@ export default function QuestPage() {
                             const description = quest.description.id || quest.description.en;
 
                             return (
-                                <div 
-                                    key={quest.id} 
-                                    className={`flex items-center w-full justify-between px-5 py-4 rounded-2xl shadow-sm border ${
-                                        isClaimed ? 'bg-gray-100 border-gray-200 opacity-70' : 
-                                        isAchieved ? 'bg-yellow-50 border-yellow-200 ring-2 ring-yellow-400' : 'bg-white border-transparent'
-                                    }`}
+                                <div
+                                    key={quest.id}
+                                    className={`flex items-center w-full justify-between px-5 py-4 rounded-2xl shadow-sm border ${isClaimed ? 'bg-yellow-100 border-secondary opacity-80' :
+                                        isAchieved ? 'bg-yellow-100 border-yellow-200 ring ring-secondary' : 'bg-white border-transparent'
+                                        }`}
                                 >
                                     <div className="flex flex-col max-w-[70%]">
                                         <span className={`font-bold text-base md:text-lg ${isClaimed ? 'text-gray-500' : 'text-tertiary'}`}>
@@ -94,24 +93,24 @@ export default function QuestPage() {
                                         </span>
                                         {!isClaimed && !isAchieved && (
                                             <div className="w-full bg-gray-200 h-2 rounded-full mt-3 overflow-hidden">
-                                                <div 
-                                                    className="bg-secondary h-full transition-all duration-500" 
+                                                <div
+                                                    className="bg-secondary h-full transition-all duration-500"
                                                     style={{ width: `${Math.min((quest.currentProgress / quest.targetValue) * 100, 100)}%` }}
                                                 ></div>
                                             </div>
                                         )}
                                     </div>
-                                    
+
                                     <div className="flex flex-col items-end justify-center shrink-0">
                                         <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100 mb-2">
                                             <CoinIcon />
                                             <span className="font-bold text-tertiary">{quest.rewardCurrency}</span>
                                         </div>
-                                        
+
                                         {isClaimed ? (
-                                            <span className="text-xs font-bold text-gray-400 px-2 uppercase tracking-wide">Selesai</span>
+                                            <span className="text-xs font-bold text-secondary px-2 uppercase tracking-wide">Selesai</span>
                                         ) : isAchieved ? (
-                                            <button 
+                                            <button
                                                 onClick={() => handleClaim(quest.id)}
                                                 className="bg-secondary hover:brightness-110 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-secondary/30 cursor-pointer"
                                             >

@@ -35,6 +35,24 @@ body {
   background: #1a2200;
 }
 
+/* Custom Primary Scrollbar */
+.custom-scrollbar-primary::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar-primary::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar-primary::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #e6fe966e;
+}
+
 /* Floating Animations for Mascots */
 @keyframes float-1 {
 
@@ -147,6 +165,10 @@ body {
 
 .fade-in {
   animation: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-in-delay {
+  animation: fade-in 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fade-out {
