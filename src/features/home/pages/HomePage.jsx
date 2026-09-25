@@ -68,7 +68,7 @@ export default function HomePage() {
     { text: lang === 'id' ? "Beranda" : "Home", href: "/home" },
     { text: lang === 'id' ? "Peringkat" : "Leaderboard", onClick: () => navigate("/leaderboard") },
     { text: lang === 'id' ? "Misi" : "Quest", onClick: () => navigate("/quest") },
-    { text: lang === 'id' ? "Toko" : "Shop", href: "/shop" },
+    { text: lang === 'id' ? "Toko" : "Shop", onClick: () => navigate("/shop") },
     { text: lang === 'id' ? "Profil" : "Profile", onClick: () => navigate("/profile") },
   ];
 

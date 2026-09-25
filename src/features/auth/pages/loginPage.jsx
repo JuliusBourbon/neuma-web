@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import ActionButton from "../../../components/common/actionButton";
 import FillRoundedButton from "../../../components/common/fillRoundedButton";
@@ -196,14 +196,14 @@ export default function LoginPage({ onClose, onSwitchToRegister, lang = 'id' }) 
           {lang === 'id' ? (
             <>
               Dengan masuk ke Neumá, Anda menyetujui
-              <a href="/terms" className="font-bold underline cursor-pointer"> Syarat</a> dan{" "}
-              <a href="/privacy" className="font-bold underline cursor-pointer"> Kebijakan Privasi</a> kami
+              <Link to="/terms" className="font-bold underline cursor-pointer"> Syarat</Link> dan{" "}
+              <Link to="/privacy" className="font-bold underline cursor-pointer"> Kebijakan Privasi</Link> kami
             </>
           ) : (
             <>
               By signing in to Neumá, you agree to our
-              <a href="/terms" className="font-bold underline cursor-pointer"> Terms</a> and{" "}
-              <a href="/privacy" className="font-bold underline cursor-pointer"> Privacy Policy</a>
+              <Link to="/terms" className="font-bold underline cursor-pointer"> Terms</Link> and{" "}
+              <Link to="/privacy" className="font-bold underline cursor-pointer"> Privacy Policy</Link>
             </>
           )}
         </h3>
