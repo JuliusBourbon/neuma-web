@@ -4,6 +4,15 @@ import firefly4 from "../../../assets/onboarding/firefly-4.png";
 import PageHeader from "../../../components/layout/PageHeader";
 
 export default function LeaderboardPage() {
+  const [user] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  });
+  const lang = user?.preferredLanguage || 'id';
+
   const [leaderboard, setLeaderboard] = useState([]);
   const [myRank, setMyRank] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +47,7 @@ export default function LeaderboardPage() {
   return (
     <div className="h-screen bg-primary flex flex-col overflow-hidden relative">
       <PageHeader
-        title="Leaderboard"
+        title={lang === 'id' ? "Papan Peringkat" : "Leaderboard"}
         showBackButton={true}
         backButtonPath="/home"
       />
@@ -46,7 +55,7 @@ export default function LeaderboardPage() {
       <div className="flex-1 overflow-y-auto custom-scrollbar w-full pb-24 pr-1">
         {loading ? (
           <div className="flex justify-center items-center h-full">
-            <span className="text-xl">Loading...</span>
+            <span className="text-xl">{lang === 'id' ? "Memuat..." : "Loading..."}</span>
           </div>
         ) : (
           <div className="flex flex-col w-full max-w-6xl mx-auto gap-3 px-4 py-4 md:py-8">
@@ -78,9 +87,9 @@ export default function LeaderboardPage() {
                     </div>
                     <span
                       className={`truncate max-w-30 md:max-w-xs ${isMe ? "font-semibold" : ""}`}
-                      title={isMe ? `${user.username || "Anonymous"} (You)` : (user.username || "Anonymous")}
+                      title={isMe ? `${user.username || (lang === 'id' ? "Anonim" : "Anonymous")} ${lang === 'id' ? "(Anda)" : "(You)"}` : (user.username || (lang === 'id' ? "Anonim" : "Anonymous"))}
                     >
-                      {user.username || "Anonymous"} {isMe ? "(You)" : ""}
+                      {user.username || (lang === 'id' ? "Anonim" : "Anonymous")} {isMe ? (lang === 'id' ? "(Anda)" : "(You)") : ""}
                     </span>
                   </div>
                   <div className="flex items-center gap-4 md:gap-8 text-right">
@@ -91,7 +100,7 @@ export default function LeaderboardPage() {
                       {user.totalXp} xp
                     </span>
                     <span
-                      title="Alphabet Collected"
+                      title={lang === 'id' ? "Abjad Terkumpul" : "Alphabet Collected"}
                       className={`whitespace-nowrap w-12 md:w-16 text-center ${isMe ? "font-bold text-white" : "font-semibold"}`}
                     >
                       {user.wordsCollected || 0}/26
@@ -119,9 +128,9 @@ export default function LeaderboardPage() {
               </div>
               <span
                 className="truncate max-w-30 md:max-w-xs font-semibold"
-                title={`${myRank.username || "Anonymous"} (You)`}
+                title={`${myRank.username || (lang === 'id' ? "Anonim" : "Anonymous")} ${lang === 'id' ? "(Anda)" : "(You)"}`}
               >
-                {myRank.username || "Anonymous"} (You)
+                {myRank.username || (lang === 'id' ? "Anonim" : "Anonymous")} {lang === 'id' ? "(Anda)" : "(You)"}
               </span>
             </div>
             <div className="flex items-center gap-4 md:gap-8 text-right">
@@ -129,7 +138,7 @@ export default function LeaderboardPage() {
                 {myRank.totalXp} xp
               </span>
               <span
-                title="Alphabet Collected"
+                title={lang === 'id' ? "Abjad Terkumpul" : "Alphabet Collected"}
                 className="font-bold whitespace-nowrap w-12 md:w-16 text-center"
               >
                 {myRank.wordsCollected || 0}/26
