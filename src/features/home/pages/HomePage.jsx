@@ -1,80 +1,23 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../../../components/common/topBar";
 import LevelMap from "../components/LevelMap/LevelMap";
 import UserStats from "../components/userStats";
-import { getHomeData } from "../../../services/api/userService";
-import { logout } from "../../../services/api/authService";
+import LoadingOverlay from "../../../components/common/LoadingOverlay";
+import ErrorOverlay from "../../../components/common/ErrorOverlay";
+import { useHomeData } from "../../../hooks/useHomeData";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [levels, setLevels] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cachedLevels")) || [];
-    } catch {
-      return [];
-    }
-  });
-  const [userStats, setUserStats] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cachedStats")) || null;
-    } catch {
-      return null;
-    }
-  });
-  const [isLoading, setIsLoading] = useState(levels.length === 0);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
-
-  const fetchInitialData = async () => {
-    if (levels.length === 0) setIsLoading(true);
-    setErrorMessage("");
-    try {
-      const response = await getHomeData();
-      const levelsData = response?.levels;
-      const statsData = response?.stats;
-      const userProfile = response?.user;
-
-      if (levelsData) {
-        setLevels(levelsData);
-        localStorage.setItem("cachedLevels", JSON.stringify(levelsData));
-      }
-      if (statsData) {
-        setUserStats(statsData);
-        localStorage.setItem("cachedStats", JSON.stringify(statsData));
-      }
-      if (userProfile) {
-        setUser(userProfile);
-        localStorage.setItem("user", JSON.stringify(userProfile));
-      }
-    } catch (err) {
-      if (levels.length === 0) {
-        setErrorMessage(err.message || "Gagal memuat data pembelajaran.");
-      } else {
-        console.warn("Background fetch failed:", err);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
-
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user") || "{}");
-    } catch {
-      return {};
-    }
-  });
-
-  const lang = user?.preferredLanguage || 'id';
+  const {
+    levels,
+    userStats,
+    lang,
+    activeAvatar,
+    formattedAlphabet,
+    isLoading,
+    errorMessage,
+    refetch,
+  } = useHomeData();
 
   // List for TopBar
   const navLinks = [
@@ -85,9 +28,6 @@ export default function HomePage() {
     { text: lang === 'id' ? "Profil" : "Profile", onClick: () => navigate("/profile") },
   ];
 
-  const activeAvatar = userStats?.avatar || user?.avatarUrl || user?.avatar || null;
-  const formattedAlphabet = `${String(userStats?.wordsCollected ?? 0).padStart(2, "0")}/26`;
-
   return (
     <div className="relative w-screen h-screen overflow-hidden select-none bg-primary">
       {/* Floating TopBar Navigation */}
@@ -95,25 +35,13 @@ export default function HomePage() {
 
       {/* Main Interactive Level Map / Loading / Error Overlay */}
       {isLoading ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary z-40">
-          <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-tertiary/80 font-medium text-sm tracking-wide">
-            {lang === 'id' ? "Memuat Peta Petualangan BISINDO..." : "Loading BISINDO Adventure Map..."}
-          </p>
-        </div>
+        <LoadingOverlay message={lang === 'id' ? "Memuat..." : "Loading..."} />
       ) : errorMessage ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary/95 z-40 p-6">
-          <div className="text-red-700 px-8 py-6 max-w-md text-center">
-            <p className="text-base font-bold mb-3">{errorMessage}</p>
-            <button
-              type="button"
-              onClick={fetchInitialData}
-              className="text-xs bg-secondary text-white px-5 py-2.5 rounded-xl font-bold hover:brightness-110 shadow transition cursor-pointer"
-            >
-              {lang === 'id' ? "Coba Lagi" : "Try Again"}
-            </button>
-          </div>
-        </div>
+        <ErrorOverlay
+          message={errorMessage}
+          onRetry={refetch}
+          retryText={lang === 'id' ? "Coba Lagi" : "Try Again"}
+        />
       ) : (
         <>
           <LevelMap levels={levels} avatar={activeAvatar} lang={lang} />
