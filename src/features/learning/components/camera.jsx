@@ -33,6 +33,7 @@ export default function Camera({
     onCameraReady,
     isSubmitted = false,
     result = null,
+    lang = 'id',
 }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -74,7 +75,7 @@ export default function Camera({
     const hintImageSrc = isHintEnabled ? getHintImage(activeTargetLetter) : null;
 
     // States
-    const [statusText, setStatusText] = useState("Inisialisasi Model ML & Kamera...");
+    const [statusText, setStatusText] = useState(lang === 'id' ? "Inisialisasi Model ML & Kamera..." : "Initializing ML Model & Camera...");
     const [isLoadingModel, setIsLoadingModel] = useState(true);
     const [cameraActive, setCameraActive] = useState(false);
     const [cameraError, setCameraError] = useState(null);
@@ -197,13 +198,13 @@ export default function Camera({
                 });
                 if (isMountedRef.current) {
                     setIsLoadingModel(false);
-                    setStatusText("Model siap! Menghubungkan ke kamera...");
+                    setStatusText(lang === 'id' ? "Model siap! Menghubungkan ke kamera..." : "Model ready! Connecting to camera...");
                     startCamera();
                 }
             } catch (err) {
                 if (isMountedRef.current) {
                     setIsLoadingModel(false);
-                    setCameraError("Gagal memuat model: " + (err.message || "Error WebAssembly/WASM"));
+                    setCameraError((lang === 'id' ? "Gagal memuat model: " : "Failed to load model: ") + (err.message || "Error WebAssembly/WASM"));
                 }
             }
         };
@@ -255,7 +256,7 @@ export default function Camera({
                     if (!isMountedRef.current) return;
                     videoRef.current.play().catch(() => { });
                     setCameraActive(true);
-                    setStatusText("Kamera aktif. Tunjukkan tangan Anda.");
+                    setStatusText(lang === 'id' ? "Kamera aktif. Tunjukkan tangan Anda." : "Camera active. Show your hands.");
                     startPredictionLoop();
                     // Signal parent that ML model + camera are both ready to use
                     onCameraReadyRef.current?.();
@@ -265,8 +266,8 @@ export default function Camera({
             if (!isMountedRef.current) return;
             setCameraError(
                 err.name === "NotAllowedError"
-                    ? "Izin akses kamera ditolak. Berikan izin di browser untuk melanjutkan."
-                    : "Tidak dapat mengakses kamera: " + err.message
+                    ? (lang === 'id' ? "Izin akses kamera ditolak. Berikan izin di browser untuk melanjutkan." : "Camera access denied. Please allow camera access in your browser.")
+                    : (lang === 'id' ? "Tidak dapat mengakses kamera: " : "Cannot access camera: ") + err.message
             );
         }
     };
@@ -520,8 +521,8 @@ export default function Camera({
                 <div className="w-full flex flex-col items-center gap-2">
                     <h1 className="text-xl sm:text-2xl font-bold text-center max-w-2xl text-tertiary">
                         {question?.questionText
-                            ? getText(question.questionText)
-                            : `Eja kata '${spellingLetters.join("")}'`}
+                            ? getText(question.questionText, lang)
+                            : (lang === 'id' ? `Eja kata '${spellingLetters.join("")}'` : `Spell the word '${spellingLetters.join("")}'`)}
                     </h1>
 
                     {/* Spelling Cards */}
@@ -578,10 +579,10 @@ export default function Camera({
             ) : (
                 <h1 className="text-2xl font-bold text-center max-w-2xl text-tertiary">
                     {question?.questionText
-                        ? getText(question.questionText)
-                        : `Let's try to make the letter `}
+                        ? getText(question.questionText, lang)
+                        : (lang === 'id' ? `Mari coba peragakan huruf ` : `Let's try to make the letter `)}
                     {!question?.questionText && (
-                        <span className="text-secondary">{activeTargetLetter || "Bebas"}</span>
+                        <span className="text-secondary">{activeTargetLetter || (lang === 'id' ? "Bebas" : "Free")}</span>
                     )}
                 </h1>
             )}
@@ -591,7 +592,7 @@ export default function Camera({
                 {cameraError ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-tertiary/90 text-white p-6 text-center">
                         <CameraOff size={48} className="text-red-400 mb-3" />
-                        <h4 className="font-bold text-lg mb-2">Kamera Tidak Dapat Digunakan</h4>
+                        <h4 className="font-bold text-lg mb-2">{lang === 'id' ? "Kamera Tidak Dapat Digunakan" : "Camera Unavailable"}</h4>
                         <p className="text-sm text-white/70 max-w-sm mb-4">{cameraError}</p>
                         <button
                             type="button"
@@ -599,7 +600,7 @@ export default function Camera({
                             className="bg-secondary text-white px-4 py-2 rounded-xl font-semibold text-sm hover:brightness-110 transition cursor-pointer flex items-center gap-2"
                         >
                             <RefreshCw size={14} />
-                            Coba Lagi
+                            {lang === 'id' ? "Coba Lagi" : "Try Again"}
                         </button>
                     </div>
                 ) : (
@@ -648,7 +649,7 @@ export default function Camera({
                                 {hintImageSrc && (
                                     <img
                                         src={hintImageSrc}
-                                        alt={`Hint Isyarat ${activeTargetLetter}`}
+                                        alt={lang === 'id' ? `Hint Isyarat ${activeTargetLetter}` : `Sign Hint ${activeTargetLetter}`}
                                         className={`w-80 h-80 object-contain drop-shadow-xl pointer-events-none mix-blend-multiply transition-opacity duration-300 ${isMatching ? "opacity-10" : "opacity-70"}`}
                                     />
                                 )}
@@ -666,15 +667,15 @@ export default function Camera({
                                     <p className="text-white text-xs mt-1 text-center font-medium">
                                         {isSpellingMode ? (
                                             holdProgress > 0 ? (
-                                                `Tahan kartu ${currentCardIndex + 1}/${spellingLetters.length} (Huruf ${activeTargetLetter})... ${holdProgress}%`
+                                                (lang === 'id' ? `Tahan kartu ${currentCardIndex + 1}/${spellingLetters.length} (Huruf ${activeTargetLetter})... ${holdProgress}%` : `Hold card ${currentCardIndex + 1}/${spellingLetters.length} (Letter ${activeTargetLetter})... ${holdProgress}%`)
                                             ) : (
-                                                `Peragakan huruf ke-${currentCardIndex + 1}: ${activeTargetLetter} (Tahan 2 detik)`
+                                                (lang === 'id' ? `Peragakan huruf ke-${currentCardIndex + 1}: ${activeTargetLetter} (Tahan 2 detik)` : `Perform letter ${currentCardIndex + 1}: ${activeTargetLetter} (Hold for 2 seconds)`)
                                             )
                                         ) : (
                                             holdProgress > 0 ? (
-                                                `Tahan gestur huruf ${activeTargetLetter}... (${holdProgress}%)`
+                                                (lang === 'id' ? `Tahan gestur huruf ${activeTargetLetter}... (${holdProgress}%)` : `Hold gesture for letter ${activeTargetLetter}... (${holdProgress}%)`)
                                             ) : (
-                                                `Bentuk isyarat huruf ${activeTargetLetter} dan tahan posisi (3 detik)`
+                                                (lang === 'id' ? `Bentuk isyarat huruf ${activeTargetLetter} dan tahan posisi (3 detik)` : `Form the sign for letter ${activeTargetLetter} and hold position (3 seconds)`)
                                             )
                                         )}
                                     </p>
@@ -703,9 +704,9 @@ export default function Camera({
                         <div className="min-w-0">
                             <p className="font-bold text-xl leading-tight">
                                 {result.isCorrect
-                                    ? "Jawaban Benar!!"
+                                    ? (lang === 'id' ? "Jawaban Benar!!" : "Correct Answer!!")
                                     : result.isTimeout
-                                        ? "Waktu Habis!"
+                                        ? (lang === 'id' ? "Waktu Habis!" : "Time's Up!")
                                         : "System Error"}
                             </p>
                             {result.isCorrect && (

@@ -5,10 +5,10 @@ import { getText } from "../../../utils/text";
  * Lesson component — displays a single material step.
  * @param {{ material: { contentText: object, mediaUrl?: string, orderIndex: number } }} props
  */
-export default function Lesson({ material }) {
+export default function Lesson({ material, lang = 'id' }) {
     if (!material) return null;
 
-    const text = getText(material.contentText);
+    const text = getText(material.contentText, lang);
     const mediaUrl = material.mediaUrl;
 
     if (!mediaUrl) {
@@ -30,7 +30,7 @@ export default function Lesson({ material }) {
                 <img
                     className="w-3/5 md:w-1/3 lg:w-1/5 rounded-2xl shadow-lg object-contain"
                     src={mediaUrl}
-                    alt={`Ilustrasi materi ${material.orderIndex || ''}`}
+                    alt={lang === 'id' ? `Ilustrasi materi ${material.orderIndex || ''}` : `Illustration for material ${material.orderIndex || ''}`}
                     loading="lazy"
                 />
             </div>

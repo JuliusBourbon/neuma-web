@@ -18,13 +18,14 @@ export default function UnderSection({
     canGoNext = true,
     nextLabel = "Lanjut",
     isLoading = false,
+    lang = 'id',
 }) {
     return (
         <div className="w-full">
             <hr className="w-full border-tertiary/80" />
             <div className="flex justify-between mx-6 sm:mx-16">
                 <ActionButton
-                    text="Kembali"
+                    text={lang === 'id' ? "Kembali" : "Back"}
                     classes="bg-tertiary text-white py-2 px-12 sm:px-24 rounded-lg my-3 sm:my-6"
                     onClick={onBack}
                     disabled={!canGoBack}
@@ -35,7 +36,7 @@ export default function UnderSection({
                     }
                 />
                 <ActionButton
-                    text={isLoading ? "Memproses..." : nextLabel}
+                    text={isLoading ? (lang === 'id' ? "Memproses..." : "Processing...") : nextLabel}
                     classes="bg-secondary text-white py-2 px-12 sm:px-24 rounded-lg my-3 sm:my-6"
                     onClick={onNext}
                     disabled={!canGoNext || isLoading}

@@ -13,7 +13,7 @@ import PartyIcon from "../../../components/icons/partyIcon";
  *   result: { isCorrect: boolean, isTimeout: boolean, xpEarned: number, correctAnswer?: string } | null,
  * }} props
  */
-export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmitted, result }) {
+export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmitted, result, lang = 'id' }) {
     const [showNotification, setShowNotification] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -45,7 +45,7 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
 
     if (!question) return null;
 
-    const questionText = getText(question.questionText);
+    const questionText = getText(question.questionText, lang);
     const isMultipleChoice = question.type === "multiple_choice";
     const isTrueFalse = question.type === "true_false";
 
@@ -68,7 +68,7 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                         className={`${isTrueFalse ? "h-[20vh] md:h-[24vh]" : "h-[18vh]"} rounded-2xl object-contain shadow-md`}
                         src={question.mediaUrl}
                         // src={defaultMascot}
-                        alt="Visual soal"
+                        alt={lang === 'id' ? "Visual soal" : "Question visual"}
                         loading="lazy"
                     />
                 </div>
@@ -114,7 +114,7 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                             }
                         }
 
-                        const choiceText = getText(choice);
+                        const choiceText = getText(choice, lang);
 
                         return (
                             <button
@@ -128,7 +128,7 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                                         className="h-24 object-contain rounded-lg"
                                         src={choice.image_url}
                                         // src={defaultMascot}
-                                        alt={choiceText || `Pilihan ${choice.key.toUpperCase()}`}
+                                        alt={choiceText || (lang === 'id' ? `Pilihan ${choice.key.toUpperCase()}` : `Choice ${choice.key.toUpperCase()}`)}
                                     />
                                 )}
                                 {choiceText && (
@@ -190,7 +190,7 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                                 disabled={isSubmitted}
                                 className={`w-full border-2 ${borderClass} ${bgClass} ${textColor} font-semibold py-4 px-6 rounded-xl hover:bg-black transition active:scale-95 cursor-pointer disabled:cursor-not-allowed text-lg`}
                             >
-                                {option === "true" ? "Benar" : "Salah"}
+                                {option === "true" ? (lang === 'id' ? "Benar" : "True") : (lang === 'id' ? "Salah" : "False")}
                             </button>
                         );
                     })}
@@ -215,10 +215,10 @@ export default function Quiz({ question, selectedAnswer, onSelectAnswer, isSubmi
                         <div className="min-w-0">
                             <p className="font-bold text-xl leading-tight">
                                 {result.isCorrect
-                                    ? "Jawaban Benar!!"
+                                    ? (lang === 'id' ? "Jawaban Benar!!" : "Correct Answer!!")
                                     : result.isTimeout
-                                        ? "Waktu Habis!"
-                                        : "Kurang Tepat!"}
+                                        ? (lang === 'id' ? "Waktu Habis!" : "Time's Up!")
+                                        : (lang === 'id' ? "Kurang Tepat!" : "Incorrect!")}
                             </p>
                             {result.isCorrect && (
                                 <p className="text-sm text-secondary font-semibold mt-0.5">

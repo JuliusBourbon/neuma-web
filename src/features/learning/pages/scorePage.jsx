@@ -3,7 +3,18 @@ import { getText } from "../../../utils/text";
 import firefly2 from "../../../assets/onboarding/firefly-2.png";
 import firefly4 from "../../../assets/onboarding/firefly-4.png";
 
+import { useState } from "react";
+
 export default function ScorePage() {
+    const [user] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("user") || "{}");
+        } catch {
+            return {};
+        }
+    });
+    const lang = user?.preferredLanguage || 'id';
+
     const navigate = useNavigate();
     const location = useLocation();
     const data = location.state;
@@ -13,13 +24,13 @@ export default function ScorePage() {
         return (
             <div className="bg-primary min-h-screen flex flex-col items-center justify-center text-tertiary p-6">
                 <div className="bg-white/90 backdrop-blur-md border border-tertiary/20 px-8 py-6 rounded-3xl max-w-md text-center shadow-2xl">
-                    <p className="text-base font-bold mb-3">Data skor tidak ditemukan.</p>
+                    <p className="text-base font-bold mb-3">{lang === 'id' ? "Data skor tidak ditemukan." : "Score data not found."}</p>
                     <button
                         type="button"
                         onClick={() => navigate("/home")}
                         className="text-sm bg-secondary text-white px-5 py-2.5 rounded-xl font-bold hover:brightness-110 shadow transition cursor-pointer"
                     >
-                        Kembali ke Home
+                        {lang === 'id' ? "Kembali ke Home" : "Back to Home"}
                     </button>
                 </div>
             </div>
@@ -37,14 +48,14 @@ export default function ScorePage() {
         coinsEarned = 0,
     } = data;
 
-    const title = getText(levelTitle) || "Level";
+    const title = getText(levelTitle, lang) || "Level";
 
     return (
         <div className="bg-primary min-h-screen flex flex-col items-center justify-center text-tertiary p-3 md:p-6">
             <div className="w-full max-w-2xl flex flex-col items-center gap-6">
                 {/* Title */}
                 <h1 className="text-3xl font-bold text-center">
-                    {isPassed ? `${title} - Selesai!` : `${title} - Belum Berhasil`}
+                    {isPassed ? `${title} - ${lang === 'id' ? "Selesai!" : "Completed!"}` : `${title} - ${lang === 'id' ? "Belum Berhasil" : "Not Passed"}`}
                 </h1>
                 {/* Result Icon */}
                 <div className="text-7xl">
@@ -82,14 +93,14 @@ export default function ScorePage() {
                         onClick={() => navigate(`/learning?levelId=${levelId}`)}
                         className="flex-1 bg-tertiary text-white py-3 px-6 rounded-xl font-semibold hover:bg-black transition cursor-pointer text-center"
                     >
-                        {isPassed ? "Ulangi Level" : "Coba Lagi"}
+                        {isPassed ? (lang === 'id' ? "Ulangi Level" : "Retry Level") : (lang === 'id' ? "Coba Lagi" : "Try Again")}
                     </button>
                     <button
                         type="button"
                         onClick={() => navigate("/home")}
                         className="flex-1 bg-secondary text-white py-3 px-6 rounded-xl font-semibold hover:bg-orange-600 transition cursor-pointer text-center"
                     >
-                        Kembali ke Home
+                        {lang === 'id' ? "Kembali ke Home" : "Back to Home"}
                     </button>
                 </div>
             </div>

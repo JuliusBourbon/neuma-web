@@ -24,6 +24,15 @@ function extractTargetLetter(question) {
 }
 
 export default function LearningPage() {
+    const [user] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("user") || "{}");
+        } catch {
+            return {};
+        }
+    });
+    const lang = user?.preferredLanguage || 'id';
+
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const levelId = searchParams.get("levelId");
@@ -57,7 +66,7 @@ export default function LearningPage() {
     // Fetch level detail on mount
     useEffect(() => {
         if (!levelId) {
-            setErrorMessage("Level ID tidak ditemukan. Kembali ke halaman utama.");
+            setErrorMessage(lang === 'id' ? "Level ID tidak ditemukan. Kembali ke halaman utama." : "Level ID not found. Returning to home.");
             setIsLoading(false);
             return;
         }
@@ -87,7 +96,7 @@ export default function LearningPage() {
                 setSteps(mergedSteps);
 
             } catch (err) {
-                setErrorMessage(err.message || "Gagal memuat detail level.");
+                setErrorMessage(err.message || (lang === 'id' ? "Gagal memuat detail level." : "Failed to load level details."));
             } finally {
                 setIsLoading(false);
             }
@@ -255,7 +264,7 @@ export default function LearningPage() {
             });
         } catch (err) {
             console.error("Failed to complete level:", err);
-            setErrorMessage(err.message || "Gagal menyelesaikan level.");
+            setErrorMessage(err.message || (lang === 'id' ? "Gagal menyelesaikan level." : "Failed to complete level."));
         } finally {
             setIsSubmitting(false);
         }
@@ -365,11 +374,11 @@ export default function LearningPage() {
 
     // Next button state
     const getNextButtonState = () => {
-        if (!currentItem) return { canGoNext: false, label: "Lanjut" };
+        if (!currentItem) return { canGoNext: false, label: lang === 'id' ? "Lanjut" : "Next" };
 
         if (currentItem.type === "material") {
             const isLastStep = currentStep === totalSteps - 1;
-            return { canGoNext: true, label: isLastStep ? "Selesai" : "Lanjut" };
+            return { canGoNext: true, label: isLastStep ? (lang === 'id' ? "Selesai" : "Finish") : (lang === 'id' ? "Lanjut" : "Next") };
         }
 
         const qId = currentItem.data.id;
@@ -381,7 +390,7 @@ export default function LearningPage() {
 
         if (hasResult) {
             const isLastStep = currentStep === totalSteps - 1;
-            return { canGoNext: true, label: isLastStep ? "Selesai" : "Lanjut" };
+            return { canGoNext: true, label: isLastStep ? (lang === 'id' ? "Selesai" : "Finish") : (lang === 'id' ? "Lanjut" : "Next") };
         }
 
         return {
@@ -397,7 +406,7 @@ export default function LearningPage() {
         return (
             <div className="bg-primary min-h-screen flex flex-col items-center justify-center text-tertiary">
                 <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4" />
-                <p className="font-medium text-sm">Loading...</p>
+                <p className="font-medium text-sm">{lang === 'id' ? "Memuat..." : "Loading..."}</p>
             </div>
         );
     }
@@ -413,7 +422,7 @@ export default function LearningPage() {
                         onClick={() => navigate("/home")}
                         className="text-sm text-secondary px-5 py-2.5 rounded-xl font-bold hover:brightness-110 shadow transition cursor-pointer"
                     >
-                        Kembali ke Home
+                        {lang === 'id' ? "Kembali ke Home" : "Back to Home"}
                     </button>
                 </div>
             </div>
@@ -468,7 +477,7 @@ export default function LearningPage() {
 
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col items-center justify-center lg:justify-between p-2">
-                {currentItem?.type === "material" && <Lesson material={currentItem.data} />}
+                {currentItem?.type === "material" && <Lesson material={currentItem.data} lang={lang} />}
 
                 {currentItem?.type === "quiz" && (
                     <Quiz
@@ -483,6 +492,7 @@ export default function LearningPage() {
                         }
                         isSubmitted={!!submitResults[currentItem.data.id]}
                         result={submitResults[currentItem.data.id] || null}
+                        lang={lang}
                     />
                 )}
 
@@ -519,6 +529,7 @@ export default function LearningPage() {
                         }
                         isSubmitted={!!submitResults[currentItem.data.id]}
                         result={submitResults[currentItem.data.id] || null}
+                        lang={lang}
                     />
                 )}
             </main>
@@ -532,6 +543,7 @@ export default function LearningPage() {
                     canGoNext={canGoNext}
                     nextLabel={nextLabel}
                     isLoading={isSubmitting}
+                    lang={lang}
                 />
             </div>
         </div>
