@@ -4,13 +4,13 @@ export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, current
             aria-label="Map navigation controls"
             className="fixed right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3 pointer-events-auto select-none"
         >
-            <div className="bg-tertiary/80 backdrop-blur-md border border-white/20 p-1.5 rounded-2xl shadow-2xl flex flex-col gap-1.5">
+            <div className="bg-tertiary/80 backdrop-blur-md border border-white/20 p-2 md:p-1.5 rounded-2xl shadow-2xl flex flex-col gap-1.5">
                 {/* Zoom In */}
                 <button
                     type="button"
                     onClick={onZoomIn}
                     title={lang === 'id' ? "Perbesar Peta (+)" : "Zoom In (+)"}
-                    className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xl transition active:scale-90 cursor-pointer"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xl transition active:scale-90 cursor-pointer"
                 >
                     +
                 </button>
@@ -25,7 +25,7 @@ export default function MapControls({ onZoomIn, onZoomOut, onResetFocus, current
                     type="button"
                     onClick={onZoomOut}
                     title={lang === 'id' ? "Perkecil Peta (-)" : "Zoom Out (-)"}
-                    className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xl transition active:scale-90 cursor-pointer"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-xl transition active:scale-90 cursor-pointer"
                 >
                     −
                 </button>
