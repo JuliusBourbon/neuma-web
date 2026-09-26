@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { leaderboardService } from "../../../services/api/leaderboardService";
 import firefly4 from "../../../assets/onboarding/firefly-4.png";
 import PageHeader from "../../../components/layout/PageHeader";
+import LoadingOverlay from "../../../components/common/LoadingOverlay";
 
 export default function LeaderboardPage() {
   const [user] = useState(() => {
@@ -13,9 +14,25 @@ export default function LeaderboardPage() {
   });
   const lang = user?.preferredLanguage || 'id';
 
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [myRank, setMyRank] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [leaderboard, setLeaderboard] = useState(() => {
+    try {
+      const cached = localStorage.getItem("leaderboardData");
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return [];
+  });
+  
+  const [myRank, setMyRank] = useState(() => {
+    try {
+      const cached = localStorage.getItem("leaderboardMyRank");
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  });
+
+  const [isInitializing, setIsInitializing] = useState(() => {
+    return !localStorage.getItem("leaderboardData");
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,15 +40,17 @@ export default function LeaderboardPage() {
         const topResponse = await leaderboardService.getTop();
         if (topResponse.success) {
           setLeaderboard(topResponse.data.leaderboard);
+          localStorage.setItem("leaderboardData", JSON.stringify(topResponse.data.leaderboard));
         }
         const myRankResponse = await leaderboardService.getMyRank();
         if (myRankResponse.success) {
           setMyRank(myRankResponse.data.myRank);
+          localStorage.setItem("leaderboardMyRank", JSON.stringify(myRankResponse.data.myRank));
         }
       } catch (error) {
         console.error("Failed to fetch leaderboard data", error);
       } finally {
-        setLoading(false);
+        setIsInitializing(false);
       }
     };
     fetchData();
@@ -52,12 +71,10 @@ export default function LeaderboardPage() {
         backButtonPath="/home"
       />
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar w-full pb-24 pr-1">
-        {loading ? (
-          <div className="flex justify-center items-center h-full">
-            <span className="text-xl">{lang === 'id' ? "Memuat..." : "Loading..."}</span>
-          </div>
-        ) : (
+      {isInitializing ? (
+        <LoadingOverlay message={lang === 'id' ? "Memuat papan peringkat..." : "Loading leaderboard..."} />
+      ) : (
+        <div className="flex-1 overflow-y-auto custom-scrollbar w-full pb-24 pr-1">
           <div className="flex flex-col w-full max-w-6xl mx-auto gap-3 px-4 py-4 md:py-8">
             {leaderboard.map((user) => {
               const isMe = myRank && user.userId === myRank.userId;
@@ -110,11 +127,11 @@ export default function LeaderboardPage() {
               );
             })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* My Rank Fixed Bottom */}
-      {myRank && !loading && (
+      {myRank && !isInitializing && (
         <div className="bg-primary backdrop-blur-sm border-t border-tertiary/20 p-4 shrink-0 absolute bottom-0 w-full z-20 text-white">
           <div className="flex justify-between w-full max-w-6xl mx-auto text-lg md:text-2xl bg-tertiary/40 rounded-xl gap-4 items-center py-3 px-4 md:px-6 shadow-lg ring-1 ring-tertiary/30">
             <div className="flex items-center gap-4 md:gap-6">
