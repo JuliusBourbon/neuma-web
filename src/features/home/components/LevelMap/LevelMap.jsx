@@ -10,7 +10,8 @@ export default function LevelMap({ levels = [], avatar = null, lang = 'id' }) {
     const { showHint, hintKey, dismissHint } = useMapHint();
     const {
         containerRef,
-        pan,
+        mapRef,
+        panRef,
         zoom,
         isDragging,
         handlers,
@@ -21,27 +22,37 @@ export default function LevelMap({ levels = [], avatar = null, lang = 'id' }) {
         <div
             ref={containerRef}
             {...handlers}
-            className={`fade-in-delay fixed inset-0 w-screen h-screen overflow-hidden select-none bg-primary ${
-                isDragging ? "cursor-grabbing" : "cursor-grab"
-            }`}
+            className={`fade-in-delay fixed inset-0 w-screen h-screen overflow-hidden select-none bg-primary ${isDragging ? "cursor-grabbing" : "cursor-grab"
+                }`}
         >
             {/* Kanvas Peta Utama yang Bergeser */}
             <div
+                ref={mapRef}
                 className="absolute origin-top-left will-change-transform"
                 style={{
                     width: `${MAP_DIMENSIONS.width}px`,
                     height: `${MAP_DIMENSIONS.height}px`,
-                    transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`,
+                    transform: `translate3d(${panRef.current.x}px, ${panRef.current.y}px, 0) scale(${zoom})`,
                     transition: isDragging ? "none" : "transform 0.15s ease-out",
                 }}
             >
-                {/* 1. Background Ilustrasi Tekstur Peta Petualangan / Topografi Nuansa Primary */}
                 <div className="absolute inset-0 bg-primary pointer-events-none">
-                    {/* Ornamen Lembut Nuansa Neuma */}
-                    <div className="absolute top-40 left-80 w-96 h-96 rounded-full bg-orange/30 blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-60 right-96 w-125 h-125 rounded-full bg-neon/20 blur-3xl pointer-events-none" />
-                    <div className="absolute top-1/2 w-80 h-80 rounded-full bg-yellow/40 blur-3xl pointer-events-none" />
-                    <div className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full bg-yellow/40 blur-3xl pointer-events-none" />
+                    <div
+                        className="absolute top-40 left-80 w-96 h-96 rounded-full pointer-events-none"
+                        style={{ background: 'radial-gradient(circle, rgba(255, 214, 0, 0.3) 0%, rgba(255, 214, 0, 0) 70%)' }}
+                    />
+                    <div
+                        className="absolute bottom-60 right-96 w-125 h-125 rounded-full pointer-events-none"
+                        style={{ background: 'radial-gradient(circle, rgba(194, 255, 0, 0.2) 0%, rgba(194, 255, 0, 0) 70%)' }}
+                    />
+                    <div
+                        className="absolute top-1/2 w-80 h-80 rounded-full pointer-events-none"
+                        style={{ background: 'radial-gradient(circle, rgba(245, 255, 0, 0.4) 0%, rgba(245, 255, 0, 0) 70%)' }}
+                    />
+                    <div
+                        className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full pointer-events-none"
+                        style={{ background: 'radial-gradient(circle, rgba(245, 255, 0, 0.4) 0%, rgba(245, 255, 0, 0) 70%)' }}
+                    />
                 </div>
 
                 {/* 2. Garis-garis Penghubung Level (MapLines) */}

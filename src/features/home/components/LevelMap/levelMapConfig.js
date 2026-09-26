@@ -1,7 +1,7 @@
 // Dimension
 export const MAP_DIMENSIONS = {
     width: 4600,
-    height: 1400,
+    height: 1700,
 };
 
 // Position each level
