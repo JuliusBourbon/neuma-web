@@ -173,8 +173,8 @@ function App() {
         <TopBar brand='Neumá' links={navLinks} />
         <div className='flex flex-col items-center animate-fade-in-up'>
           <div className=''>
-            <h1 className='text-tertiary text-5xl text-center p-6'>Neumá</h1>
-            <h3 className='text-secondary text-2xl text-center font-medium mb-6'>Break the Silence, Bridge the World.</h3>
+            <h1 className='text-tertiary text-4xl md:text-5xl text-center p-4 md:p-6'>Neumá</h1>
+            <h3 className='text-secondary text-;lg md:text-2xl text-center font-medium mb-6'>Break the Silence, Bridge the World.</h3>
           </div>
           <div className='flex flex-col md:flex-row gap-2 md:gap-6'>
             <FillRoundedButton
@@ -212,7 +212,7 @@ function App() {
 
       <div className='bg-primary h-[40vh] lg:h-screen md:px-8 lg:px-16'>
         <div className='h-full w-full bg-tertiary md:rounded-t-4xl flex flex-col md:justify-between'>
-          <div className='text-lg md:text-3xl lg:text-4xl py-10 font-bold  text-primary flex flex-col items-center justify-center'>
+          <div className='text-lg md:text-3xl lg:text-4xl px-4 py-6 md:py-10 font-bold  text-primary flex flex-col items-center justify-center'>
             <span className='text-center'>
               {lang === 'id' ? "Rasakan pengalaman baru dalam belajar bahasa isyarat" : "Experience a new experience in learning sign language"}
             </span>
@@ -225,19 +225,19 @@ function App() {
       </div>
 
       <div ref={sectionRef} className='bg-primary h-[400vh] relative'>
-        <div className='sticky top-0 h-screen px-16 flex flex-col justify-center items-center text-6xl font-bold gap-8 overflow-hidden'>
+        <div className='sticky top-0 h-screen px-16 flex flex-col justify-center items-center text-5xl md:text-6xl font-bold gap-8 overflow-hidden'>
 
           {/* Mascots Background */}
-          <img src={mascot_1} alt="Mascot 1" className='absolute top-[10%] left-[10%] float-1 w-20 md:w-32 object-contain' />
-          <img src={mascot_2} alt="Mascot 2" className='absolute top-[15%] right-[12%] float-2 w-24 md:w-36 object-contain' />
-          <img src={mascot_3} alt="Mascot 3" className='absolute bottom-[15%] left-[8%] float-3 w-16 md:w-28 object-contain' />
-          <img src={mascot_4} alt="Mascot 4" className='absolute bottom-[10%] right-[10%] float-4 w-20 md:w-32 object-contain' />
-          <img src={mascot_5} alt="Mascot 5" className='absolute top-[40%] left-[5%] float-4 w-16 md:w-28 object-contain' />
-          <img src={mascot_6} alt="Mascot 6" className='absolute top-[45%] right-[5%] float-3 w-20 md:w-32 object-contain' />
+          <img src={mascot_1} alt="Mascot 1" className='absolute top-[10%] left-[10%] float-1 w-15 md:w-32 object-contain' />
+          <img src={mascot_2} alt="Mascot 2" className='absolute top-[15%] right-[12%] float-2 w-20 md:w-36 object-contain' />
+          <img src={mascot_3} alt="Mascot 3" className='absolute bottom-[15%] left-[8%] float-3 w-11 md:w-28 object-contain' />
+          <img src={mascot_4} alt="Mascot 4" className='absolute bottom-[10%] right-[10%] float-4 w-15 md:w-32 object-contain' />
+          <img src={mascot_5} alt="Mascot 5" className='absolute top-[40%] left-[5%] float-4 w-11 md:w-28 object-contain' />
+          <img src={mascot_6} alt="Mascot 6" className='absolute top-[45%] right-[5%] float-3 w-15 md:w-32 object-contain' />
           <img src={mascot_7} alt="Mascot 7" className='absolute top-[5%] left-[45%] float-1 w-12 md:w-24 object-contain' />
-          <img src={mascot_8} alt="Mascot 8" className='absolute bottom-[5%] left-[45%] float-2 w-16 md:w-28 object-contain' />
-          <img src={mascot_9} alt="Mascot 9" className='absolute top-[30%] left-[25%] float-2 w-12 md:w-20 object-contain' />
-          <img src={mascot_10} alt="Mascot 10" className='absolute bottom-[30%] right-[25%] float-1 w-16 md:w-24 object-contain' />
+          <img src={mascot_8} alt="Mascot 8" className='absolute bottom-[5%] left-[45%] float-2 w-12 md:w-28 object-contain' />
+          <img src={mascot_9} alt="Mascot 9" className='absolute top-[30%] left-[25%] float-2 w-13 md:w-20 object-contain' />
+          <img src={mascot_10} alt="Mascot 10" className='absolute bottom-[30%] right-[25%] float-1 w-11 md:w-24 object-contain' />
 
           {/* Texts */}
           <span style={getSpanStyle(0)} className='relative z-10 text-center'>
@@ -258,14 +258,14 @@ function App() {
             ref={bottomSectionRef}
             className={`flex flex-col h-full gap-4 justify-center items-center ${isBottomVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
           >
-            <span className='text-center text-2xl md:text-3xl font-bold '>
+            <span className='text-center text-xl md:text-3xl font-bold'>
               {lang === 'id' ? (
                 <>Bahasa Baru di Genggaman Anda <br /> Dunia Baru dalam Jangkauan Anda</>
               ) : (
                 <>A New Language in Your Hands <br /> A Whole New World in Your Reach</>
               )}
             </span>
-            <span className='text-center text-base'>
+            <span className='text-center text-sm md:text-base'>
               {lang === 'id' ? "Mulai belajar Bahasa Isyarat bersama Neumá hari ini!" : "Start learning Sign Language with Neumá today!"}
             </span>
             <div className='flex flex-col items-center'>
