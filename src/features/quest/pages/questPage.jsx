@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CoinIcon from "../../../components/icons/coinIcon";
 import { getQuests, claimQuest } from "../../../services/api/questService";
 import { getText } from "../../../utils/text";
+import LoadingOverlay from "../../../components/common/LoadingOverlay";
 
 export default function QuestPage() {
     const navigate = useNavigate();
@@ -15,20 +16,29 @@ export default function QuestPage() {
     });
     const lang = user?.preferredLanguage || 'id';
 
-    const [quests, setQuests] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [quests, setQuests] = useState(() => {
+        try {
+            const cached = localStorage.getItem("questData");
+            if (cached) return JSON.parse(cached);
+        } catch {}
+        return [];
+    });
+    const [isInitializing, setIsInitializing] = useState(() => {
+        return !localStorage.getItem("questData");
+    });
     const [error, setError] = useState(null);
     const [claimingQuestId, setClaimingQuestId] = useState(null);
 
     const fetchQuests = async (showLoading = true) => {
-        if (showLoading) setIsLoading(true);
+        if (showLoading) setIsInitializing(true);
         try {
             const data = await getQuests();
             setQuests(data.quests || []);
+            localStorage.setItem("questData", JSON.stringify(data.quests || []));
         } catch (err) {
             setError(err.message || (lang === 'id' ? "Gagal memuat quest." : "Failed to load quests."));
         } finally {
-            if (showLoading) setIsLoading(false);
+            if (showLoading) setIsInitializing(false);
         }
     };
 
@@ -75,13 +85,12 @@ export default function QuestPage() {
                 <h3 className="text-lg md:text-xl font-medium text-secondary">{lang === 'id' ? "Selesaikan misi dan dapatkan coin!" : "Complete quests and earn coins!"}</h3>
             </div>
 
-            <div className="flex-1 overflow-y-auto pb-20 mt-6 py-2 custom-scrollbar">
-                <div className="flex flex-col items-center w-full max-w-3xl mx-auto px-4 gap-4">
-                    {isLoading ? (
-                        <div className="flex flex-col items-center justify-center mt-10">
-                            <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                    ) : error ? (
+            {isInitializing ? (
+                <LoadingOverlay message={lang === 'id' ? "Memuat quest..." : "Loading quests..."} />
+            ) : (
+                <div className="flex-1 overflow-y-auto pb-20 mt-6 py-2 custom-scrollbar">
+                    <div className="flex flex-col items-center w-full max-w-3xl mx-auto px-4 gap-4">
+                        {error ? (
                         <div className="text-red-500 mt-10 font-medium">{error}</div>
                     ) : quests.length === 0 ? (
                         <div className="text-gray-500 mt-10">{lang === 'id' ? "Belum ada quest yang tersedia." : "No quests available."}</div>
@@ -147,6 +156,7 @@ export default function QuestPage() {
                     )}
                 </div>
             </div>
+            )}
         </div>
     );
 }
