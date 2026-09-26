@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CoinIcon from "../../../components/icons/coinIcon";
-import { getQuests, claimQuest } from "../../../services/api/questService";
-import { getText } from "../../../utils/text";
+import LoadingOverlay from "../../../components/common/LoadingOverlay";
+import QuestItemCard from "../components/QuestItemCard";
+import { useQuest } from "../hooks/useQuest";
 
 export default function QuestPage() {
     const navigate = useNavigate();
@@ -15,35 +15,7 @@ export default function QuestPage() {
     });
     const lang = user?.preferredLanguage || 'id';
 
-    const [quests, setQuests] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const fetchQuests = async () => {
-        setIsLoading(true);
-        try {
-            const data = await getQuests();
-            setQuests(data.quests || []);
-        } catch (err) {
-            setError(err.message || (lang === 'id' ? "Gagal memuat quest." : "Failed to load quests."));
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchQuests();
-    }, []);
-
-    const handleClaim = async (questId) => {
-        try {
-            await claimQuest(questId);
-            // Refresh quest list after claiming
-            fetchQuests();
-        } catch (err) {
-            alert(err.message || (lang === 'id' ? "Gagal mengklaim quest." : "Failed to claim quest."));
-        }
-    };
+    const { quests, isInitializing, error, claimingQuestId, handleClaim } = useQuest(lang);
 
     return (
         <div className="h-screen bg-primary flex flex-col overflow-hidden relative">
@@ -70,74 +42,29 @@ export default function QuestPage() {
                 <h3 className="text-lg md:text-xl font-medium text-secondary">{lang === 'id' ? "Selesaikan misi dan dapatkan coin!" : "Complete quests and earn coins!"}</h3>
             </div>
 
-            <div className="flex-1 overflow-y-auto pb-20 mt-6 py-2 custom-scrollbar">
-                <div className="flex flex-col items-center w-full max-w-3xl mx-auto px-4 gap-4">
-                    {isLoading ? (
-                        <div className="flex flex-col items-center justify-center mt-10">
-                            <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                    ) : error ? (
+            {isInitializing ? (
+                <LoadingOverlay message={lang === 'id' ? "Memuat quest..." : "Loading quests..."} />
+            ) : (
+                <div className="flex-1 overflow-y-auto pb-20 mt-6 py-2 custom-scrollbar">
+                    <div className="flex flex-col items-center w-full max-w-3xl mx-auto px-4 gap-4">
+                        {error ? (
                         <div className="text-red-500 mt-10 font-medium">{error}</div>
                     ) : quests.length === 0 ? (
                         <div className="text-gray-500 mt-10">{lang === 'id' ? "Belum ada quest yang tersedia." : "No quests available."}</div>
                     ) : (
-                        quests.map((quest) => {
-                            const isClaimed = quest.status === 'claimed';
-                            const isAchieved = quest.status === 'achieved';
-                            const title = getText(quest.title, lang);
-                            const description = getText(quest.description, lang);
-
-                            return (
-                                <div
-                                    key={quest.id}
-                                    className={`flex items-center w-full justify-between px-5 py-4 rounded-2xl shadow-sm border ${isClaimed ? 'bg-yellow-100 border-secondary opacity-80' :
-                                        isAchieved ? 'bg-yellow-100 border-yellow-200 ring ring-secondary' : 'bg-white border-transparent'
-                                        }`}
-                                >
-                                    <div className="flex flex-col max-w-[70%]">
-                                        <span className={`font-bold text-base md:text-lg ${isClaimed ? 'text-gray-500' : 'text-tertiary'}`}>
-                                            {title}
-                                        </span>
-                                        <span className={`text-sm mt-1 leading-snug ${isClaimed ? 'text-gray-400' : 'text-gray-600'}`}>
-                                            {description}
-                                        </span>
-                                        {!isClaimed && !isAchieved && (
-                                            <div className="w-full bg-gray-200 h-2 rounded-full mt-3 overflow-hidden">
-                                                <div
-                                                    className="bg-secondary h-full transition-all duration-500"
-                                                    style={{ width: `${Math.min((quest.currentProgress / quest.targetValue) * 100, 100)}%` }}
-                                                ></div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex flex-col items-end justify-center shrink-0">
-                                        <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100 mb-2">
-                                            <CoinIcon />
-                                            <span className="font-bold text-tertiary">{quest.rewardCurrency}</span>
-                                        </div>
-
-                                        {isClaimed ? (
-                                            <span className="text-xs font-bold text-secondary px-2 uppercase tracking-wide">{lang === 'id' ? "Selesai" : "Done"}</span>
-                                        ) : isAchieved ? (
-                                            <button
-                                                onClick={() => handleClaim(quest.id)}
-                                                className="bg-secondary hover:brightness-110 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-secondary/30 cursor-pointer"
-                                            >
-                                                {lang === 'id' ? "Klaim!" : "Claim!"}
-                                            </button>
-                                        ) : (
-                                            <span className="text-xs font-bold text-gray-500 px-2">
-                                                {quest.currentProgress} / {quest.targetValue}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })
+                        quests.map((quest) => (
+                            <QuestItemCard 
+                                key={quest.id} 
+                                quest={quest} 
+                                claimingQuestId={claimingQuestId} 
+                                handleClaim={handleClaim} 
+                                lang={lang} 
+                            />
+                        ))
                     )}
                 </div>
             </div>
+            )}
         </div>
     );
 }

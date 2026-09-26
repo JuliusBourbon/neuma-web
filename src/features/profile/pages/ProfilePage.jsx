@@ -9,6 +9,7 @@ import ProfileAvatarCard from "../components/ProfileAvatarCard";
 import AvatarPickerModal from "../components/AvatarPickerModal";
 import PageHeader from "../../../components/layout/PageHeader";
 import ProfileFeedbackModal from "../components/ProfileFeedbackModal";
+import LoadingOverlay from "../../../components/common/LoadingOverlay";
 
 import {
   getMyProfile,
@@ -55,26 +56,43 @@ function ProfilePage() {
     return genderLabels[gender] || "";
   }
 
-  // Data sementara untuk tampilan
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    age: "",
-    gender: "",
-    preferredLanguage: "id",
-    hasPassword: false,
+  // Data dari cache (localStorage) jika ada
+  const [profile, setProfile] = useState(() => {
+    try {
+      const cached = localStorage.getItem("profileData");
+      if (cached) return JSON.parse(cached);
+    } catch { }
+    return {
+      name: "",
+      email: "",
+      age: "",
+      gender: "",
+      preferredLanguage: "id",
+      hasPassword: false,
+    };
   });
 
   const [formData, setFormData] = useState(profile);
 
-  const [stats, setStats] = useState({
-    avatar: null,
-    activeAvatarId: null,
-    dayStreak: 0,
-    rank: null,
-    wordsCollected: 0,
-    totalXp: 0,
-    currencyBalance: 0,
+  const [stats, setStats] = useState(() => {
+    try {
+      const cached = localStorage.getItem("statsData");
+      if (cached) return JSON.parse(cached);
+    } catch { }
+    return {
+      avatar: null,
+      activeAvatarId: null,
+      dayStreak: 0,
+      rank: null,
+      wordsCollected: 0,
+      totalXp: 0,
+      currencyBalance: 0,
+    };
+  });
+
+  // State untuk menahan render jika sama sekali tidak ada data di cache (first load)
+  const [isInitializing, setIsInitializing] = useState(() => {
+    return !localStorage.getItem("profileData") || !localStorage.getItem("statsData");
   });
 
   const [avatars, setAvatars] = useState([]);
@@ -170,13 +188,14 @@ function ProfilePage() {
     fetchAvatars();
   }, []);
 
-  // Ambil data profile dari API
+  // Ambil data profile dan stats dari API (SWR Pattern)
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchProfileAndStats() {
       try {
-        const user = await getMyProfile();
-
-        console.log("Profile dari API:", user);
+        const [user, userStats] = await Promise.all([
+          getMyProfile(),
+          getMyStats()
+        ]);
 
         const profileData = {
           name: user.username || "Anonymous",
@@ -187,25 +206,7 @@ function ProfilePage() {
           hasPassword: Boolean(user.hasPassword),
         };
 
-        setProfile(profileData);
-        setFormData(profileData);
-      } catch (error) {
-        console.error("Gagal mengambil profile:", error);
-      }
-    }
-
-    fetchProfile();
-  }, []);
-
-  // Ambil data stats dari API
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const userStats = await getMyStats();
-
-        console.log("Stats dari API:", userStats);
-
-        setStats({
+        const statsData = {
           avatar: userStats?.avatar ?? null,
           activeAvatarId: userStats?.activeAvatarId ?? null,
           dayStreak: userStats?.dayStreak ?? 0,
@@ -213,16 +214,28 @@ function ProfilePage() {
           wordsCollected: userStats?.wordsCollected ?? 0,
           totalXp: userStats?.totalXp ?? 0,
           currencyBalance: userStats?.currencyBalance ?? 0,
-        });
+        };
 
+        setProfile(profileData);
+        // Only override formData if we are not editing
+        setFormData((prev) => (mode === "profile" ? profileData : prev));
+
+        setStats(statsData);
         setSelectedAvatarId(userStats?.activeAvatarId ?? null);
+
+        // Update Cache
+        localStorage.setItem("profileData", JSON.stringify(profileData));
+        localStorage.setItem("statsData", JSON.stringify(statsData));
+
       } catch (error) {
-        console.error("Gagal mengambil statistik:", error);
+        console.error("Gagal mengambil data profile/stats:", error);
+      } finally {
+        setIsInitializing(false);
       }
     }
 
-    fetchStats();
-  }, []);
+    fetchProfileAndStats();
+  }, [mode]);
 
   // profile | edit | password
 
@@ -273,9 +286,10 @@ function ProfilePage() {
       setProfile(updatedProfile);
       setFormData(updatedProfile);
       setUserStore(prev => ({ ...prev, preferredLanguage: updatedUser.preferredLanguage || "id" }));
-      
+
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
       localStorage.setItem("user", JSON.stringify({ ...currentUser, ...updatedUser }));
+      localStorage.setItem("profileData", JSON.stringify(updatedProfile));
 
       setMode("profile");
 
@@ -398,92 +412,96 @@ function ProfilePage() {
         backButtonPath="/home"
       />
 
-      {/* Scrollable Content */}
-      <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pr-1 sm:px-6 lg:px-8">
-        {/* Main Content */}
-        <div className="mx-auto grid w-full max-w-[1625px] grid-cols-1 gap-10 px-4 py-6 sm:px-8 md:py-8 lg:grid-cols-2 lg:gap-25 lg:px-12">
-          {/* LEFT SIDE */}
-          <div className="order-last lg:order-first">
-            {/* Profile Mode */}
-            {mode === "profile" && (
-              <ProfileInfo
-                profile={profile}
-                getGenderLabel={getGenderLabel}
-                onEdit={handleEditProfile}
-                onChangePassword={() => setMode("password")}
-                lang={lang}
-              />
-            )}
+      {isInitializing ? (
+        <LoadingOverlay message={lang === 'id' ? "Memuat profil..." : "Loading profile..."} />
+      ) : (
+        /* Scrollable Content */
+        <div className="custom-scrollbar flex-1 overflow-y-auto px-4 pr-1 sm:px-6 lg:px-8">
+          {/* Main Content */}
+          <div className="mx-auto grid w-full max-w-[1625px] grid-cols-1 gap-10 px-4 py-6 sm:px-8 md:py-8 lg:grid-cols-2 lg:gap-25 lg:px-12">
+            {/* LEFT SIDE */}
+            <div className="order-last lg:order-first">
+              {/* Profile Mode */}
+              {mode === "profile" && (
+                <ProfileInfo
+                  profile={profile}
+                  getGenderLabel={getGenderLabel}
+                  onEdit={handleEditProfile}
+                  onChangePassword={() => setMode("password")}
+                  lang={lang}
+                />
+              )}
 
-            {/* EDIT PROFILE MODE */}
-            {mode === "edit" && (
-              <ProfileEditForm
-                formData={formData}
-                setFormData={setFormData}
-                onCancel={handleCancel}
-                onSave={handleSave}
-                lang={lang}
-              />
-            )}
+              {/* EDIT PROFILE MODE */}
+              {mode === "edit" && (
+                <ProfileEditForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  onCancel={handleCancel}
+                  onSave={handleSave}
+                  lang={lang}
+                />
+              )}
 
-            {/* CHANGE PASSWORD MODE */}
-            {mode === "password" && (
-              <ProfilePasswordForm
-                hasPassword={profile.hasPassword}
-                onCancel={handleCancel}
-                onSubmit={handlePasswordSubmit}
-                lang={lang}
-              />
-            )}
+              {/* CHANGE PASSWORD MODE */}
+              {mode === "password" && (
+                <ProfilePasswordForm
+                  hasPassword={profile.hasPassword}
+                  onCancel={handleCancel}
+                  onSubmit={handlePasswordSubmit}
+                  lang={lang}
+                />
+              )}
 
-            {/* Sign Out */}
-            <div className="mt-8 flex max-w-162.5 justify-center">
-              <FillRoundedButton
-                text={lang === 'id' ? "Keluar" : "Sign Out"}
-                classes="min-w-64 bg-[#FE7236] text-lg text-white"
-                onClick={handleLogout}
+              {/* Sign Out */}
+              <div className="mt-8 flex max-w-162.5 justify-center">
+                <FillRoundedButton
+                  text={lang === 'id' ? "Keluar" : "Sign Out"}
+                  classes="min-w-64 bg-[#FE7236] text-lg text-white"
+                  onClick={handleLogout}
+                />
+              </div>
+            </div>
+
+            {/* RIGHT SIDE */}
+            <div className="order-first flex flex-col items-center justify-start pt-0 lg:order-last lg:pt-4">
+              <ProfileAvatarCard
+                avatar={stats.avatar || fireflyMain}
+                dayStreak={stats.dayStreak}
+                rank={stats.rank}
+                wordsCollected={stats.wordsCollected}
+                totalXp={stats.totalXp}
+                currencyBalance={stats.currencyBalance}
+                onChangeAvatar={handleOpenAvatarPicker}
+                lang={lang}
               />
             </div>
-          </div>
 
-          {/* RIGHT SIDE */}
-          <div className="order-first flex flex-col items-center justify-start pt-0 lg:order-last lg:pt-4">
-            <ProfileAvatarCard
-              avatar={stats.avatar || fireflyMain}
-              dayStreak={stats.dayStreak}
-              rank={stats.rank}
-              wordsCollected={stats.wordsCollected}
-              totalXp={stats.totalXp}
-              currencyBalance={stats.currencyBalance}
-              onChangeAvatar={handleOpenAvatarPicker}
+            {/* AVATAR PICKER MODAL */}
+            <AvatarPickerModal
+              isOpen={isAvatarPickerOpen}
+              avatars={avatars}
+              selectedAvatarId={selectedAvatarId}
+              isLoading={isLoadingAvatars}
+              onClose={handleCloseAvatarPicker}
+              onSelect={handleSelectAvatar}
+              lang={lang}
+            />
+
+            {/* PROFILE FEEDBACK MODAL */}
+            <ProfileFeedbackModal
+              isOpen={feedbackModal.isOpen}
+              type={feedbackModal.type}
+              title={feedbackModal.title}
+              message={feedbackModal.message}
+              onClose={closeFeedbackModal}
+              onConfirm={handleConfirmAction}
+              isConfirming={isProcessingAction}
               lang={lang}
             />
           </div>
-
-          {/* AVATAR PICKER MODAL */}
-          <AvatarPickerModal
-            isOpen={isAvatarPickerOpen}
-            avatars={avatars}
-            selectedAvatarId={selectedAvatarId}
-            isLoading={isLoadingAvatars}
-            onClose={handleCloseAvatarPicker}
-            onSelect={handleSelectAvatar}
-            lang={lang}
-          />
-
-          {/* PROFILE FEEDBACK MODAL */}
-          <ProfileFeedbackModal
-            isOpen={feedbackModal.isOpen}
-            type={feedbackModal.type}
-            title={feedbackModal.title}
-            message={feedbackModal.message}
-            onClose={closeFeedbackModal}
-            onConfirm={handleConfirmAction}
-            isConfirming={isProcessingAction}
-            lang={lang}
-          />
         </div>
-      </div>
+      )}
     </div>
   );
 }
