@@ -38,7 +38,7 @@ export default function DialogBubble({
 
   return (
     <div
-      className={`flex items-center justify-center gap-3 md:gap-8 ${isRight ? "flex-row-reverse" : ""
+      className={`flex items-center justify-center gap-2 md:gap-8 ${isRight ? "flex-row-reverse" : ""
         } ${customWrapper || "mb-10"}`.trim()}
     >
       {/* Mascot / Avatar Image */}
@@ -46,7 +46,7 @@ export default function DialogBubble({
         <img
           src={image}
           alt={imageAlt}
-          className={customImage || "h-20 w-20 md:h-28 md:w-28 object-contain shrink-0"}
+          className={customImage || "h-18 w-18 md:h-28 md:w-28 object-contain shrink-0"}
         />
       )}
 

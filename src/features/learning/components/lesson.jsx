@@ -23,7 +23,7 @@ export default function Lesson({ material, lang = 'id' }) {
 
     return (
         <div className="w-full flex flex-col items-center md:gap-5">
-            <div className="w-full px-4 md:px-0 md:w-4/5 lg:w-2/3">
+            <div className="w-full px-1 md:px-0 md:w-4/5 lg:w-2/3">
                 <DialogBubble text={text} />
             </div>
             <div className="flex justify-center">

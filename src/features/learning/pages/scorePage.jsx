@@ -69,7 +69,7 @@ export default function ScorePage() {
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
                         <p className="text-sm text-primary font-bold">XP</p>
                         <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
-                            {stats.totalXp ?? 0}
+                            +{data.xpEarned ?? stats?.xpEarned ?? 0}
                         </p>
                     </div>
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
