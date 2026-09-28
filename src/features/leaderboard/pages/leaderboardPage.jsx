@@ -18,7 +18,7 @@ export default function LeaderboardPage() {
   const { leaderboard, myRank, isInitializing } = useLeaderboard();
 
   return (
-    <div className="h-screen bg-primary flex flex-col overflow-hidden relative">
+    <div className="h-[calc(100vh-64px)] bg-primary flex flex-col overflow-hidden relative">
       <PageHeader
         title={lang === 'id' ? "Papan Peringkat" : "Leaderboard"}
         showBackButton={true}
@@ -31,11 +31,11 @@ export default function LeaderboardPage() {
         <div className="flex-1 overflow-y-auto custom-scrollbar w-full pb-24 pr-1">
           <div className="flex flex-col w-full max-w-6xl mx-auto gap-3 px-4 py-4 md:py-8">
             {leaderboard.map((user) => (
-              <LeaderboardItem 
-                key={user.userId} 
-                user={user} 
-                isMe={myRank && user.userId === myRank.userId} 
-                lang={lang} 
+              <LeaderboardItem
+                key={user.userId}
+                user={user}
+                isMe={myRank && user.userId === myRank.userId}
+                lang={lang}
               />
             ))}
           </div>
