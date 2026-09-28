@@ -54,9 +54,9 @@ export default function ScorePage() {
         <div className="bg-primary h-[calc(100vh-64px)] md:h-screen flex flex-col items-center justify-center text-tertiary p-3 md:p-6">
             <div className="w-full max-w-2xl flex flex-col items-center gap-6">
                 {/* Title */}
-                <h1 className="text-3xl font-bold text-center">
+                <span className="text-3xl font-bold text-center">
                     {isPassed ? `${title} - ${lang === 'id' ? "Selesai!" : "Completed!"}` : `${title} - ${lang === 'id' ? "Belum Berhasil" : "Not Passed"}`}
-                </h1>
+                </span>
                 {/* Result Icon */}
                 <div className="text-7xl">
                     {isPassed ?
