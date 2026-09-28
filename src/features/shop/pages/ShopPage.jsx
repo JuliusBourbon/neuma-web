@@ -27,7 +27,7 @@ function ShopPage() {
     try {
       const cached = localStorage.getItem("shopItems");
       if (cached) return JSON.parse(cached);
-    } catch {}
+    } catch { }
     return [];
   });
 
@@ -35,7 +35,7 @@ function ShopPage() {
     try {
       const cached = localStorage.getItem("shopCurrency");
       if (cached) return JSON.parse(cached);
-    } catch {}
+    } catch { }
     return 0;
   });
 
@@ -153,7 +153,7 @@ function ShopPage() {
   };
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden justify-between bg-primary text-tertiary">
+    <div className="flex h-[calc(100vh-64px)] md:h-screen flex-col overflow-hidden justify-between bg-primary text-tertiary">
       <ShopModal
         isOpen={Boolean(modalType)}
         type={modalType}
@@ -176,9 +176,9 @@ function ShopPage() {
       ) : (
         <>
           {/* Currency Balance */}
-          <div className="flex shrink-0 justify-center px-4 pb-6 pt-2 sm:pb-4">
-            <div className="flex items-center gap-2 rounded-full border-2 border-secondary bg-white px-4 py-2 text-base font-medium text-secondary shadow-sm sm:gap-3 sm:px-6 sm:py-3 sm:text-lg">
-              <CoinIcon size={20} color="#FE7236" className="sm:h-6 sm:w-6" />
+          <div className="flex shrink-0 justify-center px-4 pb-3 md:pb-6 pt-2 sm:pb-4">
+            <div className="flex items-center gap-2 rounded-full border-2 border-secondary bg-white px-2 md:px-4 py-2 text-xs md:text-base font-medium text-secondary shadow-sm sm:gap-3 sm:px-6 sm:py-3 sm:text-lg">
+              <CoinIcon size={20} color="#FE7236" className="h-4 w-4 md:h-6 md:w-6" />
 
               <span>{currencyBalance} Coins</span>
             </div>

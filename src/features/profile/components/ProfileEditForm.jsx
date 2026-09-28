@@ -84,16 +84,16 @@ function ProfileEditForm({ formData, setFormData, onCancel, onSave, lang = 'id' 
       </div>
 
       {/* Edit Buttons */}
-      <div className="grid grid-cols-2 gap-8 mt-10 max-w-162.5">
+      <div className="grid grid-cols-2 gap-2 md:gap-8 mt-10 max-w-162.5">
         <FillRoundedButton
           text={lang === 'id' ? "Batal" : "Cancel"}
-          classes="bg-tertiary text-white md:text-lg w-full"
+          classes="bg-tertiary text-white text-sm md:text-lg w-full"
           onClick={onCancel}
         />
 
         <FillRoundedButton
           text={lang === 'id' ? "Simpan" : "Save"}
-          classes="bg-secondary text-white md:text-lg w-full"
+          classes="bg-secondary text-white text-sm md:text-lg w-full"
           onClick={onSave}
         />
       </div>

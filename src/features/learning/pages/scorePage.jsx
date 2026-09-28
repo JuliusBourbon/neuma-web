@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { getText } from "../../../utils/text";
-import firefly2 from "../../../assets/onboarding/firefly-2.png";
-import firefly4 from "../../../assets/onboarding/firefly-4.png";
+import mascot3 from "../../../assets/onboarding/mascot_3.png";
+import mascot4 from "../../../assets/onboarding/mascot_4.png";
 
 import { useState } from "react";
 
@@ -51,7 +51,7 @@ export default function ScorePage() {
     const title = getText(levelTitle, lang) || "Level";
 
     return (
-        <div className="bg-primary min-h-screen flex flex-col items-center justify-center text-tertiary p-3 md:p-6">
+        <div className="bg-primary h-[calc(100vh-64px)] md:h-screen flex flex-col items-center justify-center text-tertiary p-3 md:p-6">
             <div className="w-full max-w-2xl flex flex-col items-center gap-6">
                 {/* Title */}
                 <h1 className="text-3xl font-bold text-center">
@@ -60,27 +60,27 @@ export default function ScorePage() {
                 {/* Result Icon */}
                 <div className="text-7xl">
                     {isPassed ?
-                        <img src={firefly2} alt="firefly" className="w-40 h-40 object-contain" /> : <img src={firefly4} alt="firefly" className="w-40 h-40 object-contain" />
+                        <img src={mascot3} alt="firefly" className="w-40 h-40 object-contain" /> : <img src={mascot4} alt="firefly" className="w-40 h-40 object-contain" />
                     }
                 </div>
 
                 {/* Stats Cards */}
-                <div className="w-full grid grid-cols-3 gap-3">
+                <div className="w-full grid grid-cols-3 gap-1 md:gap-3">
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
                         <p className="text-sm text-primary font-bold">XP</p>
-                        <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
+                        <p className="text-lg md:text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
                             +{data.xpEarned ?? stats?.xpEarned ?? 0}
                         </p>
                     </div>
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
                         <p className="text-sm text-primary font-bold">Coin</p>
-                        <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
+                        <p className="text-lg md:text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
                             +{coinsEarned}
                         </p>
                     </div>
                     <div className="rounded-xl p-2 text-center bg-tertiary flex flex-col gap-1">
                         <p className="text-sm text-primary font-bold">Accuracy</p>
-                        <p className="text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
+                        <p className="text-lg md:text-2xl font-bold bg-primary text-tertiary py-8 rounded-md">
                             {scorePercentage}%
                         </p>
                     </div>

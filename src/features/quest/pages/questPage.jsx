@@ -19,7 +19,7 @@ export default function QuestPage() {
     const { quests, isInitializing, error, claimingQuestId, handleClaim } = useQuest(lang);
 
     return (
-        <div className="h-[calc(100vh-64px)] bg-primary flex flex-col overflow-hidden relative">
+        <div className="h-[calc(100vh-64px)] md:h-screen bg-primary flex flex-col overflow-hidden relative">
             <PageHeader
                 title={lang === 'id' ? "Misi" : "Quest"}
                 showBackButton={true}

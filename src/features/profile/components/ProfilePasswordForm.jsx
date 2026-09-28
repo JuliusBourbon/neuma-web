@@ -114,16 +114,16 @@ function ProfilePasswordForm({ hasPassword = false, onCancel, onSubmit, lang = '
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-10 grid max-w-162.5 grid-cols-2 gap-8">
+      <div className="mt-10 grid max-w-162.5 grid-cols-2 gap-2 md:gap-8">
         <FillRoundedButton
           text={lang === 'id' ? "Batal" : "Cancel"}
-          classes="w-full bg-tertiary md:text-lg text-white"
+          classes="w-full bg-tertiary text-sm md:text-lg text-white"
           onClick={onCancel}
         />
 
         <FillRoundedButton
           text={hasPassword ? (lang === 'id' ? "Ubah Sandi" : "Change Password") : (lang === 'id' ? "Buat Sandi" : "Set Password")}
-          classes="w-full bg-secondary md:text-lg text-white"
+          classes="w-full bg-secondary text-sm md:text-lg text-white"
           onClick={handleSubmit}
         />
       </div>

@@ -12,7 +12,7 @@ export default function MyRankBar({ myRank, lang }) {
 
   return (
     <div className="bg-primary border-t border-tertiary/20 p-4 shrink-0 absolute bottom-0 w-full z-20 text-white">
-      <div className="flex justify-between w-full max-w-6xl mx-auto text-base md:text-2xl bg-tertiary/40 rounded-xl gap-4 items-center px-4 md:px-6 shadow-lg ring-1 ring-tertiary/30">
+      <div className="flex justify-between w-full max-w-6xl p-1 md:py-2 mx-auto text-base md:text-2xl bg-tertiary/40 rounded-xl gap-4 items-center px-4 md:px-6 shadow-lg ring-1 ring-tertiary/30">
         <div className="flex items-center gap-4 md:gap-6">
           <span className="font-bold w-6 md:w-8">#{myRank.rank}</span>
           <div className="bg-tertiary rounded-full p-1 shrink-0 shadow-md">

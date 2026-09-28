@@ -18,7 +18,7 @@ export default function LeaderboardPage() {
   const { leaderboard, myRank, isInitializing } = useLeaderboard();
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-primary flex flex-col overflow-hidden relative">
+    <div className="h-[calc(100vh-64px)] md:h-screen bg-primary flex flex-col overflow-hidden relative">
       <PageHeader
         title={lang === 'id' ? "Papan Peringkat" : "Leaderboard"}
         showBackButton={true}
