@@ -52,7 +52,7 @@ export default function TopBar({
             </button>
 
             {isMenuOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-secondary/50 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-4 md:hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-orange-300 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-4 md:hidden">
                     {finalLinks.map((link, index) => (
                         <a
                             key={link.id || index}

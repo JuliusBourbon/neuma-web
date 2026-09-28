@@ -457,7 +457,7 @@ function ProfilePage() {
               <div className="mt-8 flex max-w-162.5 justify-center">
                 <FillRoundedButton
                   text={lang === 'id' ? "Keluar" : "Sign Out"}
-                  classes="min-w-64 bg-[#FE7236] text-lg text-white"
+                  classes="min-w-64 bg-[#FE7236] text-sm md:text-lg text-white"
                   onClick={handleLogout}
                 />
               </div>

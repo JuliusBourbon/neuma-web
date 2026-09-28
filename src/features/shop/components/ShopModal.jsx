@@ -35,7 +35,7 @@ function ShopModal({
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-tertiary">{title}</h2>
+        <span className="text-xl md:text-2xl font-bold text-tertiary">{title}</span>
 
         {/* Confirmation Item */}
         {isConfirmation && item && (
@@ -60,7 +60,7 @@ function ShopModal({
         )}
 
         {/* Message */}
-        <p>
+        <p className="py-3 px-3">
           {message ||
             (isConfirmation
               ? (lang === 'id' ? "Apakah kamu yakin ingin membeli item ini?" : "Are you sure you want to buy this item?")
@@ -71,7 +71,7 @@ function ShopModal({
 
         {/* Actions */}
         {isConfirmation ? (
-          <div className="mt-6 flex justify-center gap-3">
+          <div className="flex justify-center gap-3">
             {/* Cancel Button */}
             <button
               type="button"

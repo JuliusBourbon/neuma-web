@@ -26,7 +26,7 @@ export default function UnderSection({
             <div className="flex justify-between mx-6 sm:mx-16">
                 <ActionButton
                     text={lang === 'id' ? "Kembali" : "Back"}
-                    classes="bg-tertiary text-white py-2 px-12 sm:px-24 rounded-lg my-3 sm:my-6"
+                    classes="bg-tertiary text-white py-2 px-8 md:px-24 rounded-lg my-3 sm:my-6"
                     onClick={onBack}
                     disabled={!canGoBack}
                     svg={
@@ -37,7 +37,7 @@ export default function UnderSection({
                 />
                 <ActionButton
                     text={isLoading ? (lang === 'id' ? "Memproses..." : "Processing...") : nextLabel}
-                    classes="bg-secondary text-white py-2 px-12 sm:px-24 rounded-lg my-3 sm:my-6"
+                    classes="bg-secondary text-white py-2 px-8 md:px-24 rounded-lg my-3 sm:my-6"
                     onClick={onNext}
                     disabled={!canGoNext || isLoading}
                     svg={

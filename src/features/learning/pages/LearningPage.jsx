@@ -92,7 +92,7 @@ export default function LearningPage() {
                 </button>
 
                 {/* Progress Indicator */}
-                <div className="absolute left-[55%] md:left-[53%] lg:left-1/2 -translate-x-1/2 w-full max-w-4xl px-14 md:px-10 lg:px-6">
+                <div className="absolute left-[55%] md:left-[53%] lg:left-1/2 -translate-x-1/2 w-[90%] md:w-full max-w-4xl px-14 md:px-10 lg:px-6">
                     <div className="flex justify-between text-xs md:text-sm font-semibold mb-1 text-tertiary">
                         <span className="text-xs opacity-60">
                             {engine.currentStep + 1} / {engine.totalSteps}

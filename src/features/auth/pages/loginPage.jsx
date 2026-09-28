@@ -124,15 +124,15 @@ export default function LoginPage({ onClose, onSwitchToRegister, lang = 'id' }) 
         </svg>
       </button>
 
-      <div className="flex flex-col items-center gap-6 mb-16 md:mb-20 text-center">
-        <h2 className="text-5xl font-medium text-tertiary">Neumá</h2>
-        <h3 className="text-xl md:text-2xl font-semibold text-secondary">
+      <div className="flex flex-col items-center gap-4 mb-10 md:mb-20 text-center">
+        <h2 className="text-3xl md:text-5xl font-medium text-tertiary">Neumá</h2>
+        <h3 className="text-base md:text-2xl font-semibold text-secondary">
           Break the Silence, Bridge the World.
         </h3>
       </div>
 
-      <div className="flex flex-col items-center gap-6 w-full max-w-md">
-        <h3 className="text-2xl font-medium text-tertiary">{lang === 'id' ? "Masuk" : "Log In"}</h3>
+      <div className="flex flex-col items-center gap-4 md:gap-6 w-full max-w-md">
+        <h3 className="text-xl md:text-2xl font-medium text-tertiary">{lang === 'id' ? "Masuk" : "Log In"}</h3>
 
         {errorMessage && (
           <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm text-center">
@@ -150,7 +150,7 @@ export default function LoginPage({ onClose, onSwitchToRegister, lang = 'id' }) 
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="bg-tertiary/30 text-tertiary placeholder-tertiary/60 px-4 py-2 text-xl rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+            className="bg-tertiary/30 text-tertiary placeholder-tertiary/60 px-4 py-2 text-base md:text-xl rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
           />
           <input
             type="password"
@@ -158,7 +158,7 @@ export default function LoginPage({ onClose, onSwitchToRegister, lang = 'id' }) 
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-tertiary/30 text-tertiary placeholder-tertiary/60 px-4 py-2 text-xl rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
+            className="bg-tertiary/30 text-tertiary placeholder-tertiary/60 px-4 py-2 text-base md:text-xl rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary"
           />
           <ActionButton
             type="submit"
@@ -180,7 +180,7 @@ export default function LoginPage({ onClose, onSwitchToRegister, lang = 'id' }) 
               type="button"
               disabled={isLoading}
               onClick={() => triggerGoogleLogin()}
-              classes="bg-white rounded-full w-full border border-tertiary hover:bg-gray-200 py-3 text-xl font-medium"
+              classes="bg-white rounded-full w-full border border-tertiary hover:bg-gray-200 py-3 text-base md:text-xl font-medium"
               svg={<GoogleIcon />}
               text={lang === 'id' ? "Masuk dengan Google" : "Sign in with Google"}
             />

@@ -217,8 +217,9 @@ export function useLearningEngine(levelId, lang) {
         setIsSubmitting(true);
         try {
             const result = await completeLevel(levelId);
+            const xpEarned = Object.values(submitResults).reduce((sum, res) => sum + (res.xpEarned || 0), 0);
             navigate("/score", {
-                state: { levelId, levelTitle: level?.title, ...result },
+                state: { levelId, levelTitle: level?.title, xpEarned, ...result },
             });
         } catch (err) {
             console.error("Failed to complete level:", err);

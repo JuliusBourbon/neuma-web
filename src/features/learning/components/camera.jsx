@@ -650,7 +650,7 @@ export default function Camera({
                                     <img
                                         src={hintImageSrc}
                                         alt={lang === 'id' ? `Hint Isyarat ${activeTargetLetter}` : `Sign Hint ${activeTargetLetter}`}
-                                        className={`w-80 h-80 object-contain drop-shadow-xl pointer-events-none mix-blend-multiply transition-opacity duration-300 ${isMatching ? "opacity-10" : "opacity-70"}`}
+                                        className={`w-46 h-46 md:w-80 md:h-80 object-contain drop-shadow-xl pointer-events-none mix-blend-multiply transition-opacity duration-300 ${isMatching ? "opacity-10" : "opacity-70"}`}
                                     />
                                 )}
 

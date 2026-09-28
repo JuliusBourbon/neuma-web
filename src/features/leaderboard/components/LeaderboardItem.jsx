@@ -45,7 +45,7 @@ export default function LeaderboardItem({ user, isMe, lang }) {
         </span>
         <span
           title={lang === 'id' ? "Abjad Terkumpul" : "Alphabet Collected"}
-          className={`whitespace-nowrap w-12 md:w-16 text-center ${isMe ? "font-bold text-white" : "font-semibold"}`}
+          className={`hidden md:block whitespace-nowrap w-12 md:w-16 text-center ${isMe ? "font-bold text-white" : "font-semibold"}`}
         >
           {user.wordsCollected || 0}/26
         </span>

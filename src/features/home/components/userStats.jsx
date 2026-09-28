@@ -17,7 +17,7 @@ export default function UserStats({
             className={`inline-flex items-center select-none ${className}`}
         >
             {/* Circle */}
-            <div className="relative z-10 -mr-3 flex items-center justify-center w-20 h-20 rounded-full bg-neon p-1.5 shadow-sm  border border-tertiary">
+            <div className="relative z-10 -mr-3 flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-neon p-1.5 shadow-sm border border-tertiary">
                 <div className="w-full h-full rounded-full bg-tertiary flex items-center justify-center overflow-hidden border">
                     {avatar ? (
                         <img
@@ -32,7 +32,7 @@ export default function UserStats({
             </div>
 
             {/* Square */}
-            <div className="flex items-center h-15 bg-neon pl-6 pr-6 py-2 rounded-r-2xl sm:rounded-r-3xl gap-10 border border-tertiary">
+            <div className="flex items-center h-13 md:h-15 bg-neon pl-6 pr-6 py-2 rounded-r-2xl sm:rounded-r-3xl gap-8 md:gap-10 border border-tertiary">
                 {/* Alphabet / Words Collected */}
                 <div className="flex flex-col items-center justify-center min-w-9" aria-label="Words Collected" title='Words Collected' >
                     <BookIcon size={24} color="#FE7236" />

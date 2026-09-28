@@ -3,9 +3,22 @@ import { MAP_DIMENSIONS, getLevelPosition } from "../components/LevelMap/levelMa
 
 export function useMapNavigation(levels, dismissHint) {
     const containerRef = useRef(null);
+    const mapRef = useRef(null);
 
-    const [pan, setPan] = useState({ x: 0, y: 0 });
+    const panRef = useRef({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.85);
+    const rafIdRef = useRef(null);
+
+    const updateTransform = useCallback((x, y, currentZoom) => {
+        if (mapRef.current) {
+            mapRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${currentZoom})`;
+        }
+    }, []);
+
+    const setPan = useCallback((newPan, currentZoom = zoom) => {
+        panRef.current = newPan;
+        updateTransform(newPan.x, newPan.y, currentZoom);
+    }, [zoom, updateTransform]);
 
     const [isDragging, setIsDragging] = useState(false);
     const isMouseDownRef = useRef(false);
@@ -56,7 +69,7 @@ export function useMapNavigation(levels, dismissHint) {
         isMouseDownRef.current = true;
         hasDraggedRef.current = false;
         startCoordsRef.current = { x: e.clientX, y: e.clientY };
-        panStartRef.current = { ...pan };
+        panStartRef.current = { ...panRef.current };
     };
 
     const handleMouseMove = (e) => {
@@ -72,7 +85,11 @@ export function useMapNavigation(levels, dismissHint) {
 
             const nextX = panStartRef.current.x + deltaX;
             const nextY = panStartRef.current.y + deltaY;
-            setPan(clampPan(nextX, nextY));
+            
+            if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+            rafIdRef.current = requestAnimationFrame(() => {
+                setPan(clampPan(nextX, nextY));
+            });
         }
     };
 
@@ -91,7 +108,7 @@ export function useMapNavigation(levels, dismissHint) {
         isMouseDownRef.current = true;
         hasDraggedRef.current = false;
         startCoordsRef.current = { x: touch.clientX, y: touch.clientY };
-        panStartRef.current = { ...pan };
+        panStartRef.current = { ...panRef.current };
     };
 
     const handleTouchMove = (e) => {
@@ -108,7 +125,11 @@ export function useMapNavigation(levels, dismissHint) {
 
             const nextX = panStartRef.current.x + deltaX;
             const nextY = panStartRef.current.y + deltaY;
-            setPan(clampPan(nextX, nextY));
+            
+            if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+            rafIdRef.current = requestAnimationFrame(() => {
+                setPan(clampPan(nextX, nextY));
+            });
         }
     };
 
@@ -123,14 +144,14 @@ export function useMapNavigation(levels, dismissHint) {
     const handleZoomIn = () => {
         const nextZoom = Math.min(1.4, Number((zoom + 0.15).toFixed(2)));
         setZoom(nextZoom);
-        setPan((prev) => clampPan(prev.x, prev.y, nextZoom));
+        setPan(clampPan(panRef.current.x, panRef.current.y, nextZoom), nextZoom);
         if (dismissHint) dismissHint();
     };
 
     const handleZoomOut = () => {
         const nextZoom = Math.max(0.60, Number((zoom - 0.15).toFixed(2)));
         setZoom(nextZoom);
-        setPan((prev) => clampPan(prev.x, prev.y, nextZoom));
+        setPan(clampPan(panRef.current.x, panRef.current.y, nextZoom), nextZoom);
         if (dismissHint) dismissHint();
     };
 
@@ -154,19 +175,20 @@ export function useMapNavigation(levels, dismissHint) {
                 const nextZoom = Math.min(1.4, Math.max(0.60, Number((prevZoom + zoomDelta).toFixed(2))));
                 if (nextZoom === prevZoom) return prevZoom;
 
-                setPan((prevPan) => {
-                    const rect = container.getBoundingClientRect();
-                    const cursorX = e.clientX - rect.left;
-                    const cursorY = e.clientY - rect.top;
+                const prevPan = panRef.current;
+                const rect = container.getBoundingClientRect();
+                const cursorX = e.clientX - rect.left;
+                const cursorY = e.clientY - rect.top;
 
-                    const mapX = (cursorX - prevPan.x) / prevZoom;
-                    const mapY = (cursorY - prevPan.y) / prevZoom;
+                const mapX = (cursorX - prevPan.x) / prevZoom;
+                const mapY = (cursorY - prevPan.y) / prevZoom;
 
-                    const nextPanX = cursorX - mapX * nextZoom;
-                    const nextPanY = cursorY - mapY * nextZoom;
+                const nextPanX = cursorX - mapX * nextZoom;
+                const nextPanY = cursorY - mapY * nextZoom;
 
-                    return clampPan(nextPanX, nextPanY, nextZoom);
-                });
+                const clamped = clampPan(nextPanX, nextPanY, nextZoom);
+                panRef.current = clamped;
+                updateTransform(clamped.x, clamped.y, nextZoom);
 
                 return nextZoom;
             });
@@ -180,7 +202,8 @@ export function useMapNavigation(levels, dismissHint) {
 
     return {
         containerRef,
-        pan,
+        mapRef,
+        panRef,
         zoom,
         isDragging,
         handlers: {

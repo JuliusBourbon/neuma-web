@@ -23,16 +23,16 @@ function ProfileInfo({ profile, getGenderLabel, onEdit, onChangePassword, lang =
       </div>
 
       {/* Profile Buttons */}
-      <div className="grid grid-cols-2 gap-3 md:gap-8 mt-10 max-w-162.5">
+      <div className="grid grid-cols-2 gap-2 md:gap-8 mt-10 max-w-162.5">
         <FillRoundedButton
           text={lang === 'id' ? "Ubah Profil" : "Edit Profile"}
-          classes="bg-secondary text-white text-md md:text-lg w-full"
+          classes="bg-secondary text-white text-sm md:text-lg w-full"
           onClick={onEdit}
         />
 
         <FillRoundedButton
           text={profile.hasPassword ? (lang === 'id' ? "Ubah Sandi" : "Change Password") : (lang === 'id' ? "Buat Sandi" : "Set Password")}
-          classes="bg-secondary text-white md:text-lg w-full"
+          classes="bg-secondary text-white text-sm md:text-lg w-full"
           onClick={onChangePassword}
         />
       </div>
