@@ -27,7 +27,7 @@ function OnboardingPage() {
   const [selectedReason, setSelectedReason] = useState(null);
   const [typedText, setTypedText] = useState("");
 
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const toggleLanguage = () => {
     const newLang = lang === "id" ? "en" : "id";
@@ -147,16 +147,30 @@ function OnboardingPage() {
   }, [dialogText]);
 
   const handleNext = async () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep((prev) => prev + 1);
+    if (currentStep === 5) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Turn off camera immediately
+        stream.getTracks().forEach((track) => track.stop());
+      } catch (err) {
+        console.warn("Izin kamera ditolak atau tidak tersedia:", err);
+      }
+      setCurrentStep(6);
       return;
     }
 
-    try {
-      await completeOnboarding(lang);
-      navigate("/home");
-    } catch (error) {
-      console.error("Gagal menyelesaikan onboarding:", error);
+    if (currentStep === totalSteps) {
+      try {
+        await completeOnboarding(lang);
+        navigate("/home");
+      } catch (error) {
+        console.error("Gagal menyelesaikan onboarding:", error);
+      }
+      return;
+    }
+
+    if (currentStep < totalSteps) {
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
@@ -171,7 +185,7 @@ function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-primary">
+    <div className="flex h-[calc(100vh-64px)] md:h-screen flex-col overflow-x-hidden bg-primary">
       {/* Floating Language Toggle */}
 
       {/* <button
@@ -191,10 +205,10 @@ function OnboardingPage() {
       <div className="relative flex items-center justify-center px-4 pt-5 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
         {/* Progress Bar */}
         <div className="flex w-full max-w-130 justify-center gap-2 sm:gap-3 md:gap-4">
-          {[1, 2, 3, 4, 5].map((step) => (
+          {[1, 2, 3, 4, 5, 6].map((step) => (
             <div
               key={step}
-              className={`h-2 w-14 rounded-full sm:h-2.5 sm:w-20 md:h-3 md:w-32 ${currentStep >= step ? "bg-tertiary" : "bg-secondary"
+              className={`h-2 w-12 rounded-full sm:h-2.5 sm:w-20 md:h-3 md:w-32 ${currentStep >= step ? "bg-tertiary" : "bg-secondary"
                 }`}
             />
           ))}
@@ -307,15 +321,15 @@ function OnboardingPage() {
                 />
               </div>
 
-              <p className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+              <p className="onboarding-fade-up-delay mt-5 text-xl md:text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 {lang === "id"
                   ? "Keren! Di Neuma, kita akan belajar Bahasa Isyarat bersama melalui 4 tahap:"
                   : "Cool! Here at Neuma, we will learn Sign Language together through 4 stages:"}
               </p>
 
-              <div className="onboarding-fade-up-delay-more mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-left w-full max-w-2xl">
+              <div className="onboarding-fade-up-delay-more mt-8 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 text-left w-full max-w-2xl">
                 <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
-                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                  <h4 className="md:text-xl font-bold text-tertiary">
                     {lang === 'id' ? "1. Pelajari Huruf" : "1. Learn the Alphabet"}
                   </h4>
                   <p className="text-tertiary/80 text-sm sm:text-base">
@@ -323,7 +337,7 @@ function OnboardingPage() {
                   </p>
                 </div>
                 <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
-                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                  <h4 className="md:text-xl font-bold text-tertiary">
                     {lang === 'id' ? "2. Kuis Interaktif" : "2. Interactive Quiz"}
                   </h4>
                   <p className="text-tertiary/80 text-sm sm:text-base">
@@ -331,7 +345,7 @@ function OnboardingPage() {
                   </p>
                 </div>
                 <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
-                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                  <h4 className="md:text-xl font-bold text-tertiary">
                     {lang === 'id' ? "3. Ujian Praktik" : "3. Practical Test"}
                   </h4>
                   <p className="text-tertiary/80 text-sm sm:text-base">
@@ -339,7 +353,7 @@ function OnboardingPage() {
                   </p>
                 </div>
                 <div className="bg-tertiary/10 rounded-2xl p-5 border border-tertiary/20 flex flex-col gap-1 transition-transform">
-                  <h4 className="text-lg sm:text-xl font-bold text-tertiary">
+                  <h4 className="md:text-xl font-bold text-tertiary">
                     {lang === 'id' ? "4. Mengeja Kata" : "4. Spelling Words"}
                   </h4>
                   <p className="text-tertiary/80 text-sm sm:text-base">
@@ -361,6 +375,26 @@ function OnboardingPage() {
                 />
               </div>
 
+              <p className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
+                {lang === "id" ? "Izin Akses Kamera" : "Camera Access Permission"}
+              </p>
+              <p className="onboarding-fade-up-delay mt-3 text-base font-medium text-tertiary/70 sm:mt-4 sm:text-lg max-w-md">
+                {lang === "id"
+                  ? "Neumá menggunakan teknologi AI untuk membaca gerakan tangan Anda. Oleh karena itu, kami akan meminta izin akses kamera perangkat Anda pada tahap selanjutnya."
+                  : "Neumá uses AI technology to detect your hand gestures. Therefore, we will ask for your device's camera access permission in the next steps."}
+              </p>
+            </div>
+          )}
+          {/* Step 6 */}
+          {currentStep === 6 && (
+            <div className="flex flex-col items-center px-2 text-center sm:px-4">
+              <div className="onboarding-fade-up">
+                <img
+                  src={mascot1}
+                  alt="Neuma mascot"
+                  className="onboarding-float h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-32 md:w-32"
+                />
+              </div>
               <p className="onboarding-fade-up-delay mt-5 text-2xl font-bold leading-tight text-tertiary sm:mt-8 sm:text-3xl">
                 {lang === "id" ? "Mari kita mulai!" : "Let's get started!"}
               </p>

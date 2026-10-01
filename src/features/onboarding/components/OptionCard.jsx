@@ -14,7 +14,7 @@ function OptionCard({ text, image, selected = false, onClick }) {
   active:scale-[0.98]
   ${selected
           ? "border-tertiary bg-tertiary text-primary shadow-md"
-          : "border-secondary bg-secondary/70 text-primary hover:border-tertiary hover:shadow-md"
+          : "border-secondary bg-secondary/70 text-tertiary hover:border-tertiary hover:shadow-md"
         }
 `}
     >
@@ -30,7 +30,7 @@ function OptionCard({ text, image, selected = false, onClick }) {
         />
       )}
 
-      <span className="text-lg font-medium">{text}</span>
+      <span className="md:text-lg font-medium">{text}</span>
     </button>
   );
 }
